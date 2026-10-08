@@ -12,167 +12,696 @@
     box-sizing:border-box;
     margin:0;
     padding:0;
+    -webkit-tap-highlight-color:transparent;
 }
 
-html,body{
+html,
+body{
     width:100%;
     height:100%;
     overflow:hidden;
-    background:#08111c;
+    background:#111;
     font-family:Arial,Helvetica,sans-serif;
 }
 
-#game{
+#world{
     position:fixed;
     inset:0;
-    width:100%;
-    height:100%;
-    display:block;
-    cursor:crosshair;
+    overflow:hidden;
+    background:#111;
 }
 
-/* =========================
-   TOP PLAYER PANEL
-========================= */
+/* =========================================
+   MAP
+========================================= */
 
-.player-panel{
-    position:fixed;
-    top:14px;
-    left:14px;
+#map{
+    position:absolute;
+    inset:0;
+
+    width:100%;
+    height:100%;
+
+    object-fit:cover;
+
+    user-select:none;
+    pointer-events:none;
+}
+
+/* =========================================
+   GAME LAYER
+========================================= */
+
+#gameLayer{
+    position:absolute;
+    inset:0;
+
+    overflow:hidden;
+}
+
+/* =========================================
+   PLAYER
+========================================= */
+
+#player{
+    position:absolute;
+
+    left:50%;
+    top:68%;
+
+    width:120px;
+    height:150px;
+
+    transform:
+        translate(-50%,-100%);
+
     z-index:20;
 
-    width:330px;
-    min-height:88px;
+    pointer-events:none;
+}
+
+/*
+   This is the actual sprite container.
+
+   Later:
+   idle.png
+   walk.png
+   attack.png
+
+   will be loaded here.
+*/
+
+#playerSprite{
+    position:absolute;
+
+    left:50%;
+    bottom:0;
+
+    width:100%;
+    height:100%;
+
+    transform:
+        translateX(-50%);
+
+    background-image:
+        url("assets/player/idle.png");
+
+    background-repeat:no-repeat;
+    background-position:center bottom;
+    background-size:contain;
+
+    image-rendering:auto;
+
+    filter:
+        drop-shadow(
+            0 8px 6px
+            rgba(0,0,0,.55)
+        );
+}
+
+/*
+   If sprite doesn't exist yet,
+   show a simple temporary humanoid
+   silhouette so the movement system
+   can still be tested.
+
+   This disappears automatically
+   when idle.png exists.
+*/
+
+#playerFallback{
+    position:absolute;
+
+    left:50%;
+    bottom:5px;
+
+    width:72px;
+    height:118px;
+
+    transform:
+        translateX(-50%);
 
     display:flex;
+
+    flex-direction:column;
     align-items:center;
 
-    padding:10px 14px;
+    filter:
+        drop-shadow(
+            0 7px 5px
+            rgba(0,0,0,.55)
+        );
+}
 
-    border:2px solid #8b6a32;
-    border-radius:18px;
+.fallback-head{
+    width:38px;
+    height:38px;
+
+    border-radius:50%;
+
+    background:
+        radial-gradient(
+            circle at 50% 65%,
+            #f0bd82 0 54%,
+            #171717 55% 100%
+        );
+
+    border:2px solid #111;
+}
+
+.fallback-body{
+    position:relative;
+
+    width:45px;
+    height:53px;
+
+    margin-top:-1px;
+
+    border-radius:10px 10px 5px 5px;
 
     background:
         linear-gradient(
-            135deg,
-            rgba(10,14,20,.96),
-            rgba(31,36,43,.92)
+            90deg,
+            #111827,
+            #596579,
+            #111827
         );
 
-    box-shadow:
-        0 8px 25px rgba(0,0,0,.45),
-        inset 0 1px rgba(255,255,255,.08);
+    border:2px solid #d0d5db;
+}
+
+.fallback-arm{
+    position:absolute;
+
+    top:8px;
+
+    width:10px;
+    height:43px;
+
+    border-radius:7px;
+
+    background:#263244;
+}
+
+.fallback-arm.left{
+    left:-10px;
+    transform:rotate(18deg);
+}
+
+.fallback-arm.right{
+    right:-10px;
+    transform:rotate(-25deg);
+}
+
+.fallback-leg{
+    width:14px;
+    height:35px;
+
+    margin-top:-1px;
+
+    border-radius:0 0 6px 6px;
+
+    background:#171d27;
+}
+
+.fallback-legs{
+    display:flex;
+    gap:7px;
+}
+
+.fallback-sword{
+    position:absolute;
+
+    right:-22px;
+    top:22px;
+
+    width:9px;
+    height:68px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #64748b,
+            #f8fafc,
+            #64748b
+        );
+
+    border:1px solid #111;
+
+    transform:rotate(38deg);
+
+    transform-origin:bottom;
+}
+
+.fallback-name{
+    position:absolute;
+
+    left:50%;
+    top:-29px;
+
+    transform:translateX(-50%);
 
     color:white;
+
+    white-space:nowrap;
+
+    font-size:15px;
+    font-weight:800;
+
+    text-shadow:
+        0 2px 3px #000,
+        0 0 5px #000;
+}
+
+/* =========================================
+   NPC
+========================================= */
+
+.world-object{
+    position:absolute;
+
+    transform:
+        translate(-50%,-100%);
+
+    z-index:15;
+
+    pointer-events:auto;
+}
+
+.npc{
+    left:24%;
+    top:70%;
+
+    width:100px;
+    height:155px;
+}
+
+.npc-sprite{
+    width:100%;
+    height:100%;
+
+    background:
+        url("assets/npcs/quest-npc.png")
+        center bottom /
+        contain
+        no-repeat;
+}
+
+.object-name{
+    position:absolute;
+
+    left:50%;
+    top:-28px;
+
+    transform:translateX(-50%);
+
+    color:white;
+
+    font-size:15px;
+    font-weight:800;
+
+    white-space:nowrap;
+
+    text-shadow:
+        0 2px 3px #000;
+}
+
+.quest-mark{
+    position:absolute;
+
+    left:50%;
+    top:-75px;
+
+    transform:translateX(-50%);
+
+    width:38px;
+    height:38px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:50%;
+
+    background:#ef2020;
+
+    border:3px solid white;
+
+    color:#ffe600;
+
+    font-size:23px;
+    font-weight:900;
+
+    box-shadow:
+        0 0 10px
+        rgba(255,0,0,.65);
+
+    animation:
+        questPulse 1s infinite alternate;
+}
+
+@keyframes questPulse{
+    from{
+        transform:
+            translateX(-50%)
+            scale(.9);
+    }
+
+    to{
+        transform:
+            translateX(-50%)
+            scale(1.08);
+    }
+}
+
+/* =========================================
+   MONSTER
+========================================= */
+
+.monster{
+    position:absolute;
+
+    left:78%;
+    top:73%;
+
+    width:145px;
+    height:120px;
+
+    transform:
+        translate(-50%,-100%);
+
+    z-index:15;
+}
+
+.monster-sprite{
+    width:100%;
+    height:100%;
+
+    background:
+        url("assets/monsters/forest-wolf.png")
+        center bottom /
+        contain
+        no-repeat;
+}
+
+.monster-name{
+    position:absolute;
+
+    left:50%;
+    top:-32px;
+
+    transform:translateX(-50%);
+
+    color:white;
+
+    white-space:nowrap;
+
+    font-weight:800;
+
+    text-shadow:
+        0 2px 3px #000;
+}
+
+.monster-hp{
+    position:absolute;
+
+    left:50%;
+    top:-13px;
+
+    transform:translateX(-50%);
+
+    width:105px;
+    height:9px;
+
+    border:1px solid #111;
+
+    background:#111;
+}
+
+.monster-hp-fill{
+    width:100%;
+    height:100%;
+
+    background:#dc2626;
+}
+
+/* =========================================
+   PORTAL
+========================================= */
+
+.portal{
+    position:absolute;
+
+    right:5%;
+    top:62%;
+
+    width:105px;
+    height:155px;
+
+    transform:
+        translateY(-100%);
+
+    z-index:14;
+
+    background:
+        url("assets/portal.png")
+        center /
+        contain
+        no-repeat;
+
+    filter:
+        drop-shadow(
+            0 0 16px
+            rgba(0,170,255,.75)
+        );
+}
+
+.portal-name{
+    position:absolute;
+
+    left:50%;
+    top:-25px;
+
+    transform:translateX(-50%);
+
+    color:white;
+
+    font-weight:800;
+
+    text-shadow:
+        0 2px 4px #000;
+}
+
+/* =========================================
+   MOVE MARKER
+========================================= */
+
+#moveMarker{
+    position:absolute;
+
+    width:32px;
+    height:15px;
+
+    border-radius:50%;
+
+    border:2px solid rgba(255,255,255,.85);
+
+    box-shadow:
+        0 0 10px
+        rgba(40,140,255,.9);
+
+    transform:
+        translate(-50%,-50%);
+
+    z-index:10;
+
+    pointer-events:none;
+
+    animation:
+        marker .65s infinite alternate;
+}
+
+@keyframes marker{
+    from{
+        opacity:.35;
+        transform:
+            translate(-50%,-50%)
+            scale(.75);
+    }
+
+    to{
+        opacity:1;
+        transform:
+            translate(-50%,-50%)
+            scale(1);
+    }
+}
+
+/* =========================================
+   TOP PLAYER HUD
+========================================= */
+
+.player-hud{
+    position:fixed;
+
+    left:12px;
+    top:12px;
+
+    z-index:50;
+
+    width:330px;
+
+    padding:10px;
+
+    display:flex;
+    gap:10px;
+
+    border:
+        2px solid
+        #80652e;
+
+    border-radius:16px;
+
+    background:
+        rgba(8,13,19,.93);
+
+    box-shadow:
+        0 7px 22px
+        rgba(0,0,0,.45);
 }
 
 .avatar{
-    width:62px;
-    height:62px;
+    width:66px;
+    height:66px;
+
     flex:none;
 
     border-radius:50%;
 
+    border:2px solid #c69c42;
+
+    background:
+        linear-gradient(
+            #111827,
+            #05070a
+        );
+
     display:flex;
+
     align-items:center;
     justify-content:center;
 
-    margin-right:12px;
+    color:white;
 
-    background:
-        radial-gradient(circle at 50% 35%,#f4c28d 0 20%,transparent 21%),
-        linear-gradient(#182334,#080b10);
-
-    border:2px solid #c39a4a;
-
-    font-size:30px;
+    font-size:25px;
 }
 
-.player-info{
+.hud-info{
     flex:1;
 }
 
-.player-name{
+.hud-name{
     display:flex;
     justify-content:space-between;
 
-    font-size:17px;
+    color:white;
+
+    font-size:18px;
     font-weight:800;
 
-    margin-bottom:7px;
+    margin-bottom:6px;
 }
 
-.level{
-    color:#ffd76a;
+.hud-level{
+    color:#ffd34d;
 }
 
-.bar{
+.stat-bar{
     position:relative;
 
-    width:100%;
-    height:14px;
-
-    margin-bottom:5px;
+    height:15px;
 
     overflow:hidden;
+
+    margin-bottom:5px;
 
     border-radius:8px;
 
     background:#111827;
-    border:1px solid #374151;
+
+    border:1px solid #111;
 }
 
-.bar-fill{
+.stat-fill{
     height:100%;
     width:100%;
 }
 
-.hp{
-    background:linear-gradient(90deg,#991b1b,#ef4444);
+.hp-fill{
+    background:
+        linear-gradient(
+            90deg,
+            #991b1b,
+            #ef4444
+        );
 }
 
-.mp{
-    background:linear-gradient(90deg,#1d4ed8,#38bdf8);
+.mp-fill{
+    background:
+        linear-gradient(
+            90deg,
+            #1d4ed8,
+            #38bdf8
+        );
 }
 
-.bar-text{
+.stat-text{
     position:absolute;
+
     inset:0;
 
     display:flex;
+
     align-items:center;
     justify-content:center;
 
+    color:white;
+
     font-size:10px;
     font-weight:bold;
-    text-shadow:0 1px 2px #000;
+
+    text-shadow:
+        0 1px 2px #000;
 }
 
-/* =========================
-   LOCATION PANEL
-========================= */
+/* =========================================
+   LOCATION
+========================================= */
 
 .location{
     position:fixed;
-    top:14px;
-    right:14px;
 
-    z-index:20;
+    top:12px;
+    right:12px;
 
-    min-width:250px;
+    z-index:50;
 
-    padding:11px 20px;
+    min-width:270px;
+
+    padding:10px 18px;
 
     text-align:center;
 
+    border:
+        2px solid
+        #80652e;
+
+    border-radius:16px;
+
+    background:
+        rgba(8,13,19,.93);
+
     color:white;
-
-    border:2px solid #8b6a32;
-    border-radius:18px;
-
-    background:rgba(12,16,22,.92);
-
-    box-shadow:0 8px 25px rgba(0,0,0,.4);
 }
 
 .location-title{
@@ -182,273 +711,54 @@ html,body{
 
 .location-time{
     margin-top:3px;
-    color:#e8d59b;
+
+    color:#e6d28e;
+
+    font-size:12px;
+}
+
+/* =========================================
+   QUEST PANEL
+========================================= */
+
+.quest-panel{
+    position:fixed;
+
+    left:10px;
+    top:115px;
+
+    z-index:50;
+
+    width:180px;
+
+    padding:9px 12px;
+
+    border-radius:10px;
+
+    background:
+        rgba(5,10,15,.9);
+
+    border:
+        1px solid #555;
+
+    color:white;
+}
+
+.quest-panel strong{
+    font-size:16px;
+}
+
+.quest-status{
+    margin-top:3px;
+
+    color:#bfc5cc;
+
     font-size:13px;
 }
 
-/* =========================
-   INTERACTIVE LABELS
-========================= */
-
-.world-label{
-    position:absolute;
-    z-index:10;
-
-    transform:translate(-50%,-100%);
-
-    color:white;
-
-    text-align:center;
-
-    pointer-events:none;
-
-    text-shadow:
-        0 2px 3px #000,
-        0 0 4px #000;
-}
-
-.world-label .name{
-    font-size:15px;
-    font-weight:800;
-}
-
-.world-label .sub{
-    font-size:11px;
-    color:#ffe45c;
-}
-
-/* =========================
-   NPC
-========================= */
-
-.npc{
-    position:absolute;
-    z-index:8;
-
-    width:48px;
-    height:82px;
-
-    transform:translate(-50%,-100%);
-
-    pointer-events:none;
-}
-
-.npc-head{
-    position:absolute;
-
-    width:30px;
-    height:30px;
-
-    top:0;
-    left:9px;
-
-    border-radius:50%;
-
-    background:#efbd83;
-    border:2px solid #6b4327;
-}
-
-.npc-hair{
-    position:absolute;
-
-    width:32px;
-    height:18px;
-
-    top:-1px;
-    left:8px;
-
-    border-radius:18px 18px 6px 6px;
-
-    background:#713f1d;
-
-    z-index:2;
-}
-
-.npc-body{
-    position:absolute;
-
-    width:38px;
-    height:48px;
-
-    left:5px;
-    top:27px;
-
-    border-radius:10px 10px 4px 4px;
-
-    background:linear-gradient(
-        90deg,
-        #1e3a5f,
-        #f5e7c2,
-        #1e3a5f
-    );
-
-    border:2px solid #9c7a3c;
-}
-
-/* =========================
-   MONSTER
-========================= */
-
-.monster{
-    position:absolute;
-    z-index:8;
-
-    width:105px;
-    height:85px;
-
-    transform:translate(-50%,-100%);
-
-    pointer-events:none;
-}
-
-.wolf-body{
-    position:absolute;
-
-    width:78px;
-    height:48px;
-
-    left:12px;
-    top:28px;
-
-    border-radius:45% 50% 40% 35%;
-
-    background:linear-gradient(
-        135deg,
-        #111827,
-        #374151
-    );
-
-    border:3px solid #0b0f14;
-}
-
-.wolf-head{
-    position:absolute;
-
-    width:43px;
-    height:43px;
-
-    right:1px;
-    top:12px;
-
-    border-radius:50%;
-
-    background:#1f2937;
-
-    border:3px solid #090d12;
-}
-
-.wolf-ear{
-    position:absolute;
-
-    width:17px;
-    height:22px;
-
-    top:-12px;
-
-    background:#111827;
-
-    transform:rotate(25deg);
-
-    border:2px solid #090d12;
-}
-
-.wolf-ear.left{
-    left:3px;
-}
-
-.wolf-ear.right{
-    right:3px;
-    transform:rotate(-25deg);
-}
-
-.wolf-eye{
-    position:absolute;
-
-    width:6px;
-    height:6px;
-
-    border-radius:50%;
-
-    background:#ef4444;
-
-    top:18px;
-}
-
-.wolf-eye.left{
-    left:10px;
-}
-
-.wolf-eye.right{
-    right:10px;
-}
-
-.wolf-hp{
-    position:absolute;
-
-    top:-20px;
-    left:10px;
-
-    width:85px;
-    height:9px;
-
-    background:#111;
-
-    border:1px solid #000;
-}
-
-.wolf-hp-fill{
-    width:100%;
-    height:100%;
-
-    background:#dc2626;
-}
-
-/* =========================
-   PORTAL
-========================= */
-
-.portal{
-    position:absolute;
-    z-index:7;
-
-    width:85px;
-    height:115px;
-
-    transform:translate(-50%,-100%);
-
-    border-radius:50% 50% 45% 45%;
-
-    background:
-        radial-gradient(
-            ellipse at center,
-            #d8f7ff 0%,
-            #38bdf8 20%,
-            #2563eb 50%,
-            #172554 75%,
-            transparent 76%
-        );
-
-    box-shadow:
-        0 0 20px #38bdf8,
-        0 0 45px rgba(37,99,235,.7);
-
-    animation:portalPulse 1.8s infinite alternate;
-
-    pointer-events:none;
-}
-
-@keyframes portalPulse{
-    from{
-        transform:translate(-50%,-100%) scale(.96);
-    }
-    to{
-        transform:translate(-50%,-100%) scale(1.04);
-    }
-}
-
-/* =========================
+/* =========================================
    CHAT
-========================= */
+========================================= */
 
 .chat{
     position:fixed;
@@ -456,19 +766,25 @@ html,body{
     left:12px;
     bottom:12px;
 
-    z-index:30;
+    z-index:50;
 
     width:430px;
-    height:165px;
-
-    border:2px solid #6d552d;
-    border-radius:14px;
+    height:175px;
 
     overflow:hidden;
 
-    background:rgba(5,9,14,.91);
+    border:
+        2px solid
+        #725a2e;
 
-    box-shadow:0 8px 25px rgba(0,0,0,.45);
+    border-radius:12px;
+
+    background:
+        rgba(5,9,14,.95);
+
+    box-shadow:
+        0 7px 25px
+        rgba(0,0,0,.5);
 }
 
 .chat-tabs{
@@ -482,7 +798,7 @@ html,body{
 .chat-tab{
     padding:8px 20px;
 
-    color:#b9c1ca;
+    color:#b8bec7;
 
     font-size:13px;
     font-weight:bold;
@@ -491,45 +807,45 @@ html,body{
 .chat-tab.active{
     color:white;
 
-    background:#1758bd;
+    background:#1760c8;
 }
 
 .chat-messages{
-    padding:9px 12px;
+    height:93px;
 
-    height:83px;
+    padding:8px 12px;
 
-    color:#d9e1e8;
+    overflow:auto;
+
+    color:#d9e0e8;
 
     font-size:12px;
 }
 
-.welcome{
-    color:#facc15;
+.chat-welcome{
+    color:#ffe000;
     font-weight:bold;
 }
 
 .chat-location{
-    color:#22d3ee;
     margin-top:5px;
+    color:#20d8ff;
 }
 
 .chat-input{
-    position:absolute;
-
-    bottom:0;
-    left:0;
-    right:0;
-
-    height:42px;
-
     display:flex;
 
-    border-top:1px solid #343b45;
+    height:45px;
+
+    border-top:
+        1px solid
+        #303640;
 }
 
 .chat-input input{
     flex:1;
+
+    min-width:0;
 
     border:0;
     outline:0;
@@ -538,88 +854,105 @@ html,body{
 
     color:white;
 
-    background:#0c1219;
+    background:#0b1118;
 }
 
 .chat-input button{
-    width:65px;
+    width:70px;
 
     border:0;
 
     color:white;
-    font-weight:bold;
 
-    background:#d88b1b;
+    font-weight:800;
+
+    background:#df901c;
+
+    cursor:pointer;
 }
 
-/* =========================
-   ACTION BAR
-========================= */
+/* =========================================
+   SKILL BAR
+========================================= */
 
-.action-bar{
+.skill-bar{
     position:fixed;
 
     left:50%;
-    bottom:15px;
+    bottom:12px;
 
     transform:translateX(-50%);
 
-    z-index:30;
+    z-index:50;
 
     display:flex;
     gap:7px;
 
-    padding:9px 14px;
+    padding:8px 12px;
 
-    border:2px solid #765c30;
-    border-radius:20px;
+    border:
+        2px solid
+        #725a2e;
 
-    background:rgba(10,14,19,.94);
+    border-radius:17px;
 
-    box-shadow:0 8px 30px rgba(0,0,0,.5);
+    background:
+        rgba(7,11,16,.96);
+
+    box-shadow:
+        0 7px 25px
+        rgba(0,0,0,.5);
 }
 
 .skill{
+    position:relative;
+
     width:53px;
     height:53px;
 
     display:flex;
+
     align-items:center;
     justify-content:center;
 
-    border:2px solid #6b7280;
-    border-radius:12px;
+    border:
+        2px solid
+        #596474;
+
+    border-radius:10px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #1e2937,
+            #080c11
+        );
 
     color:white;
 
-    font-size:25px;
-
-    background:linear-gradient(
-        135deg,
-        #182230,
-        #05080d
-    );
+    font-size:24px;
 
     cursor:pointer;
 }
 
 .skill:hover{
     border-color:#facc15;
-    transform:translateY(-2px);
 }
 
 .skill-number{
     position:absolute;
 
-    font-size:10px;
-    color:#ddd;
+    right:4px;
+    bottom:2px;
 
-    margin:39px 0 0 38px;
+    color:white;
+
+    font-size:10px;
 }
 
-/* =========================
+/* =========================================
    MENU
-========================= */
+========================================= */
 
 .menu{
     position:fixed;
@@ -627,30 +960,32 @@ html,body{
     right:12px;
     bottom:12px;
 
-    z-index:30;
+    z-index:50;
 
     display:flex;
 
-    padding:9px 13px;
+    gap:10px;
 
-    gap:15px;
+    padding:8px 12px;
 
-    border:2px solid #765c30;
-    border-radius:18px;
+    border:
+        2px solid
+        #725a2e;
 
-    background:rgba(10,14,19,.94);
+    border-radius:17px;
 
-    box-shadow:0 8px 25px rgba(0,0,0,.45);
+    background:
+        rgba(7,11,16,.96);
 }
 
 .menu-item{
-    width:58px;
+    width:62px;
 
     text-align:center;
 
     color:white;
 
-    font-size:11px;
+    font-size:10px;
 
     cursor:pointer;
 }
@@ -659,121 +994,51 @@ html,body{
     width:38px;
     height:38px;
 
-    margin:auto auto 4px;
+    margin:auto auto 3px;
 
     display:flex;
+
     align-items:center;
     justify-content:center;
 
-    border-radius:10px;
+    border:
+        1px solid
+        #6c5b38;
 
-    border:1px solid #6d552d;
+    border-radius:9px;
 
-    background:#1b2430;
+    background:#1a2430;
 
-    font-size:20px;
+    font-size:19px;
 }
 
-/* =========================
-   CLICK MARKER
-========================= */
-
-.move-marker{
-    position:absolute;
-
-    width:24px;
-    height:24px;
-
-    z-index:9;
-
-    transform:translate(-50%,-50%);
-
-    border:3px solid rgba(255,255,255,.85);
-
-    border-radius:50%;
-
-    box-shadow:
-        0 0 0 4px rgba(37,99,235,.35),
-        0 0 15px rgba(37,99,235,.8);
-
-    animation:marker .7s infinite alternate;
-
-    pointer-events:none;
-}
-
-@keyframes marker{
-    from{
-        opacity:.45;
-        transform:translate(-50%,-50%) scale(.8);
-    }
-
-    to{
-        opacity:1;
-        transform:translate(-50%,-50%) scale(1);
-    }
-}
-
-/* =========================
+/* =========================================
    MOBILE
-========================= */
+========================================= */
 
-.mobile-controls{
-    display:none;
+@media(max-width:900px){
 
-    position:fixed;
-
-    left:15px;
-    bottom:20px;
-
-    z-index:50;
-}
-
-.mobile-controls button{
-    width:52px;
-    height:52px;
-
-    border:1px solid rgba(255,255,255,.25);
-    border-radius:13px;
-
-    color:white;
-
-    background:rgba(0,0,0,.6);
-
-    font-size:21px;
-
-    touch-action:none;
-}
-
-.mobile-row{
-    display:flex;
-    gap:5px;
-    margin-top:5px;
-}
-
-@media(max-width:800px){
-
-    .player-panel{
-        width:245px;
-        min-height:70px;
-        padding:7px;
+    .player-hud{
+        width:250px;
         top:7px;
         left:7px;
     }
 
     .avatar{
-        width:45px;
-        height:45px;
-        font-size:22px;
+        width:50px;
+        height:50px;
     }
 
-    .player-name{
-        font-size:13px;
+    .hud-name{
+        font-size:14px;
     }
 
     .location{
         top:7px;
         right:7px;
-        min-width:145px;
+
+        min-width:150px;
+
         padding:7px;
     }
 
@@ -781,36 +1046,44 @@ html,body{
         font-size:12px;
     }
 
-    .location-time{
-        font-size:10px;
+    .quest-panel{
+        top:82px;
+        left:7px;
+
+        width:150px;
     }
 
     .chat{
-        width:calc(100% - 30px);
-        left:15px;
-        bottom:82px;
-        height:125px;
+        left:8px;
+        right:8px;
+        bottom:73px;
+
+        width:auto;
+        height:130px;
     }
 
-    .action-bar{
-        bottom:12px;
+    .skill-bar{
         left:auto;
-        right:10px;
+        right:8px;
+        bottom:8px;
+
         transform:none;
     }
 
     .skill{
         width:43px;
         height:43px;
-        font-size:20px;
+
+        font-size:19px;
     }
 
     .menu{
         display:none;
     }
 
-    .mobile-controls{
-        display:block;
+    #player{
+        width:95px;
+        height:125px;
     }
 }
 </style>
@@ -818,121 +1091,224 @@ html,body{
 
 <body>
 
-<canvas id="game"></canvas>
+<div id="world">
 
-<!-- PLAYER HUD -->
-<div class="player-panel">
+    <!-- BACKGROUND -->
+    <img
+        id="map"
+        src="assets/maps/novarise-forest.png"
+        alt="Novarise Forest"
+    >
 
-    <div class="avatar">⚔</div>
+    <div id="gameLayer">
 
-    <div class="player-info">
+        <!-- PLAYER -->
+        <div id="player">
 
-        <div class="player-name">
-            <span>Novarise</span>
-            <span class="level">Lv. 1</span>
+            <div id="playerSprite"></div>
+
+            <!-- temporary fallback -->
+            <div id="playerFallback">
+
+                <div class="fallback-name">
+                    Novarise
+                </div>
+
+                <div class="fallback-sword"></div>
+
+                <div class="fallback-head"></div>
+
+                <div class="fallback-body">
+
+                    <div class="fallback-arm left"></div>
+                    <div class="fallback-arm right"></div>
+
+                </div>
+
+                <div class="fallback-legs">
+
+                    <div class="fallback-leg"></div>
+                    <div class="fallback-leg"></div>
+
+                </div>
+
+            </div>
+
         </div>
 
-        <div class="bar">
-            <div class="bar-fill hp"></div>
-            <div class="bar-text">100 / 100</div>
+        <!-- NPC -->
+        <div
+            class="world-object npc"
+            id="npc"
+        >
+
+            <div class="npc-sprite"></div>
+
+            <div class="object-name">
+                Seraphine
+            </div>
+
+            <div class="quest-mark">
+                !
+            </div>
+
         </div>
 
-        <div class="bar">
-            <div class="bar-fill mp"></div>
-            <div class="bar-text">100 / 100</div>
+        <!-- MONSTER -->
+        <div
+            class="monster"
+            id="monster"
+        >
+
+            <div class="monster-sprite"></div>
+
+            <div class="monster-name">
+                Dire Wolf — Lv. 3
+            </div>
+
+            <div class="monster-hp">
+
+                <div class="monster-hp-fill"></div>
+
+            </div>
+
+        </div>
+
+        <!-- PORTAL -->
+        <div
+            class="portal"
+            id="portal"
+        >
+
+            <div class="portal-name">
+                Portal
+            </div>
+
+        </div>
+
+        <!-- MOVE MARKER -->
+        <div
+            id="moveMarker"
+            style="display:none"
+        ></div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================
+     PLAYER HUD
+========================================= -->
+
+<div class="player-hud">
+
+    <div class="avatar">
+        ⚔
+    </div>
+
+    <div class="hud-info">
+
+        <div class="hud-name">
+
+            <span>
+                Novarise
+            </span>
+
+            <span class="hud-level">
+                Lv. 1
+            </span>
+
+        </div>
+
+        <div class="stat-bar">
+
+            <div
+                class="stat-fill hp-fill"
+            ></div>
+
+            <div class="stat-text">
+                100 / 100
+            </div>
+
+        </div>
+
+        <div class="stat-bar">
+
+            <div
+                class="stat-fill mp-fill"
+            ></div>
+
+            <div class="stat-text">
+                100 / 100
+            </div>
+
         </div>
 
     </div>
+
 </div>
+
 
 <!-- LOCATION -->
+
 <div class="location">
-    <div class="location-title">☀ Novarise Forest</div>
-    <div class="location-time" id="time">--:--</div>
-</div>
 
-<!-- NPC -->
-<div
-    class="npc"
-    id="npc"
-    style="left:29%;top:59%;"
->
-    <div class="npc-head"></div>
-    <div class="npc-hair"></div>
-    <div class="npc-body"></div>
-</div>
-
-<div
-    class="world-label"
-    style="left:29%;top:50%;"
->
-    <div class="name">Seraphine</div>
-    <div class="sub">Quest Guide</div>
-</div>
-
-<!-- MONSTER -->
-<div
-    class="monster"
-    id="monster"
-    style="left:84%;top:71%;"
->
-
-    <div class="wolf-body"></div>
-
-    <div class="wolf-head">
-        <div class="wolf-ear left"></div>
-        <div class="wolf-ear right"></div>
-        <div class="wolf-eye left"></div>
-        <div class="wolf-eye right"></div>
+    <div class="location-title">
+        ☀ Novarise Forest
     </div>
 
-    <div class="wolf-hp">
-        <div class="wolf-hp-fill"></div>
+    <div
+        class="location-time"
+        id="clock"
+    >
+        --:--
     </div>
 
 </div>
 
-<div
-    class="world-label"
-    style="left:84%;top:52%;"
->
-    <div class="name">Dire Wolf</div>
-    <div class="sub">Lv. 3</div>
+
+<!-- QUEST -->
+
+<div class="quest-panel">
+
+    <strong>
+        Lucy
+    </strong>
+
+    <div class="quest-status">
+        Out of range
+    </div>
+
 </div>
 
-<!-- PORTAL -->
-<div
-    class="portal"
-    id="portal"
-    style="left:94%;top:64%;"
-></div>
-
-<div
-    class="world-label"
-    style="left:94%;top:45%;"
->
-    <div class="name">Portal</div>
-</div>
-
-<!-- MOVE MARKER -->
-<div
-    id="moveMarker"
-    class="move-marker"
-    style="display:none;"
-></div>
 
 <!-- CHAT -->
+
 <div class="chat">
 
     <div class="chat-tabs">
-        <div class="chat-tab active">General</div>
-        <div class="chat-tab">Party</div>
-        <div class="chat-tab">Guild</div>
+
+        <div class="chat-tab active">
+            General
+        </div>
+
+        <div class="chat-tab">
+            Party
+        </div>
+
+        <div class="chat-tab">
+            Guild
+        </div>
+
     </div>
 
-    <div class="chat-messages">
+    <div
+        class="chat-messages"
+        id="chatMessages"
+    >
 
-        <div class="welcome">
+        <div class="chat-welcome">
             Welcome to Novarise World!
         </div>
 
@@ -947,6 +1323,7 @@ html,body{
     </div>
 
     <div class="chat-input">
+
         <input
             id="chatInput"
             type="text"
@@ -956,41 +1333,46 @@ html,body{
         <button id="sendChat">
             SEND
         </button>
+
     </div>
 
 </div>
 
-<!-- ACTION BAR -->
-<div class="action-bar">
 
-    <button class="skill" title="Attack">
+<!-- SKILLS -->
+
+<div class="skill-bar">
+
+    <button class="skill">
         ⚔
         <span class="skill-number">1</span>
     </button>
 
-    <button class="skill" title="Power">
+    <button class="skill">
         ✦
         <span class="skill-number">2</span>
     </button>
 
-    <button class="skill" title="Fire">
+    <button class="skill">
         🔥
         <span class="skill-number">3</span>
     </button>
 
-    <button class="skill" title="Defense">
+    <button class="skill">
         🛡
         <span class="skill-number">4</span>
     </button>
 
-    <button class="skill" title="Potion">
+    <button class="skill">
         🧪
         <span class="skill-number">5</span>
     </button>
 
 </div>
 
+
 <!-- MENU -->
+
 <div class="menu">
 
     <div class="menu-item">
@@ -1025,639 +1407,441 @@ html,body{
 
 </div>
 
-<!-- MOBILE CONTROLS -->
-<div class="mobile-controls">
-
-    <button id="up">▲</button>
-
-    <div class="mobile-row">
-        <button id="left">◀</button>
-        <button id="down">▼</button>
-        <button id="right">▶</button>
-    </div>
-
-</div>
 
 <script>
 
-/* =========================================================
-   NOVARISE WORLD
-========================================================= */
+/* ======================================================
+   NOVARISE SPRITE GAME
+====================================================== */
 
-const canvas = document.getElementById("game");
-const ctx = canvas.getContext("2d");
+const player =
+    document.getElementById("player");
 
-const background = new Image();
+const playerSprite =
+    document.getElementById("playerSprite");
 
-/*
-    IMPORTANT:
-    This must match the filename you uploaded.
-*/
-background.src = "assets/maps/novarise-forest.png";
+const fallback =
+    document.getElementById("playerFallback");
 
-let W = window.innerWidth;
-let H = window.innerHeight;
+const marker =
+    document.getElementById("moveMarker");
 
-function resize(){
 
-    W = window.innerWidth;
-    H = window.innerHeight;
+/* ======================================================
+   SPRITE CHECK
+====================================================== */
 
-    canvas.width = W;
-    canvas.height = H;
+function checkSprite(){
 
-}
+    const image =
+        new Image();
 
-window.addEventListener("resize", resize);
+    image.src =
+        "assets/player/idle.png";
 
-resize();
+    image.onload = function(){
 
-/* =========================================================
-   PLAYER
-========================================================= */
+        playerSprite.style.display =
+            "block";
 
-const player = {
+        fallback.style.display =
+            "none";
 
-    x:0.50,
-    y:0.70,
+    };
 
-    targetX:0.50,
-    targetY:0.70,
+    image.onerror = function(){
 
-    speed:0.0018,
+        playerSprite.style.display =
+            "none";
 
-    moving:false,
-
-    direction:1
-
-};
-
-/* =========================================================
-   BACKGROUND
-========================================================= */
-
-function drawBackground(){
-
-    if(!background.complete || !background.naturalWidth){
-
-        ctx.fillStyle="#101820";
-
-        ctx.fillRect(0,0,W,H);
-
-        ctx.fillStyle="white";
-
-        ctx.font="20px Arial";
-
-        ctx.textAlign="center";
-
-        ctx.fillText(
-            "Loading Novarise Forest...",
-            W/2,
-            H/2
-        );
-
-        return;
-    }
-
-    const imageRatio =
-        background.naturalWidth /
-        background.naturalHeight;
-
-    const screenRatio =
-        W / H;
-
-    let drawWidth;
-    let drawHeight;
-
-    /*
-        Cover the entire screen.
-    */
-
-    if(screenRatio > imageRatio){
-
-        drawWidth = W;
-        drawHeight = W / imageRatio;
-
-    }else{
-
-        drawHeight = H;
-        drawWidth = H * imageRatio;
-
-    }
-
-    const x =
-        (W - drawWidth) / 2;
-
-    const y =
-        (H - drawHeight) / 2;
-
-    ctx.drawImage(
-        background,
-        x,
-        y,
-        drawWidth,
-        drawHeight
-    );
-
-}
-
-/* =========================================================
-   PLAYER POSITION
-========================================================= */
-
-function getPlayerScreen(){
-
-    return {
-
-        x:player.x * W,
-
-        y:player.y * H
+        fallback.style.display =
+            "flex";
 
     };
 
 }
 
-/* =========================================================
-   DRAW PLAYER
-========================================================= */
+checkSprite();
 
-function drawPlayer(){
 
-    const p = getPlayerScreen();
+/* ======================================================
+   PLAYER POSITION
+====================================================== */
 
-    const x = p.x;
-    const y = p.y;
+let playerX = 50;
+let playerY = 68;
 
-    /*
-        Shadow
-    */
+let targetX = 50;
+let targetY = 68;
 
-    ctx.save();
+let moving = false;
 
-    ctx.fillStyle =
-        "rgba(0,0,0,.38)";
 
-    ctx.beginPath();
+/* ======================================================
+   SET POSITION
+====================================================== */
 
-    ctx.ellipse(
-        x,
-        y + 29,
-        28,
-        9,
-        0,
-        0,
-        Math.PI * 2
-    );
+function updatePlayerPosition(){
 
-    ctx.fill();
+    player.style.left =
+        playerX + "%";
 
-    /*
-        Cape
-    */
-
-    ctx.fillStyle =
-        "#111827";
-
-    ctx.beginPath();
-
-    ctx.moveTo(
-        x - 19,
-        y - 10
-    );
-
-    ctx.lineTo(
-        x - 35,
-        y + 32
-    );
-
-    ctx.lineTo(
-        x - 8,
-        y + 27
-    );
-
-    ctx.closePath();
-
-    ctx.fill();
-
-    /*
-        Body armor
-    */
-
-    const armor =
-        ctx.createLinearGradient(
-            x-20,
-            y,
-            x+20,
-            y
-        );
-
-    armor.addColorStop(
-        0,
-        "#111827"
-    );
-
-    armor.addColorStop(
-        .5,
-        "#64748b"
-    );
-
-    armor.addColorStop(
-        1,
-        "#111827"
-    );
-
-    ctx.fillStyle=armor;
-
-    ctx.beginPath();
-
-    ctx.roundRect(
-        x-19,
-        y-5,
-        38,
-        46,
-        8
-    );
-
-    ctx.fill();
-
-    ctx.strokeStyle="#cbd5e1";
-    ctx.lineWidth=2;
-
-    ctx.stroke();
-
-    /*
-        Head
-    */
-
-    ctx.fillStyle="#efbd83";
-
-    ctx.beginPath();
-
-    ctx.arc(
-        x,
-        y-27,
-        17,
-        0,
-        Math.PI*2
-    );
-
-    ctx.fill();
-
-    /*
-        Hair
-    */
-
-    ctx.fillStyle="#111827";
-
-    ctx.beginPath();
-
-    ctx.arc(
-        x,
-        y-32,
-        18,
-        Math.PI,
-        Math.PI*2
-    );
-
-    ctx.fill();
-
-    /*
-        Sword
-    */
-
-    ctx.save();
-
-    ctx.translate(
-        x+17,
-        y+8
-    );
-
-    ctx.rotate(
-        player.direction > 0
-        ? -0.65
-        : 0.65
-    );
-
-    ctx.fillStyle="#dbeafe";
-
-    ctx.beginPath();
-
-    ctx.moveTo(0,-8);
-    ctx.lineTo(8,-55);
-    ctx.lineTo(14,-8);
-    ctx.closePath();
-
-    ctx.fill();
-
-    ctx.strokeStyle="#475569";
-    ctx.lineWidth=2;
-
-    ctx.stroke();
-
-    /*
-        Sword handle
-    */
-
-    ctx.fillStyle="#7c2d12";
-
-    ctx.fillRect(
-        -3,
-        -5,
-        8,
-        22
-    );
-
-    ctx.restore();
-
-    /*
-        Name
-    */
-
-    ctx.fillStyle="white";
-
-    ctx.font="bold 14px Arial";
-
-    ctx.textAlign="center";
-
-    ctx.shadowColor="#000";
-    ctx.shadowBlur=5;
-
-    ctx.fillText(
-        "Novarise",
-        x,
-        y-55
-    );
-
-    ctx.shadowBlur=0;
-
-    ctx.restore();
+    player.style.top =
+        playerY + "%";
 
 }
 
-/* =========================================================
-   PLAYER MOVEMENT
-========================================================= */
 
-function updatePlayer(){
-
-    const dx =
-        player.targetX -
-        player.x;
-
-    const dy =
-        player.targetY -
-        player.y;
-
-    const distance =
-        Math.sqrt(
-            dx*dx +
-            dy*dy
-        );
-
-    if(distance < 0.002){
-
-        player.x =
-            player.targetX;
-
-        player.y =
-            player.targetY;
-
-        player.moving=false;
-
-        return;
-
-    }
-
-    player.moving=true;
-
-    player.direction =
-        dx >= 0
-        ? 1
-        : -1;
-
-    player.x +=
-        (dx / distance) *
-        player.speed;
-
-    player.y +=
-        (dy / distance) *
-        player.speed;
-
-}
-
-/* =========================================================
+/* ======================================================
    CLICK TO MOVE
-========================================================= */
+====================================================== */
 
-canvas.addEventListener(
+document
+.getElementById("gameLayer")
+.addEventListener(
     "click",
     function(event){
 
-        const rect =
-            canvas.getBoundingClientRect();
-
-        const x =
-            (event.clientX - rect.left) /
-            rect.width;
-
-        const y =
-            (event.clientY - rect.top) /
-            rect.height;
-
         /*
-            Don't allow player to walk
-            into the HUD areas.
+           Ignore clicks on UI objects.
         */
 
-        if(y < .14) return;
+        if(
+            event.target.closest(
+                ".world-object,.monster,.portal"
+            )
+        ){
+            return;
+        }
 
-        player.targetX =
+        const rect =
+            this.getBoundingClientRect();
+
+        targetX =
+            (
+                (event.clientX -
+                rect.left)
+                /
+                rect.width
+            ) * 100;
+
+        targetY =
+            (
+                (event.clientY -
+                rect.top)
+                /
+                rect.height
+            ) * 100;
+
+
+        /*
+           Keep player inside
+           playable area.
+        */
+
+        targetX =
             Math.max(
-                .04,
-                Math.min(.96,x)
+                5,
+                Math.min(
+                    95,
+                    targetX
+                )
             );
 
-        player.targetY =
+        targetY =
             Math.max(
-                .25,
-                Math.min(.88,y)
+                25,
+                Math.min(
+                    87,
+                    targetY
+                )
             );
 
-        showMoveMarker(
-            x * W,
-            y * H
+        moving = true;
+
+        showMarker(
+            event.clientX,
+            event.clientY
         );
+
+        startWalking();
 
     }
 );
 
-/* =========================================================
-   MOVE MARKER
-========================================================= */
 
-function showMoveMarker(x,y){
+/* ======================================================
+   MOVEMENT
+====================================================== */
 
-    const marker =
-        document.getElementById(
-            "moveMarker"
+function movementLoop(){
+
+    if(moving){
+
+        const dx =
+            targetX -
+            playerX;
+
+        const dy =
+            targetY -
+            playerY;
+
+        const distance =
+            Math.sqrt(
+                dx * dx +
+                dy * dy
+            );
+
+        if(distance < .35){
+
+            playerX =
+                targetX;
+
+            playerY =
+                targetY;
+
+            moving = false;
+
+            stopWalking();
+
+        }else{
+
+            const speed =
+                .35;
+
+            playerX +=
+                (dx / distance) *
+                speed;
+
+            playerY +=
+                (dy / distance) *
+                speed;
+
+        }
+
+        updatePlayerPosition();
+
+    }
+
+    requestAnimationFrame(
+        movementLoop
+    );
+
+}
+
+movementLoop();
+
+
+/* ======================================================
+   WALK SPRITE
+====================================================== */
+
+let walkTimer;
+
+function startWalking(){
+
+    /*
+       Once walk.png exists,
+       this switches to it.
+    */
+
+    const walk =
+        new Image();
+
+    walk.src =
+        "assets/player/walk.png";
+
+    walk.onload = function(){
+
+        playerSprite.style.backgroundImage =
+            'url("assets/player/walk.png")';
+
+    };
+
+    /*
+       Small movement animation.
+    */
+
+    clearInterval(walkTimer);
+
+    walkTimer =
+        setInterval(
+            ()=>{
+
+                playerSprite.classList.toggle(
+                    "walking"
+                );
+
+            },
+            180
         );
 
+}
+
+function stopWalking(){
+
+    clearInterval(walkTimer);
+
+    playerSprite.style.backgroundImage =
+        'url("assets/player/idle.png")';
+
+}
+
+
+/* ======================================================
+   MOVE MARKER
+====================================================== */
+
+function showMarker(x,y){
+
     marker.style.left =
-        x+"px";
+        x + "px";
 
     marker.style.top =
-        y+"px";
+        y + "px";
 
     marker.style.display =
         "block";
 
     clearTimeout(
-        marker.hideTimer
+        marker.timer
     );
 
-    marker.hideTimer =
+    marker.timer =
         setTimeout(
-            ()=>{
-                marker.style.display="none";
+            function(){
+
+                marker.style.display =
+                    "none";
+
             },
-            900
+            700
         );
 
 }
 
-/* =========================================================
-   KEYBOARD MOVEMENT
-========================================================= */
 
-const keys={};
+/* ======================================================
+   KEYBOARD
+====================================================== */
+
+const keys = {};
 
 window.addEventListener(
     "keydown",
-    e=>{
+    function(event){
 
-        keys[e.key.toLowerCase()]=true;
+        keys[
+            event.key.toLowerCase()
+        ] = true;
 
     }
 );
 
 window.addEventListener(
     "keyup",
-    e=>{
+    function(event){
 
-        keys[e.key.toLowerCase()]=false;
+        keys[
+            event.key.toLowerCase()
+        ] = false;
 
     }
 );
 
+
 function keyboardMovement(){
 
-    let dx=0;
-    let dy=0;
+    let dx = 0;
+    let dy = 0;
 
-    if(keys["w"] || keys["arrowup"])
-        dy=-1;
+    if(
+        keys["w"] ||
+        keys["arrowup"]
+    ){
+        dy = -1;
+    }
 
-    if(keys["s"] || keys["arrowdown"])
-        dy=1;
+    if(
+        keys["s"] ||
+        keys["arrowdown"]
+    ){
+        dy = 1;
+    }
 
-    if(keys["a"] || keys["arrowleft"])
-        dx=-1;
+    if(
+        keys["a"] ||
+        keys["arrowleft"]
+    ){
+        dx = -1;
+    }
 
-    if(keys["d"] || keys["arrowright"])
-        dx=1;
+    if(
+        keys["d"] ||
+        keys["arrowright"]
+    ){
+        dx = 1;
+    }
 
-    if(!dx && !dy)
+    if(dx === 0 && dy === 0)
         return;
 
     const length =
-        Math.sqrt(dx*dx+dy*dy);
-
-    dx/=length;
-    dy/=length;
-
-    player.x +=
-        dx * .0025;
-
-    player.y +=
-        dy * .0025;
-
-    player.x =
-        Math.max(
-            .04,
-            Math.min(.96,player.x)
+        Math.sqrt(
+            dx*dx +
+            dy*dy
         );
 
-    player.y =
+    dx /= length;
+    dy /= length;
+
+    playerX +=
+        dx * .45;
+
+    playerY +=
+        dy * .45;
+
+    playerX =
         Math.max(
-            .25,
-            Math.min(.88,player.y)
+            5,
+            Math.min(
+                95,
+                playerX
+            )
         );
 
-    player.targetX=player.x;
-    player.targetY=player.y;
+    playerY =
+        Math.max(
+            25,
+            Math.min(
+                87,
+                playerY
+            )
+        );
 
-    player.direction =
-        dx>=0 ? 1 : -1;
+    targetX =
+        playerX;
+
+    targetY =
+        playerY;
+
+    moving = true;
+
+    startWalking();
+
+    updatePlayerPosition();
 
 }
 
-/* =========================================================
-   MOBILE CONTROLS
-========================================================= */
-
-function mobileMove(dx,dy){
-
-    player.x += dx;
-    player.y += dy;
-
-    player.x =
-        Math.max(
-            .04,
-            Math.min(.96,player.x)
-        );
-
-    player.y =
-        Math.max(
-            .25,
-            Math.min(.88,player.y)
-        );
-
-    player.targetX=player.x;
-    player.targetY=player.y;
-
-}
-
-document
-.getElementById("up")
-.addEventListener(
-    "pointerdown",
-    ()=>mobileMove(0,-.025)
+setInterval(
+    keyboardMovement,
+    16
 );
 
-document
-.getElementById("down")
-.addEventListener(
-    "pointerdown",
-    ()=>mobileMove(0,.025)
-);
 
-document
-.getElementById("left")
-.addEventListener(
-    "pointerdown",
-    ()=>mobileMove(-.025,0)
-);
-
-document
-.getElementById("right")
-.addEventListener(
-    "pointerdown",
-    ()=>mobileMove(.025,0)
-);
-
-/* =========================================================
+/* ======================================================
    CLOCK
-========================================================= */
+====================================================== */
 
 function updateClock(){
 
@@ -1665,7 +1849,7 @@ function updateClock(){
         new Date();
 
     document
-    .getElementById("time")
+    .getElementById("clock")
     .textContent =
         now.toLocaleTimeString(
             [],
@@ -1684,28 +1868,10 @@ setInterval(
 
 updateClock();
 
-/* =========================================================
+
+/* ======================================================
    CHAT
-========================================================= */
-
-document
-.getElementById("sendChat")
-.addEventListener(
-    "click",
-    sendChat
-);
-
-document
-.getElementById("chatInput")
-.addEventListener(
-    "keydown",
-    e=>{
-
-        if(e.key==="Enter")
-            sendChat();
-
-    }
-);
+====================================================== */
 
 function sendChat(){
 
@@ -1721,71 +1887,74 @@ function sendChat(){
         return;
 
     const messages =
-        document.querySelector(
-            ".chat-messages"
+        document.getElementById(
+            "chatMessages"
         );
 
-    const line =
-        document.createElement("div");
+    const row =
+        document.createElement(
+            "div"
+        );
 
-    line.style.marginTop="4px";
+    row.style.marginTop =
+        "4px";
 
-    line.innerHTML =
-        `<strong style="color:#60a5fa">
-        Novarise:
-        </strong> ${escapeHtml(message)}`;
+    const name =
+        document.createElement(
+            "strong"
+        );
 
-    messages.appendChild(line);
+    name.textContent =
+        "Novarise: ";
 
-    input.value="";
+    name.style.color =
+        "#60a5fa";
+
+    row.appendChild(name);
+
+    row.appendChild(
+        document.createTextNode(
+            message
+        )
+    );
+
+    messages.appendChild(row);
+
+    input.value = "";
 
     messages.scrollTop =
         messages.scrollHeight;
 
 }
 
-function escapeHtml(text){
+document
+.getElementById("sendChat")
+.addEventListener(
+    "click",
+    sendChat
+);
 
-    const div =
-        document.createElement("div");
+document
+.getElementById("chatInput")
+.addEventListener(
+    "keydown",
+    function(event){
 
-    div.textContent=text;
+        if(event.key === "Enter"){
 
-    return div.innerHTML;
+            sendChat();
 
-}
+        }
 
-/* =========================================================
-   GAME LOOP
-========================================================= */
+    }
+);
 
-function loop(){
 
-    keyboardMovement();
+/* ======================================================
+   INITIALIZE
+====================================================== */
 
-    updatePlayer();
-
-    drawBackground();
-
-    drawPlayer();
-
-    requestAnimationFrame(loop);
-
-}
-
-background.onload=()=>{
-    loop();
-};
-
-background.onerror=()=>{
-
-    console.error(
-        "Could not load assets/maps/novarise-forest.png"
-    );
-
-    loop();
-
-};
+updatePlayerPosition();
 
 </script>
 
