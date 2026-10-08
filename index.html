@@ -1,172 +1,817 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 <title>Novarise World</title>
 
 <style>
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
 }
 
-html,
-body {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background: #111827;
-    font-family: Arial, sans-serif;
+html,body{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:#08111c;
+    font-family:Arial,Helvetica,sans-serif;
 }
 
-#game {
-    display: block;
-    width: 100%;
-    height: 100%;
-    image-rendering: pixelated;
+#game{
+    position:fixed;
+    inset:0;
+    width:100%;
+    height:100%;
+    display:block;
+    cursor:crosshair;
 }
 
-/* Top HUD */
-#hud {
-    position: fixed;
-    top: 15px;
-    left: 15px;
-    z-index: 10;
+/* =========================
+   TOP PLAYER PANEL
+========================= */
 
-    padding: 10px 15px;
-    border-radius: 12px;
+.player-panel{
+    position:fixed;
+    top:14px;
+    left:14px;
+    z-index:20;
 
-    background: rgba(0, 0, 0, 0.65);
-    color: white;
+    width:330px;
+    min-height:88px;
 
-    font-size: 14px;
-    user-select: none;
-    pointer-events: none;
-}
+    display:flex;
+    align-items:center;
 
-#hud strong {
-    color: #60a5fa;
-}
+    padding:10px 14px;
 
-/* Controls */
-#controls {
-    position: fixed;
-    left: 20px;
-    bottom: 25px;
-    z-index: 20;
-
-    display: grid;
-    grid-template-columns: 60px 60px 60px;
-    grid-template-rows: 60px 60px;
-
-    gap: 6px;
-}
-
-.control {
-    width: 60px;
-    height: 60px;
-
-    border: 1px solid rgba(255,255,255,.25);
-    border-radius: 14px;
-
-    background: rgba(0,0,0,.55);
-    color: white;
-
-    font-size: 24px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    user-select: none;
-    -webkit-user-select: none;
-    touch-action: none;
-}
-
-.control:active {
-    background: rgba(37,99,235,.8);
-}
-
-#up {
-    grid-column: 2;
-}
-
-#left {
-    grid-column: 1;
-    grid-row: 2;
-}
-
-#down {
-    grid-column: 2;
-    grid-row: 2;
-}
-
-#right {
-    grid-column: 3;
-    grid-row: 2;
-}
-
-/* Start screen */
-#startScreen {
-    position: fixed;
-    inset: 0;
-    z-index: 30;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    border:2px solid #8b6a32;
+    border-radius:18px;
 
     background:
-        radial-gradient(circle at center, rgba(30,64,175,.25), transparent 45%),
-        #0f172a;
+        linear-gradient(
+            135deg,
+            rgba(10,14,20,.96),
+            rgba(31,36,43,.92)
+        );
+
+    box-shadow:
+        0 8px 25px rgba(0,0,0,.45),
+        inset 0 1px rgba(255,255,255,.08);
+
+    color:white;
 }
 
-.startBox {
-    width: min(90%, 420px);
-    padding: 35px 25px;
+.avatar{
+    width:62px;
+    height:62px;
+    flex:none;
 
-    text-align: center;
+    border-radius:50%;
 
-    border: 1px solid rgba(255,255,255,.12);
-    border-radius: 22px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
 
-    background: rgba(15,23,42,.92);
-    box-shadow: 0 20px 60px rgba(0,0,0,.45);
+    margin-right:12px;
+
+    background:
+        radial-gradient(circle at 50% 35%,#f4c28d 0 20%,transparent 21%),
+        linear-gradient(#182334,#080b10);
+
+    border:2px solid #c39a4a;
+
+    font-size:30px;
 }
 
-.logo {
-    font-size: 34px;
-    font-weight: 800;
-    color: #60a5fa;
-    margin-bottom: 8px;
+.player-info{
+    flex:1;
 }
 
-.subtitle {
-    color: #cbd5e1;
-    margin-bottom: 25px;
+.player-name{
+    display:flex;
+    justify-content:space-between;
+
+    font-size:17px;
+    font-weight:800;
+
+    margin-bottom:7px;
 }
 
-#startButton {
-    border: 0;
-    border-radius: 12px;
-
-    padding: 14px 30px;
-
-    background: #2563eb;
-    color: white;
-
-    font-size: 16px;
-    font-weight: 700;
-
-    cursor: pointer;
+.level{
+    color:#ffd76a;
 }
 
-#startButton:hover {
-    background: #1d4ed8;
+.bar{
+    position:relative;
+
+    width:100%;
+    height:14px;
+
+    margin-bottom:5px;
+
+    overflow:hidden;
+
+    border-radius:8px;
+
+    background:#111827;
+    border:1px solid #374151;
+}
+
+.bar-fill{
+    height:100%;
+    width:100%;
+}
+
+.hp{
+    background:linear-gradient(90deg,#991b1b,#ef4444);
+}
+
+.mp{
+    background:linear-gradient(90deg,#1d4ed8,#38bdf8);
+}
+
+.bar-text{
+    position:absolute;
+    inset:0;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:10px;
+    font-weight:bold;
+    text-shadow:0 1px 2px #000;
+}
+
+/* =========================
+   LOCATION PANEL
+========================= */
+
+.location{
+    position:fixed;
+    top:14px;
+    right:14px;
+
+    z-index:20;
+
+    min-width:250px;
+
+    padding:11px 20px;
+
+    text-align:center;
+
+    color:white;
+
+    border:2px solid #8b6a32;
+    border-radius:18px;
+
+    background:rgba(12,16,22,.92);
+
+    box-shadow:0 8px 25px rgba(0,0,0,.4);
+}
+
+.location-title{
+    font-size:17px;
+    font-weight:800;
+}
+
+.location-time{
+    margin-top:3px;
+    color:#e8d59b;
+    font-size:13px;
+}
+
+/* =========================
+   INTERACTIVE LABELS
+========================= */
+
+.world-label{
+    position:absolute;
+    z-index:10;
+
+    transform:translate(-50%,-100%);
+
+    color:white;
+
+    text-align:center;
+
+    pointer-events:none;
+
+    text-shadow:
+        0 2px 3px #000,
+        0 0 4px #000;
+}
+
+.world-label .name{
+    font-size:15px;
+    font-weight:800;
+}
+
+.world-label .sub{
+    font-size:11px;
+    color:#ffe45c;
+}
+
+/* =========================
+   NPC
+========================= */
+
+.npc{
+    position:absolute;
+    z-index:8;
+
+    width:48px;
+    height:82px;
+
+    transform:translate(-50%,-100%);
+
+    pointer-events:none;
+}
+
+.npc-head{
+    position:absolute;
+
+    width:30px;
+    height:30px;
+
+    top:0;
+    left:9px;
+
+    border-radius:50%;
+
+    background:#efbd83;
+    border:2px solid #6b4327;
+}
+
+.npc-hair{
+    position:absolute;
+
+    width:32px;
+    height:18px;
+
+    top:-1px;
+    left:8px;
+
+    border-radius:18px 18px 6px 6px;
+
+    background:#713f1d;
+
+    z-index:2;
+}
+
+.npc-body{
+    position:absolute;
+
+    width:38px;
+    height:48px;
+
+    left:5px;
+    top:27px;
+
+    border-radius:10px 10px 4px 4px;
+
+    background:linear-gradient(
+        90deg,
+        #1e3a5f,
+        #f5e7c2,
+        #1e3a5f
+    );
+
+    border:2px solid #9c7a3c;
+}
+
+/* =========================
+   MONSTER
+========================= */
+
+.monster{
+    position:absolute;
+    z-index:8;
+
+    width:105px;
+    height:85px;
+
+    transform:translate(-50%,-100%);
+
+    pointer-events:none;
+}
+
+.wolf-body{
+    position:absolute;
+
+    width:78px;
+    height:48px;
+
+    left:12px;
+    top:28px;
+
+    border-radius:45% 50% 40% 35%;
+
+    background:linear-gradient(
+        135deg,
+        #111827,
+        #374151
+    );
+
+    border:3px solid #0b0f14;
+}
+
+.wolf-head{
+    position:absolute;
+
+    width:43px;
+    height:43px;
+
+    right:1px;
+    top:12px;
+
+    border-radius:50%;
+
+    background:#1f2937;
+
+    border:3px solid #090d12;
+}
+
+.wolf-ear{
+    position:absolute;
+
+    width:17px;
+    height:22px;
+
+    top:-12px;
+
+    background:#111827;
+
+    transform:rotate(25deg);
+
+    border:2px solid #090d12;
+}
+
+.wolf-ear.left{
+    left:3px;
+}
+
+.wolf-ear.right{
+    right:3px;
+    transform:rotate(-25deg);
+}
+
+.wolf-eye{
+    position:absolute;
+
+    width:6px;
+    height:6px;
+
+    border-radius:50%;
+
+    background:#ef4444;
+
+    top:18px;
+}
+
+.wolf-eye.left{
+    left:10px;
+}
+
+.wolf-eye.right{
+    right:10px;
+}
+
+.wolf-hp{
+    position:absolute;
+
+    top:-20px;
+    left:10px;
+
+    width:85px;
+    height:9px;
+
+    background:#111;
+
+    border:1px solid #000;
+}
+
+.wolf-hp-fill{
+    width:100%;
+    height:100%;
+
+    background:#dc2626;
+}
+
+/* =========================
+   PORTAL
+========================= */
+
+.portal{
+    position:absolute;
+    z-index:7;
+
+    width:85px;
+    height:115px;
+
+    transform:translate(-50%,-100%);
+
+    border-radius:50% 50% 45% 45%;
+
+    background:
+        radial-gradient(
+            ellipse at center,
+            #d8f7ff 0%,
+            #38bdf8 20%,
+            #2563eb 50%,
+            #172554 75%,
+            transparent 76%
+        );
+
+    box-shadow:
+        0 0 20px #38bdf8,
+        0 0 45px rgba(37,99,235,.7);
+
+    animation:portalPulse 1.8s infinite alternate;
+
+    pointer-events:none;
+}
+
+@keyframes portalPulse{
+    from{
+        transform:translate(-50%,-100%) scale(.96);
+    }
+    to{
+        transform:translate(-50%,-100%) scale(1.04);
+    }
+}
+
+/* =========================
+   CHAT
+========================= */
+
+.chat{
+    position:fixed;
+
+    left:12px;
+    bottom:12px;
+
+    z-index:30;
+
+    width:430px;
+    height:165px;
+
+    border:2px solid #6d552d;
+    border-radius:14px;
+
+    overflow:hidden;
+
+    background:rgba(5,9,14,.91);
+
+    box-shadow:0 8px 25px rgba(0,0,0,.45);
+}
+
+.chat-tabs{
+    display:flex;
+
+    height:35px;
+
+    background:#151b24;
+}
+
+.chat-tab{
+    padding:8px 20px;
+
+    color:#b9c1ca;
+
+    font-size:13px;
+    font-weight:bold;
+}
+
+.chat-tab.active{
+    color:white;
+
+    background:#1758bd;
+}
+
+.chat-messages{
+    padding:9px 12px;
+
+    height:83px;
+
+    color:#d9e1e8;
+
+    font-size:12px;
+}
+
+.welcome{
+    color:#facc15;
+    font-weight:bold;
+}
+
+.chat-location{
+    color:#22d3ee;
+    margin-top:5px;
+}
+
+.chat-input{
+    position:absolute;
+
+    bottom:0;
+    left:0;
+    right:0;
+
+    height:42px;
+
+    display:flex;
+
+    border-top:1px solid #343b45;
+}
+
+.chat-input input{
+    flex:1;
+
+    border:0;
+    outline:0;
+
+    padding:0 12px;
+
+    color:white;
+
+    background:#0c1219;
+}
+
+.chat-input button{
+    width:65px;
+
+    border:0;
+
+    color:white;
+    font-weight:bold;
+
+    background:#d88b1b;
+}
+
+/* =========================
+   ACTION BAR
+========================= */
+
+.action-bar{
+    position:fixed;
+
+    left:50%;
+    bottom:15px;
+
+    transform:translateX(-50%);
+
+    z-index:30;
+
+    display:flex;
+    gap:7px;
+
+    padding:9px 14px;
+
+    border:2px solid #765c30;
+    border-radius:20px;
+
+    background:rgba(10,14,19,.94);
+
+    box-shadow:0 8px 30px rgba(0,0,0,.5);
+}
+
+.skill{
+    width:53px;
+    height:53px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border:2px solid #6b7280;
+    border-radius:12px;
+
+    color:white;
+
+    font-size:25px;
+
+    background:linear-gradient(
+        135deg,
+        #182230,
+        #05080d
+    );
+
+    cursor:pointer;
+}
+
+.skill:hover{
+    border-color:#facc15;
+    transform:translateY(-2px);
+}
+
+.skill-number{
+    position:absolute;
+
+    font-size:10px;
+    color:#ddd;
+
+    margin:39px 0 0 38px;
+}
+
+/* =========================
+   MENU
+========================= */
+
+.menu{
+    position:fixed;
+
+    right:12px;
+    bottom:12px;
+
+    z-index:30;
+
+    display:flex;
+
+    padding:9px 13px;
+
+    gap:15px;
+
+    border:2px solid #765c30;
+    border-radius:18px;
+
+    background:rgba(10,14,19,.94);
+
+    box-shadow:0 8px 25px rgba(0,0,0,.45);
+}
+
+.menu-item{
+    width:58px;
+
+    text-align:center;
+
+    color:white;
+
+    font-size:11px;
+
+    cursor:pointer;
+}
+
+.menu-icon{
+    width:38px;
+    height:38px;
+
+    margin:auto auto 4px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:10px;
+
+    border:1px solid #6d552d;
+
+    background:#1b2430;
+
+    font-size:20px;
+}
+
+/* =========================
+   CLICK MARKER
+========================= */
+
+.move-marker{
+    position:absolute;
+
+    width:24px;
+    height:24px;
+
+    z-index:9;
+
+    transform:translate(-50%,-50%);
+
+    border:3px solid rgba(255,255,255,.85);
+
+    border-radius:50%;
+
+    box-shadow:
+        0 0 0 4px rgba(37,99,235,.35),
+        0 0 15px rgba(37,99,235,.8);
+
+    animation:marker .7s infinite alternate;
+
+    pointer-events:none;
+}
+
+@keyframes marker{
+    from{
+        opacity:.45;
+        transform:translate(-50%,-50%) scale(.8);
+    }
+
+    to{
+        opacity:1;
+        transform:translate(-50%,-50%) scale(1);
+    }
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+.mobile-controls{
+    display:none;
+
+    position:fixed;
+
+    left:15px;
+    bottom:20px;
+
+    z-index:50;
+}
+
+.mobile-controls button{
+    width:52px;
+    height:52px;
+
+    border:1px solid rgba(255,255,255,.25);
+    border-radius:13px;
+
+    color:white;
+
+    background:rgba(0,0,0,.6);
+
+    font-size:21px;
+
+    touch-action:none;
+}
+
+.mobile-row{
+    display:flex;
+    gap:5px;
+    margin-top:5px;
+}
+
+@media(max-width:800px){
+
+    .player-panel{
+        width:245px;
+        min-height:70px;
+        padding:7px;
+        top:7px;
+        left:7px;
+    }
+
+    .avatar{
+        width:45px;
+        height:45px;
+        font-size:22px;
+    }
+
+    .player-name{
+        font-size:13px;
+    }
+
+    .location{
+        top:7px;
+        right:7px;
+        min-width:145px;
+        padding:7px;
+    }
+
+    .location-title{
+        font-size:12px;
+    }
+
+    .location-time{
+        font-size:10px;
+    }
+
+    .chat{
+        width:calc(100% - 30px);
+        left:15px;
+        bottom:82px;
+        height:125px;
+    }
+
+    .action-bar{
+        bottom:12px;
+        left:auto;
+        right:10px;
+        transform:none;
+    }
+
+    .skill{
+        width:43px;
+        height:43px;
+        font-size:20px;
+    }
+
+    .menu{
+        display:none;
+    }
+
+    .mobile-controls{
+        display:block;
+    }
 }
 </style>
 </head>
@@ -175,577 +820,389 @@ body {
 
 <canvas id="game"></canvas>
 
-<div id="hud">
-    <strong>Novarise World</strong><br>
-    Level <span id="level">1</span>
-    &nbsp; | &nbsp;
-    HP <span id="hp">100</span>/100
-</div>
+<!-- PLAYER HUD -->
+<div class="player-panel">
 
-<div id="startScreen">
-    <div class="startBox">
-        <div class="logo">NOVARISE</div>
+    <div class="avatar">⚔</div>
 
-        <div class="subtitle">
-            Welcome to Novarise World
+    <div class="player-info">
+
+        <div class="player-name">
+            <span>Novarise</span>
+            <span class="level">Lv. 1</span>
         </div>
 
-        <button id="startButton">
-            ENTER WORLD
-        </button>
+        <div class="bar">
+            <div class="bar-fill hp"></div>
+            <div class="bar-text">100 / 100</div>
+        </div>
+
+        <div class="bar">
+            <div class="bar-fill mp"></div>
+            <div class="bar-text">100 / 100</div>
+        </div>
+
     </div>
 </div>
 
-<div id="controls">
-    <div class="control" id="up">▲</div>
-    <div class="control" id="left">◀</div>
-    <div class="control" id="down">▼</div>
-    <div class="control" id="right">▶</div>
+<!-- LOCATION -->
+<div class="location">
+    <div class="location-title">☀ Novarise Forest</div>
+    <div class="location-time" id="time">--:--</div>
+</div>
+
+<!-- NPC -->
+<div
+    class="npc"
+    id="npc"
+    style="left:29%;top:59%;"
+>
+    <div class="npc-head"></div>
+    <div class="npc-hair"></div>
+    <div class="npc-body"></div>
+</div>
+
+<div
+    class="world-label"
+    style="left:29%;top:50%;"
+>
+    <div class="name">Seraphine</div>
+    <div class="sub">Quest Guide</div>
+</div>
+
+<!-- MONSTER -->
+<div
+    class="monster"
+    id="monster"
+    style="left:84%;top:71%;"
+>
+
+    <div class="wolf-body"></div>
+
+    <div class="wolf-head">
+        <div class="wolf-ear left"></div>
+        <div class="wolf-ear right"></div>
+        <div class="wolf-eye left"></div>
+        <div class="wolf-eye right"></div>
+    </div>
+
+    <div class="wolf-hp">
+        <div class="wolf-hp-fill"></div>
+    </div>
+
+</div>
+
+<div
+    class="world-label"
+    style="left:84%;top:52%;"
+>
+    <div class="name">Dire Wolf</div>
+    <div class="sub">Lv. 3</div>
+</div>
+
+<!-- PORTAL -->
+<div
+    class="portal"
+    id="portal"
+    style="left:94%;top:64%;"
+></div>
+
+<div
+    class="world-label"
+    style="left:94%;top:45%;"
+>
+    <div class="name">Portal</div>
+</div>
+
+<!-- MOVE MARKER -->
+<div
+    id="moveMarker"
+    class="move-marker"
+    style="display:none;"
+></div>
+
+<!-- CHAT -->
+<div class="chat">
+
+    <div class="chat-tabs">
+        <div class="chat-tab active">General</div>
+        <div class="chat-tab">Party</div>
+        <div class="chat-tab">Guild</div>
+    </div>
+
+    <div class="chat-messages">
+
+        <div class="welcome">
+            Welcome to Novarise World!
+        </div>
+
+        <div>
+            Type /help for commands.
+        </div>
+
+        <div class="chat-location">
+            You are now in: Novarise Forest
+        </div>
+
+    </div>
+
+    <div class="chat-input">
+        <input
+            id="chatInput"
+            type="text"
+            placeholder="Type a message..."
+        >
+
+        <button id="sendChat">
+            SEND
+        </button>
+    </div>
+
+</div>
+
+<!-- ACTION BAR -->
+<div class="action-bar">
+
+    <button class="skill" title="Attack">
+        ⚔
+        <span class="skill-number">1</span>
+    </button>
+
+    <button class="skill" title="Power">
+        ✦
+        <span class="skill-number">2</span>
+    </button>
+
+    <button class="skill" title="Fire">
+        🔥
+        <span class="skill-number">3</span>
+    </button>
+
+    <button class="skill" title="Defense">
+        🛡
+        <span class="skill-number">4</span>
+    </button>
+
+    <button class="skill" title="Potion">
+        🧪
+        <span class="skill-number">5</span>
+    </button>
+
+</div>
+
+<!-- MENU -->
+<div class="menu">
+
+    <div class="menu-item">
+        <div class="menu-icon">🧙</div>
+        Character
+    </div>
+
+    <div class="menu-item">
+        <div class="menu-icon">🎒</div>
+        Inventory
+    </div>
+
+    <div class="menu-item">
+        <div class="menu-icon">🔥</div>
+        Skills
+    </div>
+
+    <div class="menu-item">
+        <div class="menu-icon">❗</div>
+        Quest
+    </div>
+
+    <div class="menu-item">
+        <div class="menu-icon">🗺</div>
+        Map
+    </div>
+
+    <div class="menu-item">
+        <div class="menu-icon">⚙</div>
+        Settings
+    </div>
+
+</div>
+
+<!-- MOBILE CONTROLS -->
+<div class="mobile-controls">
+
+    <button id="up">▲</button>
+
+    <div class="mobile-row">
+        <button id="left">◀</button>
+        <button id="down">▼</button>
+        <button id="right">▶</button>
+    </div>
+
 </div>
 
 <script>
+
+/* =========================================================
+   NOVARISE WORLD
+========================================================= */
+
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
-let screenWidth = window.innerWidth;
-let screenHeight = window.innerHeight;
+const background = new Image();
 
-function resizeCanvas() {
-    screenWidth = window.innerWidth;
-    screenHeight = window.innerHeight;
+/*
+    IMPORTANT:
+    This must match the filename you uploaded.
+*/
+background.src = "assets/maps/novarise-forest.png";
 
-    canvas.width = screenWidth;
-    canvas.height = screenHeight;
+let W = window.innerWidth;
+let H = window.innerHeight;
+
+function resize(){
+
+    W = window.innerWidth;
+    H = window.innerHeight;
+
+    canvas.width = W;
+    canvas.height = H;
+
 }
 
-window.addEventListener("resize", resizeCanvas);
-resizeCanvas();
+window.addEventListener("resize", resize);
 
-/* =========================
-   WORLD
-========================= */
+resize();
 
-const WORLD_WIDTH = 3000;
-const WORLD_HEIGHT = 2200;
-
-/* =========================
+/* =========================================================
    PLAYER
-========================= */
+========================================================= */
 
 const player = {
-    x: WORLD_WIDTH / 2,
-    y: WORLD_HEIGHT / 2,
 
-    width: 42,
-    height: 58,
+    x:0.50,
+    y:0.70,
 
-    speed: 4,
+    targetX:0.50,
+    targetY:0.70,
 
-    level: 1,
-    hp: 100,
-    maxHp: 100
+    speed:0.0018,
+
+    moving:false,
+
+    direction:1
+
 };
 
-/* =========================
-   CAMERA
-========================= */
+/* =========================================================
+   BACKGROUND
+========================================================= */
 
-const camera = {
-    x: 0,
-    y: 0
-};
+function drawBackground(){
 
-/* =========================
-   KEYBOARD
-========================= */
+    if(!background.complete || !background.naturalWidth){
 
-const keys = {};
+        ctx.fillStyle="#101820";
 
-window.addEventListener("keydown", (event) => {
-    keys[event.key.toLowerCase()] = true;
+        ctx.fillRect(0,0,W,H);
 
-    if (
-        ["arrowup", "arrowdown", "arrowleft", "arrowright", " "]
-        .includes(event.key.toLowerCase())
-    ) {
-        event.preventDefault();
-    }
-});
+        ctx.fillStyle="white";
 
-window.addEventListener("keyup", (event) => {
-    keys[event.key.toLowerCase()] = false;
-});
+        ctx.font="20px Arial";
 
-/* =========================
-   TOUCH CONTROLS
-========================= */
+        ctx.textAlign="center";
 
-const touchKeys = {
-    up: "arrowup",
-    down: "arrowdown",
-    left: "arrowleft",
-    right: "arrowright"
-};
-
-Object.keys(touchKeys).forEach(id => {
-
-    const button = document.getElementById(id);
-
-    const key = touchKeys[id];
-
-    button.addEventListener("pointerdown", (event) => {
-        event.preventDefault();
-        keys[key] = true;
-    });
-
-    button.addEventListener("pointerup", (event) => {
-        event.preventDefault();
-        keys[key] = false;
-    });
-
-    button.addEventListener("pointercancel", () => {
-        keys[key] = false;
-    });
-
-    button.addEventListener("pointerleave", () => {
-        keys[key] = false;
-    });
-});
-
-/* =========================
-   TREES
-========================= */
-
-const trees = [
-    {x:300, y:300},
-    {x:500, y:500},
-    {x:850, y:280},
-    {x:1200, y:450},
-    {x:1600, y:300},
-    {x:2100, y:500},
-    {x:2500, y:300},
-
-    {x:350, y:1600},
-    {x:750, y:1800},
-    {x:1200, y:1700},
-    {x:1700, y:1850},
-    {x:2200, y:1700},
-    {x:2650, y:1850}
-];
-
-/* =========================
-   NPC
-========================= */
-
-const npc = {
-    x: WORLD_WIDTH / 2 + 220,
-    y: WORLD_HEIGHT / 2 - 80
-};
-
-/* =========================
-   MONSTER
-========================= */
-
-const monster = {
-    x: WORLD_WIDTH / 2 - 250,
-    y: WORLD_HEIGHT / 2 - 100,
-
-    width: 50,
-    height: 50,
-
-    hp: 100,
-    maxHp: 100
-};
-
-/* =========================
-   GAME STATE
-========================= */
-
-let gameStarted = false;
-
-/* =========================
-   MOVEMENT
-========================= */
-
-function updatePlayer() {
-
-    if (!gameStarted) return;
-
-    let dx = 0;
-    let dy = 0;
-
-    if (keys["w"] || keys["arrowup"]) {
-        dy -= 1;
-    }
-
-    if (keys["s"] || keys["arrowdown"]) {
-        dy += 1;
-    }
-
-    if (keys["a"] || keys["arrowleft"]) {
-        dx -= 1;
-    }
-
-    if (keys["d"] || keys["arrowright"]) {
-        dx += 1;
-    }
-
-    /* Normalize diagonal movement */
-
-    if (dx !== 0 && dy !== 0) {
-        dx *= 0.707;
-        dy *= 0.707;
-    }
-
-    player.x += dx * player.speed;
-    player.y += dy * player.speed;
-
-    /* World boundaries */
-
-    player.x = Math.max(
-        player.width / 2,
-        Math.min(WORLD_WIDTH - player.width / 2, player.x)
-    );
-
-    player.y = Math.max(
-        player.height / 2,
-        Math.min(WORLD_HEIGHT - player.height / 2, player.y)
-    );
-}
-
-/* =========================
-   CAMERA
-========================= */
-
-function updateCamera() {
-
-    camera.x = player.x - screenWidth / 2;
-    camera.y = player.y - screenHeight / 2;
-
-    camera.x = Math.max(
-        0,
-        Math.min(WORLD_WIDTH - screenWidth, camera.x)
-    );
-
-    camera.y = Math.max(
-        0,
-        Math.min(WORLD_HEIGHT - screenHeight, camera.y)
-    );
-}
-
-/* =========================
-   DRAW WORLD
-========================= */
-
-function drawWorld() {
-
-    /* Ground */
-
-    ctx.fillStyle = "#6aa84f";
-    ctx.fillRect(
-        0,
-        0,
-        screenWidth,
-        screenHeight
-    );
-
-    /* Grid */
-
-    const gridSize = 80;
-
-    ctx.strokeStyle = "rgba(255,255,255,.06)";
-    ctx.lineWidth = 1;
-
-    const startX =
-        -camera.x % gridSize;
-
-    const startY =
-        -camera.y % gridSize;
-
-    for (
-        let x = startX;
-        x < screenWidth;
-        x += gridSize
-    ) {
-
-        ctx.beginPath();
-
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, screenHeight);
-
-        ctx.stroke();
-    }
-
-    for (
-        let y = startY;
-        y < screenHeight;
-        y += gridSize
-    ) {
-
-        ctx.beginPath();
-
-        ctx.moveTo(0, y);
-        ctx.lineTo(screenWidth, y);
-
-        ctx.stroke();
-    }
-
-    /* Trees */
-
-    trees.forEach(tree => {
-
-        const x = tree.x - camera.x;
-        const y = tree.y - camera.y;
-
-        /* trunk */
-
-        ctx.fillStyle = "#6b4423";
-
-        ctx.fillRect(
-            x - 9,
-            y + 15,
-            18,
-            35
+        ctx.fillText(
+            "Loading Novarise Forest...",
+            W/2,
+            H/2
         );
 
-        /* leaves */
+        return;
+    }
 
-        ctx.fillStyle = "#14532d";
+    const imageRatio =
+        background.naturalWidth /
+        background.naturalHeight;
 
-        ctx.beginPath();
-        ctx.arc(
-            x,
-            y,
-            38,
-            0,
-            Math.PI * 2
-        );
+    const screenRatio =
+        W / H;
 
-        ctx.fill();
+    let drawWidth;
+    let drawHeight;
 
-        ctx.fillStyle = "#166534";
+    /*
+        Cover the entire screen.
+    */
 
-        ctx.beginPath();
-        ctx.arc(
-            x - 18,
-            y + 5,
-            25,
-            0,
-            Math.PI * 2
-        );
+    if(screenRatio > imageRatio){
 
-        ctx.fill();
+        drawWidth = W;
+        drawHeight = W / imageRatio;
 
-        ctx.beginPath();
-        ctx.arc(
-            x + 18,
-            y + 5,
-            25,
-            0,
-            Math.PI * 2
-        );
+    }else{
 
-        ctx.fill();
-    });
+        drawHeight = H;
+        drawWidth = H * imageRatio;
 
-    /* Town */
+    }
 
-    const townX = WORLD_WIDTH / 2;
-    const townY = WORLD_HEIGHT / 2;
+    const x =
+        (W - drawWidth) / 2;
 
-    ctx.fillStyle = "#d6b56d";
+    const y =
+        (H - drawHeight) / 2;
 
-    ctx.fillRect(
-        townX - 230 - camera.x,
-        townY - 170 - camera.y,
-        460,
-        340
-    );
-
-    ctx.strokeStyle = "#9a7738";
-    ctx.lineWidth = 5;
-
-    ctx.strokeRect(
-        townX - 230 - camera.x,
-        townY - 170 - camera.y,
-        460,
-        340
-    );
-
-    /* NPC */
-
-    drawNPC();
-
-    /* Monster */
-
-    drawMonster();
-
-    /* Portal */
-
-    const portalX = WORLD_WIDTH / 2;
-    const portalY = WORLD_HEIGHT / 2 + 250;
-
-    ctx.fillStyle = "#2563eb";
-
-    ctx.beginPath();
-
-    ctx.arc(
-        portalX - camera.x,
-        portalY - camera.y,
-        45,
-        0,
-        Math.PI * 2
-    );
-
-    ctx.fill();
-
-    ctx.fillStyle = "white";
-
-    ctx.font = "bold 15px Arial";
-    ctx.textAlign = "center";
-
-    ctx.fillText(
-        "PORTAL",
-        portalX - camera.x,
-        portalY - camera.y + 5
-    );
-}
-
-/* =========================
-   DRAW NPC
-========================= */
-
-function drawNPC() {
-
-    const x = npc.x - camera.x;
-    const y = npc.y - camera.y;
-
-    /* body */
-
-    ctx.fillStyle = "#7c3aed";
-
-    ctx.fillRect(
-        x - 18,
-        y,
-        36,
-        48
-    );
-
-    /* head */
-
-    ctx.fillStyle = "#f1c27d";
-
-    ctx.beginPath();
-
-    ctx.arc(
-        x,
-        y - 18,
-        18,
-        0,
-        Math.PI * 2
-    );
-
-    ctx.fill();
-
-    /* name */
-
-    ctx.fillStyle = "white";
-
-    ctx.font = "bold 14px Arial";
-    ctx.textAlign = "center";
-
-    ctx.fillText(
-        "NPC",
-        x,
-        y - 48
-    );
-}
-
-/* =========================
-   DRAW MONSTER
-========================= */
-
-function drawMonster() {
-
-    const x = monster.x - camera.x;
-    const y = monster.y - camera.y;
-
-    ctx.fillStyle = "#7f1d1d";
-
-    ctx.beginPath();
-
-    ctx.arc(
+    ctx.drawImage(
+        background,
         x,
         y,
-        30,
-        0,
-        Math.PI * 2
+        drawWidth,
+        drawHeight
     );
 
-    ctx.fill();
-
-    /* eyes */
-
-    ctx.fillStyle = "#fef08a";
-
-    ctx.beginPath();
-
-    ctx.arc(x - 10, y - 5, 5, 0, Math.PI * 2);
-    ctx.arc(x + 10, y - 5, 5, 0, Math.PI * 2);
-
-    ctx.fill();
-
-    /* HP bar */
-
-    ctx.fillStyle = "#111827";
-
-    ctx.fillRect(
-        x - 35,
-        y - 48,
-        70,
-        7
-    );
-
-    ctx.fillStyle = "#ef4444";
-
-    ctx.fillRect(
-        x - 35,
-        y - 48,
-        70 * (monster.hp / monster.maxHp),
-        7
-    );
-
-    ctx.fillStyle = "white";
-
-    ctx.font = "bold 13px Arial";
-    ctx.textAlign = "center";
-
-    ctx.fillText(
-        "Shadow Beast",
-        x,
-        y + 50
-    );
 }
 
-/* =========================
+/* =========================================================
+   PLAYER POSITION
+========================================================= */
+
+function getPlayerScreen(){
+
+    return {
+
+        x:player.x * W,
+
+        y:player.y * H
+
+    };
+
+}
+
+/* =========================================================
    DRAW PLAYER
-========================= */
+========================================================= */
 
-function drawPlayer() {
+function drawPlayer(){
 
-    const x = player.x - camera.x;
-    const y = player.y - camera.y;
+    const p = getPlayerScreen();
 
-    /* Shadow */
+    const x = p.x;
+    const y = p.y;
 
-    ctx.fillStyle = "rgba(0,0,0,.25)";
+    /*
+        Shadow
+    */
+
+    ctx.save();
+
+    ctx.fillStyle =
+        "rgba(0,0,0,.38)";
 
     ctx.beginPath();
 
     ctx.ellipse(
         x,
-        y + 28,
-        25,
+        y + 29,
+        28,
         9,
         0,
         0,
@@ -754,128 +1211,583 @@ function drawPlayer() {
 
     ctx.fill();
 
-    /* Body */
+    /*
+        Cape
+    */
 
-    ctx.fillStyle = "#2563eb";
+    ctx.fillStyle =
+        "#111827";
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        x - 19,
+        y - 10
+    );
+
+    ctx.lineTo(
+        x - 35,
+        y + 32
+    );
+
+    ctx.lineTo(
+        x - 8,
+        y + 27
+    );
+
+    ctx.closePath();
+
+    ctx.fill();
+
+    /*
+        Body armor
+    */
+
+    const armor =
+        ctx.createLinearGradient(
+            x-20,
+            y,
+            x+20,
+            y
+        );
+
+    armor.addColorStop(
+        0,
+        "#111827"
+    );
+
+    armor.addColorStop(
+        .5,
+        "#64748b"
+    );
+
+    armor.addColorStop(
+        1,
+        "#111827"
+    );
+
+    ctx.fillStyle=armor;
+
+    ctx.beginPath();
+
+    ctx.roundRect(
+        x-19,
+        y-5,
+        38,
+        46,
+        8
+    );
+
+    ctx.fill();
+
+    ctx.strokeStyle="#cbd5e1";
+    ctx.lineWidth=2;
+
+    ctx.stroke();
+
+    /*
+        Head
+    */
+
+    ctx.fillStyle="#efbd83";
+
+    ctx.beginPath();
+
+    ctx.arc(
+        x,
+        y-27,
+        17,
+        0,
+        Math.PI*2
+    );
+
+    ctx.fill();
+
+    /*
+        Hair
+    */
+
+    ctx.fillStyle="#111827";
+
+    ctx.beginPath();
+
+    ctx.arc(
+        x,
+        y-32,
+        18,
+        Math.PI,
+        Math.PI*2
+    );
+
+    ctx.fill();
+
+    /*
+        Sword
+    */
+
+    ctx.save();
+
+    ctx.translate(
+        x+17,
+        y+8
+    );
+
+    ctx.rotate(
+        player.direction > 0
+        ? -0.65
+        : 0.65
+    );
+
+    ctx.fillStyle="#dbeafe";
+
+    ctx.beginPath();
+
+    ctx.moveTo(0,-8);
+    ctx.lineTo(8,-55);
+    ctx.lineTo(14,-8);
+    ctx.closePath();
+
+    ctx.fill();
+
+    ctx.strokeStyle="#475569";
+    ctx.lineWidth=2;
+
+    ctx.stroke();
+
+    /*
+        Sword handle
+    */
+
+    ctx.fillStyle="#7c2d12";
 
     ctx.fillRect(
-        x - 20,
-        y - 5,
-        40,
-        50
+        -3,
+        -5,
+        8,
+        22
     );
 
-    /* Head */
+    ctx.restore();
 
-    ctx.fillStyle = "#f1c27d";
+    /*
+        Name
+    */
 
-    ctx.beginPath();
+    ctx.fillStyle="white";
 
-    ctx.arc(
-        x,
-        y - 25,
-        20,
-        0,
-        Math.PI * 2
-    );
+    ctx.font="bold 14px Arial";
 
-    ctx.fill();
+    ctx.textAlign="center";
 
-    /* Hair */
-
-    ctx.fillStyle = "#1f2937";
-
-    ctx.beginPath();
-
-    ctx.arc(
-        x,
-        y - 33,
-        20,
-        Math.PI,
-        Math.PI * 2
-    );
-
-    ctx.fill();
-
-    /* Sword */
-
-    ctx.strokeStyle = "#e5e7eb";
-    ctx.lineWidth = 6;
-
-    ctx.beginPath();
-
-    ctx.moveTo(x + 18, y + 10);
-    ctx.lineTo(x + 42, y - 18);
-
-    ctx.stroke();
-
-    ctx.strokeStyle = "#92400e";
-    ctx.lineWidth = 5;
-
-    ctx.beginPath();
-
-    ctx.moveTo(x + 15, y + 14);
-    ctx.lineTo(x + 25, y + 24);
-
-    ctx.stroke();
-
-    /* Player name */
-
-    ctx.fillStyle = "white";
-
-    ctx.font = "bold 14px Arial";
-    ctx.textAlign = "center";
+    ctx.shadowColor="#000";
+    ctx.shadowBlur=5;
 
     ctx.fillText(
-        "You",
+        "Novarise",
         x,
-        y - 55
+        y-55
     );
+
+    ctx.shadowBlur=0;
+
+    ctx.restore();
+
 }
 
-/* =========================
-   GAME LOOP
-========================= */
+/* =========================================================
+   PLAYER MOVEMENT
+========================================================= */
 
-function gameLoop() {
+function updatePlayer(){
+
+    const dx =
+        player.targetX -
+        player.x;
+
+    const dy =
+        player.targetY -
+        player.y;
+
+    const distance =
+        Math.sqrt(
+            dx*dx +
+            dy*dy
+        );
+
+    if(distance < 0.002){
+
+        player.x =
+            player.targetX;
+
+        player.y =
+            player.targetY;
+
+        player.moving=false;
+
+        return;
+
+    }
+
+    player.moving=true;
+
+    player.direction =
+        dx >= 0
+        ? 1
+        : -1;
+
+    player.x +=
+        (dx / distance) *
+        player.speed;
+
+    player.y +=
+        (dy / distance) *
+        player.speed;
+
+}
+
+/* =========================================================
+   CLICK TO MOVE
+========================================================= */
+
+canvas.addEventListener(
+    "click",
+    function(event){
+
+        const rect =
+            canvas.getBoundingClientRect();
+
+        const x =
+            (event.clientX - rect.left) /
+            rect.width;
+
+        const y =
+            (event.clientY - rect.top) /
+            rect.height;
+
+        /*
+            Don't allow player to walk
+            into the HUD areas.
+        */
+
+        if(y < .14) return;
+
+        player.targetX =
+            Math.max(
+                .04,
+                Math.min(.96,x)
+            );
+
+        player.targetY =
+            Math.max(
+                .25,
+                Math.min(.88,y)
+            );
+
+        showMoveMarker(
+            x * W,
+            y * H
+        );
+
+    }
+);
+
+/* =========================================================
+   MOVE MARKER
+========================================================= */
+
+function showMoveMarker(x,y){
+
+    const marker =
+        document.getElementById(
+            "moveMarker"
+        );
+
+    marker.style.left =
+        x+"px";
+
+    marker.style.top =
+        y+"px";
+
+    marker.style.display =
+        "block";
+
+    clearTimeout(
+        marker.hideTimer
+    );
+
+    marker.hideTimer =
+        setTimeout(
+            ()=>{
+                marker.style.display="none";
+            },
+            900
+        );
+
+}
+
+/* =========================================================
+   KEYBOARD MOVEMENT
+========================================================= */
+
+const keys={};
+
+window.addEventListener(
+    "keydown",
+    e=>{
+
+        keys[e.key.toLowerCase()]=true;
+
+    }
+);
+
+window.addEventListener(
+    "keyup",
+    e=>{
+
+        keys[e.key.toLowerCase()]=false;
+
+    }
+);
+
+function keyboardMovement(){
+
+    let dx=0;
+    let dy=0;
+
+    if(keys["w"] || keys["arrowup"])
+        dy=-1;
+
+    if(keys["s"] || keys["arrowdown"])
+        dy=1;
+
+    if(keys["a"] || keys["arrowleft"])
+        dx=-1;
+
+    if(keys["d"] || keys["arrowright"])
+        dx=1;
+
+    if(!dx && !dy)
+        return;
+
+    const length =
+        Math.sqrt(dx*dx+dy*dy);
+
+    dx/=length;
+    dy/=length;
+
+    player.x +=
+        dx * .0025;
+
+    player.y +=
+        dy * .0025;
+
+    player.x =
+        Math.max(
+            .04,
+            Math.min(.96,player.x)
+        );
+
+    player.y =
+        Math.max(
+            .25,
+            Math.min(.88,player.y)
+        );
+
+    player.targetX=player.x;
+    player.targetY=player.y;
+
+    player.direction =
+        dx>=0 ? 1 : -1;
+
+}
+
+/* =========================================================
+   MOBILE CONTROLS
+========================================================= */
+
+function mobileMove(dx,dy){
+
+    player.x += dx;
+    player.y += dy;
+
+    player.x =
+        Math.max(
+            .04,
+            Math.min(.96,player.x)
+        );
+
+    player.y =
+        Math.max(
+            .25,
+            Math.min(.88,player.y)
+        );
+
+    player.targetX=player.x;
+    player.targetY=player.y;
+
+}
+
+document
+.getElementById("up")
+.addEventListener(
+    "pointerdown",
+    ()=>mobileMove(0,-.025)
+);
+
+document
+.getElementById("down")
+.addEventListener(
+    "pointerdown",
+    ()=>mobileMove(0,.025)
+);
+
+document
+.getElementById("left")
+.addEventListener(
+    "pointerdown",
+    ()=>mobileMove(-.025,0)
+);
+
+document
+.getElementById("right")
+.addEventListener(
+    "pointerdown",
+    ()=>mobileMove(.025,0)
+);
+
+/* =========================================================
+   CLOCK
+========================================================= */
+
+function updateClock(){
+
+    const now =
+        new Date();
+
+    document
+    .getElementById("time")
+    .textContent =
+        now.toLocaleTimeString(
+            [],
+            {
+                hour:"numeric",
+                minute:"2-digit"
+            }
+        );
+
+}
+
+setInterval(
+    updateClock,
+    1000
+);
+
+updateClock();
+
+/* =========================================================
+   CHAT
+========================================================= */
+
+document
+.getElementById("sendChat")
+.addEventListener(
+    "click",
+    sendChat
+);
+
+document
+.getElementById("chatInput")
+.addEventListener(
+    "keydown",
+    e=>{
+
+        if(e.key==="Enter")
+            sendChat();
+
+    }
+);
+
+function sendChat(){
+
+    const input =
+        document.getElementById(
+            "chatInput"
+        );
+
+    const message =
+        input.value.trim();
+
+    if(!message)
+        return;
+
+    const messages =
+        document.querySelector(
+            ".chat-messages"
+        );
+
+    const line =
+        document.createElement("div");
+
+    line.style.marginTop="4px";
+
+    line.innerHTML =
+        `<strong style="color:#60a5fa">
+        Novarise:
+        </strong> ${escapeHtml(message)}`;
+
+    messages.appendChild(line);
+
+    input.value="";
+
+    messages.scrollTop =
+        messages.scrollHeight;
+
+}
+
+function escapeHtml(text){
+
+    const div =
+        document.createElement("div");
+
+    div.textContent=text;
+
+    return div.innerHTML;
+
+}
+
+/* =========================================================
+   GAME LOOP
+========================================================= */
+
+function loop(){
+
+    keyboardMovement();
 
     updatePlayer();
-    updateCamera();
 
-    drawWorld();
+    drawBackground();
+
     drawPlayer();
 
-    requestAnimationFrame(gameLoop);
+    requestAnimationFrame(loop);
+
 }
 
-/* =========================
-   START GAME
-========================= */
+background.onload=()=>{
+    loop();
+};
 
-document.getElementById("startButton")
-.addEventListener("click", () => {
+background.onerror=()=>{
 
-    gameStarted = true;
+    console.error(
+        "Could not load assets/maps/novarise-forest.png"
+    );
 
-    document.getElementById("startScreen").style.display = "none";
+    loop();
 
-    gameLoop();
-});
+};
 
-/* =========================
-   INITIAL SCREEN
-========================= */
-
-ctx.fillStyle = "#0f172a";
-
-ctx.fillRect(
-    0,
-    0,
-    screenWidth,
-    screenHeight
-);
 </script>
 
 </body>
 </html>
-```
