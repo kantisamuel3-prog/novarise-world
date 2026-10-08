@@ -1,0 +1,881 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>Novarise World</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #111827;
+    font-family: Arial, sans-serif;
+}
+
+#game {
+    display: block;
+    width: 100%;
+    height: 100%;
+    image-rendering: pixelated;
+}
+
+/* Top HUD */
+#hud {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 10;
+
+    padding: 10px 15px;
+    border-radius: 12px;
+
+    background: rgba(0, 0, 0, 0.65);
+    color: white;
+
+    font-size: 14px;
+    user-select: none;
+    pointer-events: none;
+}
+
+#hud strong {
+    color: #60a5fa;
+}
+
+/* Controls */
+#controls {
+    position: fixed;
+    left: 20px;
+    bottom: 25px;
+    z-index: 20;
+
+    display: grid;
+    grid-template-columns: 60px 60px 60px;
+    grid-template-rows: 60px 60px;
+
+    gap: 6px;
+}
+
+.control {
+    width: 60px;
+    height: 60px;
+
+    border: 1px solid rgba(255,255,255,.25);
+    border-radius: 14px;
+
+    background: rgba(0,0,0,.55);
+    color: white;
+
+    font-size: 24px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: none;
+}
+
+.control:active {
+    background: rgba(37,99,235,.8);
+}
+
+#up {
+    grid-column: 2;
+}
+
+#left {
+    grid-column: 1;
+    grid-row: 2;
+}
+
+#down {
+    grid-column: 2;
+    grid-row: 2;
+}
+
+#right {
+    grid-column: 3;
+    grid-row: 2;
+}
+
+/* Start screen */
+#startScreen {
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background:
+        radial-gradient(circle at center, rgba(30,64,175,.25), transparent 45%),
+        #0f172a;
+}
+
+.startBox {
+    width: min(90%, 420px);
+    padding: 35px 25px;
+
+    text-align: center;
+
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 22px;
+
+    background: rgba(15,23,42,.92);
+    box-shadow: 0 20px 60px rgba(0,0,0,.45);
+}
+
+.logo {
+    font-size: 34px;
+    font-weight: 800;
+    color: #60a5fa;
+    margin-bottom: 8px;
+}
+
+.subtitle {
+    color: #cbd5e1;
+    margin-bottom: 25px;
+}
+
+#startButton {
+    border: 0;
+    border-radius: 12px;
+
+    padding: 14px 30px;
+
+    background: #2563eb;
+    color: white;
+
+    font-size: 16px;
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+#startButton:hover {
+    background: #1d4ed8;
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="game"></canvas>
+
+<div id="hud">
+    <strong>Novarise World</strong><br>
+    Level <span id="level">1</span>
+    &nbsp; | &nbsp;
+    HP <span id="hp">100</span>/100
+</div>
+
+<div id="startScreen">
+    <div class="startBox">
+        <div class="logo">NOVARISE</div>
+
+        <div class="subtitle">
+            Welcome to Novarise World
+        </div>
+
+        <button id="startButton">
+            ENTER WORLD
+        </button>
+    </div>
+</div>
+
+<div id="controls">
+    <div class="control" id="up">▲</div>
+    <div class="control" id="left">◀</div>
+    <div class="control" id="down">▼</div>
+    <div class="control" id="right">▶</div>
+</div>
+
+<script>
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+
+let screenWidth = window.innerWidth;
+let screenHeight = window.innerHeight;
+
+function resizeCanvas() {
+    screenWidth = window.innerWidth;
+    screenHeight = window.innerHeight;
+
+    canvas.width = screenWidth;
+    canvas.height = screenHeight;
+}
+
+window.addEventListener("resize", resizeCanvas);
+resizeCanvas();
+
+/* =========================
+   WORLD
+========================= */
+
+const WORLD_WIDTH = 3000;
+const WORLD_HEIGHT = 2200;
+
+/* =========================
+   PLAYER
+========================= */
+
+const player = {
+    x: WORLD_WIDTH / 2,
+    y: WORLD_HEIGHT / 2,
+
+    width: 42,
+    height: 58,
+
+    speed: 4,
+
+    level: 1,
+    hp: 100,
+    maxHp: 100
+};
+
+/* =========================
+   CAMERA
+========================= */
+
+const camera = {
+    x: 0,
+    y: 0
+};
+
+/* =========================
+   KEYBOARD
+========================= */
+
+const keys = {};
+
+window.addEventListener("keydown", (event) => {
+    keys[event.key.toLowerCase()] = true;
+
+    if (
+        ["arrowup", "arrowdown", "arrowleft", "arrowright", " "]
+        .includes(event.key.toLowerCase())
+    ) {
+        event.preventDefault();
+    }
+});
+
+window.addEventListener("keyup", (event) => {
+    keys[event.key.toLowerCase()] = false;
+});
+
+/* =========================
+   TOUCH CONTROLS
+========================= */
+
+const touchKeys = {
+    up: "arrowup",
+    down: "arrowdown",
+    left: "arrowleft",
+    right: "arrowright"
+};
+
+Object.keys(touchKeys).forEach(id => {
+
+    const button = document.getElementById(id);
+
+    const key = touchKeys[id];
+
+    button.addEventListener("pointerdown", (event) => {
+        event.preventDefault();
+        keys[key] = true;
+    });
+
+    button.addEventListener("pointerup", (event) => {
+        event.preventDefault();
+        keys[key] = false;
+    });
+
+    button.addEventListener("pointercancel", () => {
+        keys[key] = false;
+    });
+
+    button.addEventListener("pointerleave", () => {
+        keys[key] = false;
+    });
+});
+
+/* =========================
+   TREES
+========================= */
+
+const trees = [
+    {x:300, y:300},
+    {x:500, y:500},
+    {x:850, y:280},
+    {x:1200, y:450},
+    {x:1600, y:300},
+    {x:2100, y:500},
+    {x:2500, y:300},
+
+    {x:350, y:1600},
+    {x:750, y:1800},
+    {x:1200, y:1700},
+    {x:1700, y:1850},
+    {x:2200, y:1700},
+    {x:2650, y:1850}
+];
+
+/* =========================
+   NPC
+========================= */
+
+const npc = {
+    x: WORLD_WIDTH / 2 + 220,
+    y: WORLD_HEIGHT / 2 - 80
+};
+
+/* =========================
+   MONSTER
+========================= */
+
+const monster = {
+    x: WORLD_WIDTH / 2 - 250,
+    y: WORLD_HEIGHT / 2 - 100,
+
+    width: 50,
+    height: 50,
+
+    hp: 100,
+    maxHp: 100
+};
+
+/* =========================
+   GAME STATE
+========================= */
+
+let gameStarted = false;
+
+/* =========================
+   MOVEMENT
+========================= */
+
+function updatePlayer() {
+
+    if (!gameStarted) return;
+
+    let dx = 0;
+    let dy = 0;
+
+    if (keys["w"] || keys["arrowup"]) {
+        dy -= 1;
+    }
+
+    if (keys["s"] || keys["arrowdown"]) {
+        dy += 1;
+    }
+
+    if (keys["a"] || keys["arrowleft"]) {
+        dx -= 1;
+    }
+
+    if (keys["d"] || keys["arrowright"]) {
+        dx += 1;
+    }
+
+    /* Normalize diagonal movement */
+
+    if (dx !== 0 && dy !== 0) {
+        dx *= 0.707;
+        dy *= 0.707;
+    }
+
+    player.x += dx * player.speed;
+    player.y += dy * player.speed;
+
+    /* World boundaries */
+
+    player.x = Math.max(
+        player.width / 2,
+        Math.min(WORLD_WIDTH - player.width / 2, player.x)
+    );
+
+    player.y = Math.max(
+        player.height / 2,
+        Math.min(WORLD_HEIGHT - player.height / 2, player.y)
+    );
+}
+
+/* =========================
+   CAMERA
+========================= */
+
+function updateCamera() {
+
+    camera.x = player.x - screenWidth / 2;
+    camera.y = player.y - screenHeight / 2;
+
+    camera.x = Math.max(
+        0,
+        Math.min(WORLD_WIDTH - screenWidth, camera.x)
+    );
+
+    camera.y = Math.max(
+        0,
+        Math.min(WORLD_HEIGHT - screenHeight, camera.y)
+    );
+}
+
+/* =========================
+   DRAW WORLD
+========================= */
+
+function drawWorld() {
+
+    /* Ground */
+
+    ctx.fillStyle = "#6aa84f";
+    ctx.fillRect(
+        0,
+        0,
+        screenWidth,
+        screenHeight
+    );
+
+    /* Grid */
+
+    const gridSize = 80;
+
+    ctx.strokeStyle = "rgba(255,255,255,.06)";
+    ctx.lineWidth = 1;
+
+    const startX =
+        -camera.x % gridSize;
+
+    const startY =
+        -camera.y % gridSize;
+
+    for (
+        let x = startX;
+        x < screenWidth;
+        x += gridSize
+    ) {
+
+        ctx.beginPath();
+
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, screenHeight);
+
+        ctx.stroke();
+    }
+
+    for (
+        let y = startY;
+        y < screenHeight;
+        y += gridSize
+    ) {
+
+        ctx.beginPath();
+
+        ctx.moveTo(0, y);
+        ctx.lineTo(screenWidth, y);
+
+        ctx.stroke();
+    }
+
+    /* Trees */
+
+    trees.forEach(tree => {
+
+        const x = tree.x - camera.x;
+        const y = tree.y - camera.y;
+
+        /* trunk */
+
+        ctx.fillStyle = "#6b4423";
+
+        ctx.fillRect(
+            x - 9,
+            y + 15,
+            18,
+            35
+        );
+
+        /* leaves */
+
+        ctx.fillStyle = "#14532d";
+
+        ctx.beginPath();
+        ctx.arc(
+            x,
+            y,
+            38,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fill();
+
+        ctx.fillStyle = "#166534";
+
+        ctx.beginPath();
+        ctx.arc(
+            x - 18,
+            y + 5,
+            25,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(
+            x + 18,
+            y + 5,
+            25,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fill();
+    });
+
+    /* Town */
+
+    const townX = WORLD_WIDTH / 2;
+    const townY = WORLD_HEIGHT / 2;
+
+    ctx.fillStyle = "#d6b56d";
+
+    ctx.fillRect(
+        townX - 230 - camera.x,
+        townY - 170 - camera.y,
+        460,
+        340
+    );
+
+    ctx.strokeStyle = "#9a7738";
+    ctx.lineWidth = 5;
+
+    ctx.strokeRect(
+        townX - 230 - camera.x,
+        townY - 170 - camera.y,
+        460,
+        340
+    );
+
+    /* NPC */
+
+    drawNPC();
+
+    /* Monster */
+
+    drawMonster();
+
+    /* Portal */
+
+    const portalX = WORLD_WIDTH / 2;
+    const portalY = WORLD_HEIGHT / 2 + 250;
+
+    ctx.fillStyle = "#2563eb";
+
+    ctx.beginPath();
+
+    ctx.arc(
+        portalX - camera.x,
+        portalY - camera.y,
+        45,
+        0,
+        Math.PI * 2
+    );
+
+    ctx.fill();
+
+    ctx.fillStyle = "white";
+
+    ctx.font = "bold 15px Arial";
+    ctx.textAlign = "center";
+
+    ctx.fillText(
+        "PORTAL",
+        portalX - camera.x,
+        portalY - camera.y + 5
+    );
+}
+
+/* =========================
+   DRAW NPC
+========================= */
+
+function drawNPC() {
+
+    const x = npc.x - camera.x;
+    const y = npc.y - camera.y;
+
+    /* body */
+
+    ctx.fillStyle = "#7c3aed";
+
+    ctx.fillRect(
+        x - 18,
+        y,
+        36,
+        48
+    );
+
+    /* head */
+
+    ctx.fillStyle = "#f1c27d";
+
+    ctx.beginPath();
+
+    ctx.arc(
+        x,
+        y - 18,
+        18,
+        0,
+        Math.PI * 2
+    );
+
+    ctx.fill();
+
+    /* name */
+
+    ctx.fillStyle = "white";
+
+    ctx.font = "bold 14px Arial";
+    ctx.textAlign = "center";
+
+    ctx.fillText(
+        "NPC",
+        x,
+        y - 48
+    );
+}
+
+/* =========================
+   DRAW MONSTER
+========================= */
+
+function drawMonster() {
+
+    const x = monster.x - camera.x;
+    const y = monster.y - camera.y;
+
+    ctx.fillStyle = "#7f1d1d";
+
+    ctx.beginPath();
+
+    ctx.arc(
+        x,
+        y,
+        30,
+        0,
+        Math.PI * 2
+    );
+
+    ctx.fill();
+
+    /* eyes */
+
+    ctx.fillStyle = "#fef08a";
+
+    ctx.beginPath();
+
+    ctx.arc(x - 10, y - 5, 5, 0, Math.PI * 2);
+    ctx.arc(x + 10, y - 5, 5, 0, Math.PI * 2);
+
+    ctx.fill();
+
+    /* HP bar */
+
+    ctx.fillStyle = "#111827";
+
+    ctx.fillRect(
+        x - 35,
+        y - 48,
+        70,
+        7
+    );
+
+    ctx.fillStyle = "#ef4444";
+
+    ctx.fillRect(
+        x - 35,
+        y - 48,
+        70 * (monster.hp / monster.maxHp),
+        7
+    );
+
+    ctx.fillStyle = "white";
+
+    ctx.font = "bold 13px Arial";
+    ctx.textAlign = "center";
+
+    ctx.fillText(
+        "Shadow Beast",
+        x,
+        y + 50
+    );
+}
+
+/* =========================
+   DRAW PLAYER
+========================= */
+
+function drawPlayer() {
+
+    const x = player.x - camera.x;
+    const y = player.y - camera.y;
+
+    /* Shadow */
+
+    ctx.fillStyle = "rgba(0,0,0,.25)";
+
+    ctx.beginPath();
+
+    ctx.ellipse(
+        x,
+        y + 28,
+        25,
+        9,
+        0,
+        0,
+        Math.PI * 2
+    );
+
+    ctx.fill();
+
+    /* Body */
+
+    ctx.fillStyle = "#2563eb";
+
+    ctx.fillRect(
+        x - 20,
+        y - 5,
+        40,
+        50
+    );
+
+    /* Head */
+
+    ctx.fillStyle = "#f1c27d";
+
+    ctx.beginPath();
+
+    ctx.arc(
+        x,
+        y - 25,
+        20,
+        0,
+        Math.PI * 2
+    );
+
+    ctx.fill();
+
+    /* Hair */
+
+    ctx.fillStyle = "#1f2937";
+
+    ctx.beginPath();
+
+    ctx.arc(
+        x,
+        y - 33,
+        20,
+        Math.PI,
+        Math.PI * 2
+    );
+
+    ctx.fill();
+
+    /* Sword */
+
+    ctx.strokeStyle = "#e5e7eb";
+    ctx.lineWidth = 6;
+
+    ctx.beginPath();
+
+    ctx.moveTo(x + 18, y + 10);
+    ctx.lineTo(x + 42, y - 18);
+
+    ctx.stroke();
+
+    ctx.strokeStyle = "#92400e";
+    ctx.lineWidth = 5;
+
+    ctx.beginPath();
+
+    ctx.moveTo(x + 15, y + 14);
+    ctx.lineTo(x + 25, y + 24);
+
+    ctx.stroke();
+
+    /* Player name */
+
+    ctx.fillStyle = "white";
+
+    ctx.font = "bold 14px Arial";
+    ctx.textAlign = "center";
+
+    ctx.fillText(
+        "You",
+        x,
+        y - 55
+    );
+}
+
+/* =========================
+   GAME LOOP
+========================= */
+
+function gameLoop() {
+
+    updatePlayer();
+    updateCamera();
+
+    drawWorld();
+    drawPlayer();
+
+    requestAnimationFrame(gameLoop);
+}
+
+/* =========================
+   START GAME
+========================= */
+
+document.getElementById("startButton")
+.addEventListener("click", () => {
+
+    gameStarted = true;
+
+    document.getElementById("startScreen").style.display = "none";
+
+    gameLoop();
+});
+
+/* =========================
+   INITIAL SCREEN
+========================= */
+
+ctx.fillStyle = "#0f172a";
+
+ctx.fillRect(
+    0,
+    0,
+    screenWidth,
+    screenHeight
+);
+</script>
+
+</body>
+</html>
+```
