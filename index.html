@@ -3,9 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AQW / RedAQ Style 2D Game</title>
-
-  <!-- Phaser 3 CDN (Game Engine) -->
+  <title>AQW Replica Game</title>
   <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
 
   <style>
@@ -14,259 +12,342 @@
       margin: 0;
       padding: 0;
       user-select: none;
+      font-family: Arial, sans-serif;
     }
 
     body {
-      background-color: #111;
+      background-color: #050505;
       color: #fff;
-      font-family: Arial, sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
     }
 
-    /* Container para sa buong laro */
-    #game-container {
+    #game-wrapper {
       position: relative;
       width: 960px;
-      height: 540px;
-      border: 3px solid #444;
-      box-shadow: 0 0 20px rgba(0,0,0,0.8);
+      height: 550px;
+      border: 2px solid #333;
       overflow: hidden;
       background-color: #000;
     }
 
-    /* Canvas ng Laro */
-    #phaser-game {
-      width: 100%;
-      height: 100%;
-    }
-
-    /* --- HUD OVERLAY (UI SA TAAS AT IBABA) --- */
-
-    /* Player Profile HUD (Upper Left) */
-    .player-hud {
+    /* --- TOP HUD --- */
+    .player-profile {
       position: absolute;
-      top: 15px;
-      left: 15px;
+      top: 10px;
+      left: 10px;
       display: flex;
-      align-items: center;
-      gap: 10px;
-      background: rgba(0, 0, 0, 0.6);
-      padding: 8px 12px;
-      border-radius: 8px;
-      border: 1px solid #555;
+      align-items: flex-start;
       z-index: 10;
     }
 
-    .avatar {
-      width: 45px;
-      height: 45px;
-      background-color: #ff9900;
+    .portrait-frame {
+      position: relative;
+      width: 60px;
+      height: 60px;
+      background: #111;
+      border: 2px solid #555;
       border-radius: 50%;
-      border: 2px solid #fff;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .level-badge {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      background: #000;
+      color: #fff;
+      border: 1px solid #777;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      font-size: 10px;
       display: flex;
       justify-content: center;
       align-items: center;
       font-weight: bold;
     }
 
-    .bars {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      width: 140px;
+    .stats-container {
+      margin-left: 8px;
     }
 
-    .bar-label {
-      font-size: 11px;
+    .gold-display {
+      color: #f1c40f;
+      font-size: 12px;
+      font-weight: bold;
       margin-bottom: 2px;
     }
 
-    .bar-bg {
-      width: 100%;
-      height: 10px;
-      background: #333;
-      border-radius: 4px;
-      overflow: hidden;
-    }
-
-    .hp-fill { width: 100%; height: 100%; background: #e74c3c; }
-    .mp-fill { width: 80%; height: 100%; background: #3498db; }
-
-    /* Action Bar (Bottom Center) */
-    .action-bar {
-      position: absolute;
-      bottom: 15px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      gap: 6px;
-      background: rgba(0, 0, 0, 0.7);
-      padding: 8px 12px;
-      border-radius: 8px;
-      border: 1px solid #555;
-      z-index: 10;
-    }
-
-    .skill-btn {
-      width: 42px;
-      height: 42px;
-      background: #222;
-      border: 1px solid #777;
-      color: #fff;
-      border-radius: 4px;
-      cursor: pointer;
-      font-weight: bold;
-      transition: background 0.2s;
-    }
-
-    .skill-btn:hover {
-      background: #444;
-      border-color: #ffb700;
-    }
-
-    /* Chat Log Overlay (Bottom Left) */
-    .chat-box {
-      position: absolute;
-      bottom: 15px;
-      left: 15px;
-      width: 220px;
-      background: rgba(0, 0, 0, 0.6);
-      padding: 8px;
-      border-radius: 6px;
-      font-size: 12px;
-      z-index: 10;
-    }
-
-    .chat-messages {
-      height: 60px;
-      overflow-y: auto;
-      margin-bottom: 5px;
+    .username {
+      font-size: 11px;
       color: #ccc;
+      font-weight: bold;
+      margin-bottom: 2px;
     }
 
-    .chat-input {
-      width: 100%;
-      padding: 4px;
+    .bar-box {
+      width: 140px;
+      height: 12px;
       background: #222;
       border: 1px solid #444;
+      margin-bottom: 2px;
+      position: relative;
+    }
+
+    .hp-bar { width: 100%; height: 100%; background: #c0392b; }
+    .mp-bar { width: 80%; height: 100%; background: #2980b9; }
+
+    .bar-text {
+      position: absolute;
+      width: 100%;
+      text-align: center;
+      font-size: 9px;
+      top: 0;
+      line-height: 12px;
       color: #fff;
+      font-weight: bold;
+    }
+
+    .class-info {
+      font-size: 10px;
+      color: #888;
+    }
+
+    /* Target Box (Lucy) */
+    .target-hud {
+      position: absolute;
+      top: 80px;
+      left: 10px;
+      background: rgba(0, 0, 0, 0.7);
+      border: 1px solid #444;
+      padding: 4px 8px;
+      font-size: 11px;
+      border-radius: 4px;
+      z-index: 10;
+    }
+
+    /* --- BOTTOM INTERFACE BAR (AQW STYLE) --- */
+    .bottom-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 45px;
+      background: #111;
+      border-top: 2px solid #333;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 10px;
+      z-index: 10;
+    }
+
+    .chat-controls {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      width: 300px;
+    }
+
+    .chat-input-field {
+      width: 200px;
+      background: #000;
+      border: 1px solid #444;
+      color: #fff;
+      padding: 3px 6px;
+      font-size: 11px;
+    }
+
+    .send-btn {
+      background: #d35400;
+      border: 1px solid #e67e22;
+      color: #fff;
+      font-size: 10px;
+      padding: 3px 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .skills-container {
+      display: flex;
+      gap: 4px;
+    }
+
+    .skill-slot {
+      width: 32px;
+      height: 32px;
+      background: #222;
+      border: 1px solid #555;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 11px;
+      font-weight: bold;
+      color: #aaa;
+      position: relative;
+    }
+
+    .menu-icons {
+      display: flex;
+      gap: 8px;
+    }
+
+    .icon-btn {
+      width: 24px;
+      height: 24px;
+      background: #333;
+      border: 1px solid #666;
       border-radius: 3px;
+      cursor: pointer;
+    }
+
+    .room-info {
+      position: absolute;
+      bottom: 50px;
+      right: 10px;
+      font-size: 11px;
+      color: #fff;
+      text-shadow: 1px 1px 2px #000;
+      z-index: 10;
     }
   </style>
 </head>
 <body>
 
-  <div id="game-container">
-    <!-- Phaser Game Canvas -->
-    <div id="phaser-game"></div>
-
-    <!-- Player HUD (Upper Left) -->
-    <div class="player-hud">
-      <div class="avatar">69</div>
-      <div class="bars">
-        <div class="bar-label">MR JELLYBEAN</div>
-        <div class="bar-bg"><div class="hp-fill"></div></div>
-        <div class="bar-bg"><div class="mp-fill"></div></div>
-      </div>
+<div id="game-wrapper">
+  <!-- Top Left HUD -->
+  <div class="player-profile">
+    <div class="portrait-frame">
+      <span style="font-size:20px;">🧔</span>
+      <div class="level-badge">69</div>
     </div>
-
-    <!-- Chat Box (Bottom Left) -->
-    <div class="chat-box">
-      <div class="chat-messages" id="chat-log">
-        <div><span style="color:#f1c40f;">System:</span> Welcome to the game!</div>
+    <div class="stats-container">
+      <div class="gold-display">🟡 174457</div>
+      <div class="username">MR JELLYBEAN</div>
+      <div class="bar-box">
+        <div class="hp-bar"></div>
+        <div class="bar-text">12603</div>
       </div>
-      <input type="text" class="chat-input" placeholder="Press Enter to chat..." id="chat-input">
-    </div>
-
-    <!-- Skill Bar (Bottom Center) -->
-    <div class="action-bar">
-      <button class="skill-btn" onclick="useSkill(1)">1</button>
-      <button class="skill-btn" onclick="useSkill(2)">2</button>
-      <button class="skill-btn" onclick="useSkill(3)">3</button>
-      <button class="skill-btn" onclick="useSkill(4)">4</button>
-      <button class="skill-btn" onclick="useSkill(5)">5</button>
+      <div class="bar-box">
+        <div class="mp-bar"></div>
+        <div class="bar-text">2251</div>
+      </div>
+      <div class="class-info">Alpha Pirate, Rank 10</div>
     </div>
   </div>
 
-  <script>
-    // --- PHASER 3 GAME ENGINE CONFIGURATION ---
-    const config = {
-      type: Phaser.AUTO,
-      width: 960,
-      height: 540,
-      parent: 'phaser-game',
-      physics: {
-        default: 'arcade',
-        arcade: { debug: false }
-      },
-      scene: {
-        preload: preload,
-        create: create,
-        update: update
-      }
-    };
+  <!-- Target HUD -->
+  <div class="target-hud">
+    <strong>Lucy</strong><br>
+    <span style="color:#888;">Out of range</span>
+  </div>
 
-    const game = new Phaser.Game(config);
-    let player;
-    let targetX, targetY;
-    let isMoving = false;
+  <!-- Room Info -->
+  <div class="room-info">
+    1 player in <span style="color:#f1c40f;">fireforest-92069</span>
+  </div>
 
-    function preload() {
-      // Dito mo i-load ang iyong background at character sprites halimbawa:
-      // this.load.image('forest', 'assets/forest_bg.png');
-    }
+  <!-- Phaser Canvas -->
+  <div id="phaser-container"></div>
 
-    function create() {
-      // Kulay muna ng Lupa (Background) habang wala pang image
-      this.add.rectangle(480, 270, 960, 540, 0x2e7d32); 
+  <!-- Bottom Bar -->
+  <div class="bottom-bar">
+    <div class="chat-controls">
+      <input type="text" class="chat-input-field" placeholder="">
+      <button class="send-btn">SEND</button>
+    </div>
 
-      // Daanan (Path)
-      const path = this.add.graphics();
-      path.fillStyle(0x8d6e63, 1);
-      path.beginPath();
-      path.moveTo(0, 320);
-      path.lineTo(960, 280);
-      path.lineTo(960, 420);
-      path.lineTo(0, 480);
-      path.closePath();
-      path.fillPath();
+    <div class="skills-container">
+      <div class="skill-slot">1</div>
+      <div class="skill-slot">2</div>
+      <div class="skill-slot">3</div>
+      <div class="skill-slot">4</div>
+      <div class="skill-slot">5</div>
+      <div class="skill-slot">6</div>
+    </div>
 
-      // Placeholder Player (Asul na bilog habang wala pang sprite)
-      player = this.add.circle(200, 380, 20, 0x3498db);
-      this.physics.add.existing(player);
+    <div class="menu-icons">
+      <div class="icon-btn" title="Inventory">🎒</div>
+      <div class="icon-btn" title="Map">🗺️</div>
+      <div class="icon-btn" title="House">🏠</div>
+      <div class="icon-btn" title="Settings">⚙️</div>
+    </div>
+  </div>
+</div>
 
-      targetX = player.x;
-      targetY = player.y;
+<script>
+  const config = {
+    type: Phaser.AUTO,
+    width: 960,
+    height: 550,
+    parent: 'phaser-container',
+    physics: { default: 'arcade' },
+    scene: { preload: preload, create: create, update: update }
+  };
 
-      // Click-to-move feature katulad ng AQW
-      this.input.on('pointerdown', function (pointer) {
+  const game = new Phaser.Game(config);
+  let player, targetX, targetY, isMoving = false;
+
+  function preload() {
+    // PAALALA: Palitan ang mga URLs na ito kapag na-upload mo na ang iyong mga larawan/sprites sa GitHub Assets folder.
+    this.load.image('bg_forest', 'https://labs.phaser.io/assets/skies/space3.png'); 
+  }
+
+  function create() {
+    // 1. Background image (Gubat)
+    this.add.rectangle(480, 275, 960, 550, 0x1b4332); 
+
+    // 2. Kalsada o Daanan (Path)
+    const path = this.add.graphics();
+    path.fillStyle(0x7f5539, 1);
+    path.beginPath();
+    path.moveTo(480, 200);
+    path.lineTo(520, 200);
+    path.lineTo(750, 500);
+    path.lineTo(250, 500);
+    path.closePath();
+    path.fillPath();
+
+    // 3. Yellow Arrow sa dulo ng kalsada para mag-move sa susunod na room
+    const arrow = this.add.triangle(500, 210, 0, 15, 10, 0, 20, 15, 0xf1c40f);
+
+    // 4. Player Object (MR JELLYBEAN)
+    player = this.add.container(550, 400);
+    const body = this.add.rectangle(0, 0, 25, 50, 0x333333);
+    const nameTag = this.add.text(-35, -45, 'MR JELLYBEAN\n< PAIN >', { font: '10px Arial', fill: '#00ffff', align: 'center' });
+    player.add([body, nameTag]);
+
+    this.physics.add.existing(player);
+
+    targetX = player.x;
+    targetY = player.y;
+
+    // Click-to-Move Handler
+    this.input.on('pointerdown', function (pointer) {
+      if (pointer.y < 505) { // Huwag maglakad kapag sa bottom UI na-click
         targetX = pointer.x;
         targetY = pointer.y;
-        this.physics.moveTo(player, targetX, targetY, 200);
+        this.physics.moveTo(player, targetX, targetY, 180);
         isMoving = true;
-      }, this);
-    }
+      }
+    }, this);
+  }
 
-    function update() {
-      // Pagtigil sa character kapag nakatapat na sa diniklikang spot
-      if (isMoving) {
-        const distance = Phaser.Math.Distance.Between(player.x, player.y, targetX, targetY);
-        if (distance < 5) {
-          player.body.reset(targetX, targetY);
-          isMoving = false;
-        }
+  function update() {
+    if (isMoving) {
+      const distance = Phaser.Math.Distance.Between(player.x, player.y, targetX, targetY);
+      if (distance < 5) {
+        player.body.reset(targetX, targetY);
+        isMoving = false;
       }
     }
-
-    // --- UI EVENT FUNCTIONS ---
-    function useSkill(num) {
-      const chatLog = document.getElementById('chat-log');
-      chatLog.innerHTML += `<div>Ginamit ang Skill ${num}!</div>`;
-      chatLog.scrollTop = chatLog.scrollHeight;
-    }
-  </script>
+  }
+</script>
 </body>
 </html>
