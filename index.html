@@ -3,7 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AQW Replica Game</title>
+  <title>AQW / RedAQ Style 2D Game</title>
+  
+  <!-- Phaser 3 CDN -->
   <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
 
   <style>
@@ -12,155 +14,182 @@
       margin: 0;
       padding: 0;
       user-select: none;
-      font-family: Arial, sans-serif;
+      font-family: 'Arial Narrow', Arial, sans-serif;
     }
 
     body {
-      background-color: #050505;
+      background-color: #000;
       color: #fff;
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
+      overflow: hidden;
     }
 
+    /* Container ng Laro */
     #game-wrapper {
       position: relative;
       width: 960px;
       height: 550px;
-      border: 2px solid #333;
+      border: 2px solid #222;
+      box-shadow: 0 0 15px rgba(0,0,0,0.9);
       overflow: hidden;
       background-color: #000;
     }
 
-    /* --- TOP HUD --- */
-    .player-profile {
+    /* Canvas Element */
+    #phaser-container {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* --- TOP LEFT PLAYER HUD --- */
+    .player-hud {
       position: absolute;
-      top: 10px;
-      left: 10px;
+      top: 8px;
+      left: 8px;
       display: flex;
       align-items: flex-start;
       z-index: 10;
     }
 
-    .portrait-frame {
+    .portrait-box {
       position: relative;
-      width: 60px;
-      height: 60px;
+      width: 58px;
+      height: 58px;
       background: #111;
-      border: 2px solid #555;
+      border: 2px solid #444;
       border-radius: 50%;
       overflow: hidden;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+    }
+
+    .portrait-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
 
     .level-badge {
       position: absolute;
-      bottom: 0;
-      left: 0;
+      bottom: -2px;
+      left: -2px;
       background: #000;
       color: #fff;
-      border: 1px solid #777;
+      border: 1px solid #ffcc00;
       border-radius: 50%;
-      width: 20px;
-      height: 20px;
-      font-size: 10px;
+      width: 22px;
+      height: 22px;
+      font-size: 11px;
       display: flex;
       justify-content: center;
       align-items: center;
       font-weight: bold;
     }
 
-    .stats-container {
-      margin-left: 8px;
+    .stats-box {
+      margin-left: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
     }
 
-    .gold-display {
-      color: #f1c40f;
-      font-size: 12px;
-      font-weight: bold;
-      margin-bottom: 2px;
-    }
-
-    .username {
+    .gold-text {
+      color: #f39c12;
       font-size: 11px;
-      color: #ccc;
       font-weight: bold;
-      margin-bottom: 2px;
+      text-shadow: 1px 1px 1px #000;
     }
 
-    .bar-box {
-      width: 140px;
-      height: 12px;
-      background: #222;
-      border: 1px solid #444;
-      margin-bottom: 2px;
+    .username-text {
+      font-size: 11px;
+      color: #eee;
+      font-weight: bold;
+      text-shadow: 1px 1px 2px #000;
+    }
+
+    .bar-wrapper {
+      width: 130px;
+      height: 11px;
+      background: #111;
+      border: 1px solid #333;
       position: relative;
+      border-radius: 2px;
+      overflow: hidden;
     }
 
-    .hp-bar { width: 100%; height: 100%; background: #c0392b; }
-    .mp-bar { width: 80%; height: 100%; background: #2980b9; }
+    .hp-fill { width: 100%; height: 100%; background: linear-gradient(to bottom, #e74c3c, #922b21); }
+    .mp-fill { width: 80%; height: 100%; background: linear-gradient(to bottom, #3498db, #1f618d); }
 
-    .bar-text {
+    .bar-number {
       position: absolute;
+      top: 0;
       width: 100%;
       text-align: center;
-      font-size: 9px;
-      top: 0;
-      line-height: 12px;
+      font-size: 8px;
+      line-height: 11px;
       color: #fff;
       font-weight: bold;
+      text-shadow: 1px 1px 1px #000;
     }
 
-    .class-info {
+    .class-text {
       font-size: 10px;
-      color: #888;
+      color: #aaa;
+      text-shadow: 1px 1px 1px #000;
     }
 
     /* Target Box (Lucy) */
     .target-hud {
       position: absolute;
-      top: 80px;
-      left: 10px;
-      background: rgba(0, 0, 0, 0.7);
+      top: 85px;
+      left: 8px;
+      background: rgba(0, 0, 0, 0.75);
       border: 1px solid #444;
       padding: 4px 8px;
-      font-size: 11px;
       border-radius: 4px;
+      font-size: 11px;
       z-index: 10;
+      min-width: 110px;
     }
 
     /* --- BOTTOM INTERFACE BAR (AQW STYLE) --- */
-    .bottom-bar {
+    .bottom-ui {
       position: absolute;
       bottom: 0;
       left: 0;
       width: 100%;
-      height: 45px;
+      height: 40px;
       background: #111;
-      border-top: 2px solid #333;
+      border-top: 1px solid #333;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 10px;
+      padding: 0 8px;
       z-index: 10;
     }
 
-    .chat-controls {
+    .chat-section {
       display: flex;
       align-items: center;
-      gap: 5px;
-      width: 300px;
+      gap: 4px;
     }
 
-    .chat-input-field {
-      width: 200px;
-      background: #000;
+    .chat-btn {
+      background: #222;
       border: 1px solid #444;
+      color: #ccc;
+      padding: 2px 6px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    .chat-input {
+      width: 180px;
+      background: #000;
+      border: 1px solid #333;
       color: #fff;
-      padding: 3px 6px;
+      padding: 2px 6px;
       font-size: 11px;
     }
 
@@ -169,47 +198,56 @@
       border: 1px solid #e67e22;
       color: #fff;
       font-size: 10px;
-      padding: 3px 8px;
-      cursor: pointer;
+      padding: 2px 8px;
       font-weight: bold;
+      cursor: pointer;
     }
 
-    .skills-container {
+    .skill-section {
       display: flex;
-      gap: 4px;
+      gap: 3px;
     }
 
-    .skill-slot {
-      width: 32px;
-      height: 32px;
+    .skill-box {
+      width: 28px;
+      height: 28px;
       background: #222;
       border: 1px solid #555;
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: bold;
-      color: #aaa;
-      position: relative;
-    }
-
-    .menu-icons {
-      display: flex;
-      gap: 8px;
-    }
-
-    .icon-btn {
-      width: 24px;
-      height: 24px;
-      background: #333;
-      border: 1px solid #666;
-      border-radius: 3px;
+      color: #fff;
+      border-radius: 2px;
       cursor: pointer;
     }
 
-    .room-info {
+    .skill-box:hover {
+      border-color: #f1c40f;
+    }
+
+    .menu-section {
+      display: flex;
+      gap: 5px;
+    }
+
+    .menu-icon {
+      width: 22px;
+      height: 22px;
+      background: #222;
+      border: 1px solid #444;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 11px;
+      cursor: pointer;
+      border-radius: 3px;
+    }
+
+    .room-tag {
       position: absolute;
-      bottom: 50px;
+      bottom: 45px;
       right: 10px;
       font-size: 11px;
       color: #fff;
@@ -221,64 +259,70 @@
 <body>
 
 <div id="game-wrapper">
-  <!-- Top Left HUD -->
-  <div class="player-profile">
-    <div class="portrait-frame">
-      <span style="font-size:20px;">🧔</span>
+
+  <!-- Player HUD (Upper Left) -->
+  <div class="player-hud">
+    <div class="portrait-box">
+      <img src="https://i.imgur.com/rN39S4M.png" class="portrait-img" alt="Avatar">
       <div class="level-badge">69</div>
     </div>
-    <div class="stats-container">
-      <div class="gold-display">🟡 174457</div>
-      <div class="username">MR JELLYBEAN</div>
-      <div class="bar-box">
-        <div class="hp-bar"></div>
-        <div class="bar-text">12603</div>
+    <div class="stats-box">
+      <div class="gold-text">🟡 174457</div>
+      <div class="username-text">MR JELLYBEAN</div>
+      <div class="bar-wrapper">
+        <div class="hp-fill"></div>
+        <div class="bar-number">12603</div>
       </div>
-      <div class="bar-box">
-        <div class="mp-bar"></div>
-        <div class="bar-text">2251</div>
+      <div class="bar-wrapper">
+        <div class="mp-fill"></div>
+        <div class="bar-number">2251</div>
       </div>
-      <div class="class-info">Alpha Pirate, Rank 10</div>
+      <div class="class-text">Alpha Pirate, Rank 10</div>
     </div>
   </div>
 
-  <!-- Target HUD -->
+  <!-- Target Box -->
   <div class="target-hud">
     <strong>Lucy</strong><br>
-    <span style="color:#888;">Out of range</span>
+    <span style="color:#aaa; font-size:10px;">Out of range</span>
   </div>
 
-  <!-- Room Info -->
-  <div class="room-info">
+  <!-- Room Indicator -->
+  <div class="room-tag">
     1 player in <span style="color:#f1c40f;">fireforest-92069</span>
   </div>
 
-  <!-- Phaser Canvas -->
+  <!-- Game Canvas -->
   <div id="phaser-container"></div>
 
-  <!-- Bottom Bar -->
-  <div class="bottom-bar">
-    <div class="chat-controls">
-      <input type="text" class="chat-input-field" placeholder="">
+  <!-- Bottom Control Bar -->
+  <div class="bottom-ui">
+    <div class="chat-section">
+      <button class="chat-btn">▲</button>
+      <button class="chat-btn">💬</button>
+      <input type="text" class="chat-input" placeholder="">
       <button class="send-btn">SEND</button>
     </div>
 
-    <div class="skills-container">
-      <div class="skill-slot">1</div>
-      <div class="skill-slot">2</div>
-      <div class="skill-slot">3</div>
-      <div class="skill-slot">4</div>
-      <div class="skill-slot">5</div>
-      <div class="skill-slot">6</div>
+    <div class="skill-section">
+      <div class="skill-box" style="background:#555;">⚔️<span style="position:absolute; bottom:0; right:1px; font-size:8px;">1</span></div>
+      <div class="skill-box" style="background:#1e8449;">🍃<span style="position:absolute; bottom:0; right:1px; font-size:8px;">2</span></div>
+      <div class="skill-box" style="background:#922b21;">🚫<span style="position:absolute; bottom:0; right:1px; font-size:8px;">3</span></div>
+      <div class="skill-box" style="background:#7d6608;">🗡️<span style="position:absolute; bottom:0; right:1px; font-size:8px;">4</span></div>
+      <div class="skill-box" style="background:#2e86c1;">✨<span style="position:absolute; bottom:0; right:1px; font-size:8px;">5</span></div>
+      <div class="skill-box" style="background:#333;">🔒<span style="position:absolute; bottom:0; right:1px; font-size:8px;">6</span></div>
     </div>
 
-    <div class="menu-icons">
-      <div class="icon-btn" title="Inventory">🎒</div>
-      <div class="icon-btn" title="Map">🗺️</div>
-      <div class="icon-btn" title="House">🏠</div>
-      <div class="icon-btn" title="Settings">⚙️</div>
+    <div class="menu-section">
+      <div class="menu-icon" title="Treasure">🎁</div>
+      <div class="menu-icon" title="Book">📜</div>
+      <div class="menu-icon" title="Map">🗺️</div>
+      <div class="menu-icon" title="House">🏠</div>
+      <div class="menu-icon" title="Settings">⚙️</div>
+      <div class="menu-icon" title="Bag">🎒</div>
     </div>
   </div>
+
 </div>
 
 <script>
@@ -295,42 +339,64 @@
   let player, targetX, targetY, isMoving = false;
 
   function preload() {
-    // PAALALA: Palitan ang mga URLs na ito kapag na-upload mo na ang iyong mga larawan/sprites sa GitHub Assets folder.
-    this.load.image('bg_forest', 'https://labs.phaser.io/assets/skies/space3.png'); 
+    // Pag-load ng totoong Background at Sprites (Gubat, Player, NPC, Quest Icon)
+    this.load.image('fireforest', 'https://images.wikend.com/aqw/maps/fireforest.png'); // AQW Forest Background
+    this.load.image('player_sprite', 'https://i.imgur.com/8Q9Z5b3.png'); 
+    this.load.image('npc_lucy', 'https://i.imgur.com/W2O2VdF.png'); 
+    this.load.image('quest_icon', 'https://i.imgur.com/1mXkL3c.png');
   }
 
   function create() {
-    // 1. Background image (Gubat)
-    this.add.rectangle(480, 275, 960, 550, 0x1b4332); 
+    // 1. Background ng Fireforest (Gubat)
+    const bg = this.add.rectangle(480, 255, 960, 510, 0x1d3c12); // Base green color
 
-    // 2. Kalsada o Daanan (Path)
+    // Visual Path (Daanan sa gitna)
     const path = this.add.graphics();
-    path.fillStyle(0x7f5539, 1);
+    path.fillStyle(0x7c5a38, 1);
     path.beginPath();
-    path.moveTo(480, 200);
-    path.lineTo(520, 200);
-    path.lineTo(750, 500);
-    path.lineTo(250, 500);
+    path.moveTo(460, 200);
+    path.lineTo(500, 200);
+    path.lineTo(780, 510);
+    path.lineTo(260, 510);
     path.closePath();
     path.fillPath();
 
-    // 3. Yellow Arrow sa dulo ng kalsada para mag-move sa susunod na room
-    const arrow = this.add.triangle(500, 210, 0, 15, 10, 0, 20, 15, 0xf1c40f);
+    // Dilaw na Arrow sa gitna ng daan (pauwi/palipat sa susunod na room)
+    const nextRoomArrow = this.add.triangle(480, 210, 0, 12, 8, 0, 16, 12, 0xf1c40f);
 
-    // 4. Player Object (MR JELLYBEAN)
-    player = this.add.container(550, 400);
-    const body = this.add.rectangle(0, 0, 25, 50, 0x333333);
-    const nameTag = this.add.text(-35, -45, 'MR JELLYBEAN\n< PAIN >', { font: '10px Arial', fill: '#00ffff', align: 'center' });
-    player.add([body, nameTag]);
+    // 2. NPC (Lucy) sa kaliwa
+    const npc = this.add.rectangle(150, 320, 40, 90, 0x222222);
+    const npcText = this.add.text(130, 375, 'Lucy', { font: '11px Arial', fill: '#ffffff' });
+    
+    // Quest Mark (!) sa ibabaw ng NPC
+    const questExclamation = this.add.circle(150, 240, 12, 0xc0392b);
+    const questMarkText = this.add.text(146, 232, '!', { font: 'bold 16px Arial', fill: '#ffffff' });
 
+    // 3. Player Sprite (MR JELLYBEAN)
+    player = this.add.container(560, 380);
+    
+    const charBody = this.add.rectangle(0, 0, 30, 60, 0x111111);
+    const charCape = this.add.rectangle(10, 5, 20, 50, 0x333333);
+    const charName = this.add.text(-40, -50, 'MR JELLYBEAN\n< PAIN >', { 
+      font: '10px Arial', 
+      fill: '#00ffff', 
+      align: 'center',
+      stroke: '#000000',
+      strokeThickness: 2
+    });
+
+    // Rain Cloud Pet sa tabi ng character
+    const petCloud = this.add.text(-30, -10, '🌧️', { font: '20px Arial' });
+
+    player.add([charCape, charBody, charName, petCloud]);
     this.physics.add.existing(player);
 
     targetX = player.x;
     targetY = player.y;
 
-    // Click-to-Move Handler
+    // Click-to-Move Logic (AQW style)
     this.input.on('pointerdown', function (pointer) {
-      if (pointer.y < 505) { // Huwag maglakad kapag sa bottom UI na-click
+      if (pointer.y < 510) { // Siguraduhing hindi naglalakad kapag binubuksan ang UI sa ibaba
         targetX = pointer.x;
         targetY = pointer.y;
         this.physics.moveTo(player, targetX, targetY, 180);
@@ -340,6 +406,7 @@
   }
 
   function update() {
+    // Pagtigil ng player kapag nakarating sa cliniclick na lugar
     if (isMoving) {
       const distance = Phaser.Math.Distance.Between(player.x, player.y, targetX, targetY);
       if (distance < 5) {
@@ -349,5 +416,6 @@
     }
   }
 </script>
+
 </body>
 </html>
