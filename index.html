@@ -1,369 +1,997 @@
-from pathlib import Path
-
-html = r'''<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Forest Realm MMORPG</title>
+
+<title>My Fantasy MMORPG</title>
+
 <style>
-*{box-sizing:border-box}
-html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#050505;font-family:Arial,Helvetica,sans-serif}
-#game{
-  position:relative;width:100vw;height:100vh;min-width:900px;min-height:540px;
-  overflow:hidden;background:#172217;color:white;user-select:none
+* {
+    box-sizing: border-box;
 }
-canvas{position:absolute;inset:0;width:100%;height:100%}
 
-/* AQW-like status area */
-#status{
- position:absolute;left:12px;top:8px;width:250px;height:102px;z-index:5;
- display:flex;gap:8px
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #000;
+    font-family: Arial, sans-serif;
 }
-.portrait{
- width:76px;height:82px;border:2px solid #111;border-radius:5px;
- background:linear-gradient(#777,#222);overflow:hidden;position:relative;
- box-shadow:0 2px 6px #000
-}
-.portrait .hair{
- position:absolute;left:15px;top:8px;width:47px;height:68px;
- background:#e9e3d1;border-radius:55% 48% 45% 52%;
- transform:rotate(-5deg);box-shadow:9px -5px 0 #f2eddd
-}
-.portrait .face{
- position:absolute;left:26px;top:30px;width:35px;height:39px;
- background:#b99173;border-radius:48%;z-index:2
-}
-.portrait .face:before,.portrait .face:after{
- content:"";position:absolute;top:15px;width:4px;height:4px;background:#111;border-radius:50%
-}
-.portrait .face:before{left:9px}.portrait .face:after{right:9px}
-.portrait .bang{
- position:absolute;left:12px;top:5px;width:60px;height:30px;background:#f0ebd9;
- border-radius:50%;z-index:3
-}
-.info{width:166px}
-.name{font-size:12px;font-weight:bold;height:18px;text-shadow:1px 1px #000}
-.bar{
- height:21px;border:2px solid #111;border-radius:11px;background:#171717;
- margin-bottom:2px;overflow:hidden;box-shadow:inset 0 1px 4px #000
-}
-.fill{height:100%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:bold;text-shadow:1px 1px #000}
-.hp{background:linear-gradient(#ff3d3d,#b60000)}
-.mp{background:linear-gradient(#3e91ff,#1649b7)}
-.xp{height:8px}.xp .fill{background:linear-gradient(#a550f0,#5915a3)}
-.level{font-size:10px;margin-top:3px;color:#eee;text-shadow:1px 1px #000}
 
-/* target */
-#target{
- position:absolute;left:7px;top:127px;width:143px;min-height:45px;z-index:6;
- padding:5px 8px;background:rgba(0,0,0,.79);border-radius:5px;
- border:1px solid rgba(100,100,100,.25);box-shadow:0 3px 7px #000
+#game {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background:
+        linear-gradient(rgba(20,35,15,.15), rgba(0,0,0,.2)),
+        linear-gradient(#456b28 0%, #233919 35%, #172116 100%);
 }
-#target .shield{float:right;color:#ffd800;font-size:22px}
-#target .tn{font-size:14px}.ts{font-size:13px;color:#aaa;margin-top:1px}
 
-/* bottom bar */
-#bottom{
- position:absolute;left:0;right:0;bottom:0;height:70px;z-index:10;
- background:linear-gradient(#343434,#0b0b0b 45%,#171717);
- border-top:2px solid #777;box-shadow:0 -2px 12px #000;
- display:flex;align-items:center;padding:4px 8px;gap:5px
+/* =========================
+   FOREST
+========================= */
+
+.tree {
+    position: absolute;
+    bottom: 65px;
+    width: 110px;
+    height: 470px;
+    background: linear-gradient(
+        90deg,
+        #2b241c,
+        #66513a,
+        #3a2e22
+    );
+    border-radius: 45px 45px 15px 15px;
+    box-shadow: inset 12px 0 0 rgba(0,0,0,.25);
 }
-.btn{
- position:relative;width:54px;height:60px;border:1px solid #777;
- background:linear-gradient(#555,#171717);box-shadow:inset 0 0 8px #000;
- color:#eee;cursor:pointer
+
+.tree::before {
+    content: "";
+    position: absolute;
+    width: 230px;
+    height: 170px;
+    left: -60px;
+    top: -80px;
+    border-radius: 50%;
+    background: #527a29;
+    box-shadow:
+        70px -35px 0 #638b30,
+        145px 5px 0 #456d25,
+        30px 45px 0 #3d6222;
 }
-.btn:hover{filter:brightness(1.3)}
-.btn .ico{font-size:29px;line-height:44px;text-align:center;display:block}
-.btn .num{position:absolute;left:5px;bottom:2px;font-size:11px;font-weight:bold}
-.chat{
- height:48px;display:flex;gap:6px;flex:1;min-width:220px
+
+.tree::after {
+    content: "";
+    position: absolute;
+    width: 170px;
+    height: 120px;
+    left: -30px;
+    top: -120px;
+    border-radius: 50%;
+    background: #6c9135;
 }
-.chat input{
- flex:1;background:#050505;border:1px solid #555;color:#fff;padding:0 10px;
- outline:none;font-size:13px
+
+.tree1 { left: 30px; transform: scale(1.1); }
+.tree2 { left: 250px; transform: scale(.85); }
+.tree3 { left: 450px; transform: scale(1.25); }
+.tree4 { right: 450px; transform: scale(1.15); }
+.tree5 { right: 220px; transform: scale(.9); }
+.tree6 { right: 20px; transform: scale(1.1); }
+
+/* =========================
+   DARK FOREST BACKGROUND
+========================= */
+
+.forest-dark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 48%;
+    background:
+        radial-gradient(circle at 50% 90%,
+        #111811 0%,
+        #091009 55%,
+        #050805 100%);
+    z-index: 0;
 }
-.send{width:58px;background:#e0a516;border:1px solid #9b740b;font-weight:bold}
-.right{display:flex;gap:4px}.right .btn{width:43px;height:55px}
-#online{
- position:absolute;right:10px;bottom:78px;z-index:8;font-size:13px;
- text-shadow:1px 1px 3px #000
+
+/* =========================
+   PATH
+========================= */
+
+.path {
+    position: absolute;
+    width: 52%;
+    height: 75%;
+    left: 24%;
+    bottom: 55px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #735738,
+            #a37e50,
+            #8d6b43
+        );
+
+    clip-path: polygon(
+        42% 0,
+        58% 0,
+        100% 100%,
+        0 100%
+    );
+
+    box-shadow: 0 0 20px rgba(0,0,0,.4);
 }
-#popup{
- position:absolute;left:50%;top:45%;z-index:20;transform:translate(-50%,-50%);
- font-size:27px;font-weight:bold;text-shadow:2px 2px 5px #000;
- opacity:0;pointer-events:none
+
+/* =========================
+   GRASS
+========================= */
+
+.grass {
+    position: absolute;
+    bottom: 60px;
+    width: 100%;
+    height: 42%;
+    background:
+        radial-gradient(circle at 20% 40%, #668d29 0 5px, transparent 6px),
+        radial-gradient(circle at 75% 30%, #7da332 0 5px, transparent 6px),
+        radial-gradient(circle at 40% 70%, #557c25 0 4px, transparent 5px);
+}
+
+/* =========================
+   NPC
+========================= */
+
+.npc {
+    position: absolute;
+    left: 12%;
+    bottom: 125px;
+    width: 100px;
+    height: 220px;
+    z-index: 5;
+}
+
+.npc-head {
+    position: absolute;
+    top: 0;
+    left: 28px;
+    width: 45px;
+    height: 55px;
+    border-radius: 50%;
+    background: #151515;
+    box-shadow: 0 -12px 0 #0a0a0a;
+}
+
+.npc-body {
+    position: absolute;
+    top: 45px;
+    left: 10px;
+    width: 80px;
+    height: 160px;
+    background:
+        linear-gradient(
+            90deg,
+            #0b0b0b,
+            #292929,
+            #101010
+        );
+
+    clip-path: polygon(
+        35% 0,
+        65% 0,
+        80% 25%,
+        100% 100%,
+        0 100%,
+        20% 25%
+    );
+}
+
+.quest {
+    position: absolute;
+    top: -75px;
+    left: 28px;
+
+    width: 45px;
+    height: 45px;
+
+    border-radius: 50%;
+    background: #e51c23;
+    border: 3px solid #ffd800;
+
+    color: white;
+    text-align: center;
+    line-height: 40px;
+    font-size: 30px;
+    font-weight: bold;
+
+    box-shadow: 0 3px 8px #000;
+}
+
+/* =========================
+   PLAYER
+========================= */
+
+.player {
+    position: absolute;
+
+    left: 56%;
+    bottom: 105px;
+
+    width: 150px;
+    height: 260px;
+
+    z-index: 8;
+}
+
+/* shadow */
+
+.player-shadow {
+    position: absolute;
+    bottom: 0;
+    left: 25px;
+
+    width: 105px;
+    height: 22px;
+
+    background: rgba(0,0,0,.55);
+    border-radius: 50%;
+}
+
+/* cape */
+
+.cape {
+    position: absolute;
+
+    left: 22px;
+    top: 75px;
+
+    width: 105px;
+    height: 150px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #07090d,
+            #1c1f25,
+            #050609
+        );
+
+    clip-path: polygon(
+        35% 0,
+        75% 0,
+        100% 100%,
+        5% 100%
+    );
+}
+
+/* body */
+
+.body {
+    position: absolute;
+
+    left: 48px;
+    top: 75px;
+
+    width: 58px;
+    height: 105px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #16191e,
+            #34373c,
+            #101216
+        );
+
+    border-radius: 12px;
+}
+
+/* head */
+
+.head {
+    position: absolute;
+
+    left: 48px;
+    top: 18px;
+
+    width: 62px;
+    height: 68px;
+
+    border-radius: 45%;
+
+    background: #c39576;
+
+    z-index: 3;
+}
+
+/* anime/AQW-style hair */
+
+.hair {
+    position: absolute;
+
+    left: 38px;
+    top: 5px;
+
+    width: 82px;
+    height: 115px;
+
+    background: #e8e1cd;
+
+    border-radius:
+        55% 45% 35% 60%;
+
+    z-index: 4;
+
+    transform: rotate(-8deg);
+
+    box-shadow:
+        -18px 32px 0 #eee8d6,
+        35px 15px 0 #ddd6c2;
+}
+
+.hair::after {
+    content: "";
+
+    position: absolute;
+
+    width: 50px;
+    height: 35px;
+
+    left: 10px;
+    top: -5px;
+
+    background: #111;
+
+    border-radius: 50%;
+}
+
+/* face */
+
+.face {
+    position: absolute;
+
+    left: 54px;
+    top: 45px;
+
+    width: 50px;
+    height: 55px;
+
+    z-index: 5;
+}
+
+.eye {
+    position: absolute;
+
+    width: 6px;
+    height: 6px;
+
+    background: #111;
+
+    border-radius: 50%;
+
+    top: 22px;
+}
+
+.eye1 { left: 9px; }
+.eye2 { right: 8px; }
+
+/* armor */
+
+.armor {
+    position: absolute;
+
+    left: 42px;
+    top: 78px;
+
+    width: 75px;
+    height: 100px;
+
+    z-index: 6;
+
+    background:
+        linear-gradient(
+            90deg,
+            #101318,
+            #44484d,
+            #121419
+        );
+
+    clip-path: polygon(
+        20% 0,
+        80% 0,
+        100% 100%,
+        0 100%
+    );
+
+    border-bottom: 3px solid #8a713b;
+}
+
+/* legs */
+
+.leg {
+    position: absolute;
+
+    top: 165px;
+
+    width: 25px;
+    height: 80px;
+
+    background: #0d1014;
+
+    z-index: 5;
+}
+
+.leg1 { left: 48px; }
+.leg2 { left: 83px; }
+
+/* sword */
+
+.sword {
+    position: absolute;
+
+    left: 105px;
+    top: 85px;
+
+    width: 12px;
+    height: 135px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #777,
+            #eee,
+            #777
+        );
+
+    transform: rotate(-32deg);
+
+    z-index: 10;
+
+    box-shadow: 0 0 4px #fff;
+}
+
+.sword::after {
+    content: "";
+
+    position: absolute;
+
+    width: 45px;
+    height: 7px;
+
+    background: #a87d32;
+
+    top: 85px;
+    left: -15px;
+}
+
+/* =========================
+   TOP PLAYER HUD
+========================= */
+
+#playerHud {
+    position: absolute;
+
+    top: 10px;
+    left: 10px;
+
+    width: 280px;
+
+    z-index: 20;
+
+    display: flex;
+    gap: 8px;
+}
+
+.avatar {
+    width: 75px;
+    height: 80px;
+
+    background:
+        linear-gradient(#777,#222);
+
+    border: 2px solid #111;
+    border-radius: 5px;
+
+    position: relative;
+
+    overflow: hidden;
+}
+
+.avatar::before {
+    content: "";
+
+    position: absolute;
+
+    width: 45px;
+    height: 65px;
+
+    left: 15px;
+    top: 7px;
+
+    background: #e8e0cc;
+
+    border-radius: 50%;
+}
+
+.avatar::after {
+    content: "";
+
+    position: absolute;
+
+    width: 50px;
+    height: 22px;
+
+    left: 13px;
+    top: 7px;
+
+    background: #111;
+
+    border-radius: 50%;
+}
+
+.stats {
+    flex: 1;
+}
+
+.username {
+    font-weight: bold;
+    font-size: 13px;
+    margin-bottom: 3px;
+}
+
+.hp,
+.mp {
+    width: 100%;
+    height: 21px;
+
+    background: #111;
+
+    border: 2px solid #111;
+
+    border-radius: 12px;
+
+    overflow: hidden;
+
+    margin-bottom: 2px;
+}
+
+.hp-fill {
+    width: 88%;
+    height: 100%;
+
+    background:
+        linear-gradient(#ff4d4d,#b40000);
+
+    text-align: center;
+
+    line-height: 17px;
+
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.mp-fill {
+    width: 64%;
+    height: 100%;
+
+    background:
+        linear-gradient(#4f9bff,#174db9);
+
+    text-align: center;
+
+    line-height: 17px;
+
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.level {
+    font-size: 10px;
+    margin-top: 4px;
+}
+
+/* =========================
+   TARGET
+========================= */
+
+#target {
+    position: absolute;
+
+    top: 130px;
+    left: 8px;
+
+    width: 150px;
+
+    padding: 6px 8px;
+
+    background: rgba(0,0,0,.78);
+
+    border-radius: 5px;
+
+    z-index: 20;
+}
+
+.target-name {
+    font-size: 14px;
+}
+
+.target-status {
+    color: #aaa;
+    font-size: 13px;
+}
+
+/* =========================
+   BOTTOM BAR
+========================= */
+
+#bottomBar {
+    position: absolute;
+
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    height: 72px;
+
+    z-index: 30;
+
+    background:
+        linear-gradient(#3b3b3b,#111);
+
+    border-top: 2px solid #777;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    padding: 5px 8px;
+}
+
+.button {
+    width: 53px;
+    height: 60px;
+
+    background:
+        linear-gradient(#555,#151515);
+
+    border: 1px solid #777;
+
+    color: white;
+
+    position: relative;
+
+    cursor: pointer;
+
+    font-size: 26px;
+}
+
+.button:hover {
+    filter: brightness(1.3);
+}
+
+.number {
+    position: absolute;
+
+    bottom: 2px;
+    left: 5px;
+
+    font-size: 11px;
+}
+
+.chat {
+    flex: 1;
+
+    height: 45px;
+
+    display: flex;
+}
+
+.chat input {
+    flex: 1;
+
+    background: #050505;
+
+    border: 1px solid #555;
+
+    color: white;
+
+    padding: 0 10px;
+}
+
+.send {
+    width: 60px;
+
+    background: #dfa515;
+
+    border: 1px solid #8d690b;
+
+    font-weight: bold;
+}
+
+#online {
+    position: absolute;
+
+    right: 10px;
+    bottom: 80px;
+
+    z-index: 20;
+
+    font-size: 13px;
+
+    text-shadow: 1px 1px 3px black;
+}
+
+#message {
+    position: absolute;
+
+    left: 50%;
+    top: 45%;
+
+    transform: translate(-50%,-50%);
+
+    z-index: 50;
+
+    font-size: 28px;
+
+    font-weight: bold;
+
+    text-shadow: 2px 2px 5px #000;
+
+    opacity: 0;
 }
 </style>
 </head>
+
 <body>
+
 <div id="game">
-<canvas id="world" width="1920" height="1080"></canvas>
 
-<div id="status">
-  <div class="portrait"><div class="hair"></div><div class="face"></div><div class="bang"></div></div>
-  <div class="info">
-    <div class="name">MR JELLYBEAN</div>
-    <div class="bar"><div id="hp" class="fill hp" style="width:88%">12603</div></div>
-    <div class="bar"><div id="mp" class="fill mp" style="width:64%">2251</div></div>
-    <div class="bar xp"><div class="fill" style="width:39%"></div></div>
-    <div class="level">Level 69 &nbsp; Alpha Pirate, Rank 10</div>
-  </div>
+    <div class="forest-dark"></div>
+
+    <div class="grass"></div>
+
+    <div class="path"></div>
+
+    <div class="tree tree1"></div>
+    <div class="tree tree2"></div>
+    <div class="tree tree3"></div>
+    <div class="tree tree4"></div>
+    <div class="tree tree5"></div>
+    <div class="tree tree6"></div>
+
+    <!-- NPC -->
+
+    <div class="npc">
+
+        <div class="quest">!</div>
+
+        <div class="npc-head"></div>
+
+        <div class="npc-body"></div>
+
+    </div>
+
+
+    <!-- PLAYER -->
+
+    <div class="player">
+
+        <div class="player-shadow"></div>
+
+        <div class="cape"></div>
+
+        <div class="head"></div>
+
+        <div class="hair"></div>
+
+        <div class="face">
+            <div class="eye eye1"></div>
+            <div class="eye eye2"></div>
+        </div>
+
+        <div class="armor"></div>
+
+        <div class="leg leg1"></div>
+        <div class="leg leg2"></div>
+
+        <div class="sword"></div>
+
+    </div>
+
+
+    <!-- PLAYER HUD -->
+
+    <div id="playerHud">
+
+        <div class="avatar"></div>
+
+        <div class="stats">
+
+            <div class="username">
+                MR JELLYBEAN
+            </div>
+
+            <div class="hp">
+                <div class="hp-fill">
+                    12603
+                </div>
+            </div>
+
+            <div class="mp">
+                <div class="mp-fill">
+                    2251
+                </div>
+            </div>
+
+            <div class="level">
+                Level 69 &nbsp; Alpha Pirate, Rank 10
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- TARGET -->
+
+    <div id="target">
+
+        <div class="target-name">
+            Lucy
+        </div>
+
+        <div class="target-status">
+            Out of range
+        </div>
+
+    </div>
+
+
+    <div id="online">
+        1 player in forest-92069 ▲
+    </div>
+
+
+    <div id="message"></div>
+
+
+    <!-- BOTTOM HUD -->
+
+    <div id="bottomBar">
+
+        <button class="button">☰</button>
+
+        <button class="button">💬</button>
+
+        <div class="chat">
+
+            <input
+                id="chatInput"
+                placeholder=""
+                onkeydown="if(event.key==='Enter')sendChat()"
+            >
+
+            <button class="send" onclick="sendChat()">
+                SEND
+            </button>
+
+        </div>
+
+
+        <button class="button" onclick="attack()">
+            ⚔
+            <span class="number">1</span>
+        </button>
+
+        <button class="button">
+            🧪
+            <span class="number">2</span>
+        </button>
+
+        <button class="button">
+            ⛔
+            <span class="number">3</span>
+        </button>
+
+        <button class="button">
+            🗡
+            <span class="number">4</span>
+        </button>
+
+        <button class="button">
+            ✨
+            <span class="number">5</span>
+        </button>
+
+        <button class="button">
+            🌑
+            <span class="number">6</span>
+        </button>
+
+        <button class="button">
+            🎒
+        </button>
+
+        <button class="button">
+            ❤️
+        </button>
+
+        <button class="button">
+            ⚔
+        </button>
+
+        <button class="button">
+            ❗
+        </button>
+
+        <button class="button">
+            📜
+        </button>
+
+        <button class="button">
+            🏠
+        </button>
+
+        <button class="button">
+            ⚙
+        </button>
+
+    </div>
+
 </div>
 
-<div id="target">
-  <span class="shield">♜</span>
-  <div class="tn">Lucy</div>
-  <div class="ts">Out of range</div>
-</div>
-
-<div id="online">1 player in forest-92069 ▲</div>
-<div id="popup">MISS!</div>
-
-<div id="bottom">
-  <button class="btn"><span class="ico">⌃</span></button>
-  <button class="btn"><span class="ico">☰</span></button>
-  <button class="btn"><span class="ico">☁</span></button>
-  <div class="chat">
-    <input id="chatInput" placeholder="">
-    <button class="send" onclick="chat()">SEND</button>
-  </div>
-  <button class="btn" onclick="attack()"><span class="ico">⚔</span><span class="num">1</span></button>
-  <button class="btn"><span class="ico">🧪</span><span class="num">2</span></button>
-  <button class="btn"><span class="ico">⊘</span><span class="num">3</span></button>
-  <button class="btn"><span class="ico">🗡</span><span class="num">4</span></button>
-  <button class="btn"><span class="ico">☁</span><span class="num">5</span></button>
-  <button class="btn"><span class="ico">●</span><span class="num">6</span></button>
-  <div class="right">
-    <button class="btn">🎒</button><button class="btn">♥</button>
-    <button class="btn">⚔</button><button class="btn">❗</button>
-    <button class="btn">📜</button><button class="btn">⌂</button><button class="btn">⚙</button>
-  </div>
-</div>
 
 <script>
-const c=document.getElementById("world"),ctx=c.getContext("2d");
-const W=1920,H=1080;
-const player={x:1125,y:690,dir:1,speed:5};
-const keys={};
 
-addEventListener("keydown",e=>keys[e.key.toLowerCase()]=true);
-addEventListener("keyup",e=>keys[e.key.toLowerCase()]=false);
-c.addEventListener("click",e=>{
- const r=c.getBoundingClientRect();
- player.x=(e.clientX-r.left)*W/r.width;
- player.y=(e.clientY-r.top)*H/r.height;
-});
+function showMessage(text) {
 
-function ellipse(x,y,rx,ry,fill){
- ctx.fillStyle=fill;ctx.beginPath();ctx.ellipse(x,y,rx,ry,0,0,Math.PI*2);ctx.fill()
-}
-function tree(x,y,s){
- // trunk
- ctx.fillStyle="#514332";ctx.beginPath();
- ctx.moveTo(x-38*s,y+25*s);ctx.lineTo(x-47*s,y+250*s);
- ctx.quadraticCurveTo(x,y+265*s,x+45*s,y+250*s);
- ctx.lineTo(x+32*s,y+25*s);ctx.closePath();ctx.fill();
- ctx.fillStyle="#2f281e";ctx.fillRect(x-8*s,y+35*s,12*s,205*s);
- // canopy
- ellipse(x-48*s,y+5*s,125*s,82*s,"#355322");
- ellipse(x+45*s,y-7*s,118*s,80*s,"#456b25");
- ellipse(x,y-55*s,120*s,72*s,"#587b2a");
- ellipse(x-75*s,y-48*s,80*s,55*s,"#648c2d");
-}
-function bush(x,y,s){
- ellipse(x,y,55*s,43*s,"#4e8b20");
- ellipse(x-40*s,y+5*s,43*s,36*s,"#609f24");
- ellipse(x+38*s,y+5*s,45*s,38*s,"#39751b");
- ellipse(x+4*s,y-28*s,39*s,35*s,"#74a92a");
-}
-function stone(x,y,rx,ry){
- ellipse(x,y,rx,ry,"#777566");ellipse(x-5,y-4,rx*.75,ry*.65,"#969483")
-}
-function drawForest(){
- ctx.fillStyle="#101d0e";ctx.fillRect(0,0,W,H);
+    const message =
+        document.getElementById("message");
 
- // far foliage
- for(let i=0;i<45;i++){
-  let x=(i*173)%W,y=35+(i*71)%250;
-  ellipse(x,y,90+(i%3)*25,50+(i%2)*20,i%2?"#466b25":"#567c29");
- }
+    message.innerText = text;
 
- // distant dark trunks
- for(let i=0;i<14;i++){
-  let x=50+i*145;
-  ctx.fillStyle=i%2?"#30291f":"#3d3428";
-  ctx.fillRect(x,70,55,520);
- }
+    message.style.opacity = "1";
 
- // path with irregular edges
- ctx.fillStyle="#9b7951";
- ctx.beginPath();
- ctx.moveTo(865,285);ctx.lineTo(1050,285);
- ctx.lineTo(1370,1010);ctx.lineTo(490,1010);ctx.closePath();ctx.fill();
- ctx.fillStyle="#ad895b";
- ctx.beginPath();
- ctx.moveTo(945,285);ctx.lineTo(1015,285);
- ctx.lineTo(1195,1010);ctx.lineTo(1050,1010);ctx.closePath();ctx.fill();
+    setTimeout(() => {
 
- // trees behind
- tree(120,65,1.25);tree(345,90,1.15);tree(575,65,1.28);
- tree(1380,65,1.25);tree(1600,90,1.18);tree(1830,75,1.15);
- tree(760,115,.85);tree(1190,105,.9);
+        message.style.opacity = "0";
 
- // foreground bushes
- bush(290,570,1.15);bush(1530,585,1.0);bush(1780,650,.9);
- bush(430,760,.8);bush(1480,760,.8);
+    }, 800);
 
- // grass/flowers
- for(let i=0;i<130;i++){
-   let x=(i*137)%W,y=530+(i*83)%390;
-   if(x>500&&x<1380)continue;
-   ctx.fillStyle=i%3===0?"#e5db25":i%3===1?"#d4d4c8":"#91b72d";
-   ctx.fillRect(x,y,4,4);
- }
-
- // rocks
- stone(85,810,65,17);stone(210,875,75,20);stone(1580,880,62,17);
- stone(1740,740,55,18);stone(1480,500,35,13);
-
- // cave / dark forest opening
- ctx.fillStyle="#050805";ctx.beginPath();
- ctx.moveTo(750,290);ctx.quadraticCurveTo(960,135,1180,290);
- ctx.lineTo(1180,350);ctx.lineTo(750,350);ctx.closePath();ctx.fill();
 }
 
-function drawNPC(){
- let x=275,y=675;
- // quest marker
- ellipse(x,y-250,27,27,"#d90000");
- ctx.strokeStyle="#ffd800";ctx.lineWidth=4;ctx.stroke();
- ctx.fillStyle="#fff";ctx.font="bold 38px Arial";ctx.fillText("!",x-8,y-237);
 
- // hood/head
- ctx.fillStyle="#111";ctx.beginPath();ctx.arc(x,y-105,38,Math.PI,Math.PI*2);ctx.fill();
- ctx.fillRect(x-35,y-108,70,52);
- ellipse(x,y-88,23,29,"#050505");
+function attack() {
 
- // long cloak
- ctx.fillStyle="#121214";ctx.beginPath();
- ctx.moveTo(x-36,y-65);ctx.lineTo(x-52,y+100);ctx.lineTo(x-82,y+150);
- ctx.lineTo(x+82,y+150);ctx.lineTo(x+48,y+90);ctx.lineTo(x+35,y-65);
- ctx.closePath();ctx.fill();
- ctx.strokeStyle="#4c4c4c";ctx.lineWidth=3;ctx.stroke();
- // belt
- ctx.fillStyle="#29231d";ctx.fillRect(x-45,y+25,90,10);
- ctx.fillStyle="#d5aa34";ctx.fillRect(x-8,y+23,17,14);
+    showMessage("⚔ 1,284 DAMAGE");
+
 }
 
-function drawRabbit(){
- let x=1640,y=745;
- ellipse(x,y,42,28,"#bfc5a2");ellipse(x+34,y-24,25,23,"#cfd4b6");
- ctx.fillStyle="#dfe3ca";
- ctx.beginPath();ctx.ellipse(x+27,y-62,11,37,-.18,0,Math.PI*2);ctx.fill();
- ctx.beginPath();ctx.ellipse(x+50,y-60,11,38,.15,0,Math.PI*2);ctx.fill();
- ellipse(x+42,y-28,4,4,"#111");
+
+function sendChat() {
+
+    const input =
+        document.getElementById("chatInput");
+
+    if (input.value.trim() === "")
+        return;
+
+    showMessage("💬 " + input.value);
+
+    input.value = "";
+
 }
 
-function drawPlayer(){
- let x=player.x,y=player.y,flip=player.dir<0?-1:1;
- ctx.save();ctx.translate(x,y);ctx.scale(flip,1);
-
- // shadow
- ellipse(0,60,68,15,"rgba(0,0,0,.48)");
-
- // black magical aura
- ctx.strokeStyle="rgba(5,8,16,.9)";ctx.lineWidth=12;
- ctx.beginPath();ctx.arc(-2,-48,78,Math.PI*1.08,Math.PI*1.92);ctx.stroke();
- for(let i=0;i<6;i++){
-   ctx.strokeStyle="rgba(12,16,27,.75)";ctx.lineWidth=5;
-   ctx.beginPath();ctx.moveTo(-55+i*18,-70);ctx.lineTo(-70+i*22,-118-(i%2)*25);ctx.stroke();
- }
-
- // flowing cape
- ctx.fillStyle="#08090d";ctx.beginPath();
- ctx.moveTo(-38,-88);ctx.quadraticCurveTo(-70,-10,-76,75);
- ctx.lineTo(-30,45);ctx.lineTo(12,-15);ctx.lineTo(37,-83);ctx.closePath();ctx.fill();
-
- // legs
- ctx.fillStyle="#14151a";ctx.fillRect(-27,22,19,58);ctx.fillRect(10,22,19,58);
- ctx.fillStyle="#090a0e";ctx.fillRect(-34,73,30,10);ctx.fillRect(5,73,36,10);
-
- // coat/body
- ctx.fillStyle="#202329";ctx.beginPath();
- ctx.moveTo(-39,-78);ctx.lineTo(37,-78);ctx.lineTo(45,31);
- ctx.lineTo(2,48);ctx.lineTo(-46,28);ctx.closePath();ctx.fill();
- ctx.strokeStyle="#5d6064";ctx.lineWidth=3;ctx.stroke();
-
- // shirt/armor
- ctx.fillStyle="#111318";ctx.fillRect(-18,-66,36,73);
- ctx.fillStyle="#80632d";ctx.fillRect(-43,2,83,11);
- ctx.fillStyle="#d0aa4a";ctx.fillRect(-7,1,15,13);
-
- // head
- ellipse(1,-111,31,38,"#b98f72");
-
- // long pale hair
- ctx.fillStyle="#e7e0cc";ctx.beginPath();
- ctx.moveTo(-24,-145);ctx.quadraticCurveTo(-60,-116,-32,-73);
- ctx.lineTo(-16,-82);ctx.lineTo(-7,-120);ctx.closePath();ctx.fill();
- ctx.beginPath();
- ctx.moveTo(16,-146);ctx.quadraticCurveTo(58,-116,29,-70);
- ctx.lineTo(14,-82);ctx.lineTo(8,-119);ctx.closePath();ctx.fill();
-
- // black crown/top
- ctx.fillStyle="#0b0b0e";ctx.beginPath();ctx.arc(1,-121,32,Math.PI,Math.PI*2);ctx.fill();
-
- // face details
- ellipse(-9,-112,3,3,"#111");ellipse(10,-112,3,3,"#111");
-
- // right arm
- ctx.fillStyle="#202329";ctx.fillRect(34,-72,20,65);
-
- // sword
- ctx.strokeStyle="#d7dbe0";ctx.lineWidth=9;
- ctx.beginPath();ctx.moveTo(51,-55);ctx.lineTo(91,-128);ctx.stroke();
- ctx.strokeStyle="#9b7c35";ctx.lineWidth=7;
- ctx.beginPath();ctx.moveTo(39,-50);ctx.lineTo(61,-35);ctx.stroke();
-
- // nameplate
- ctx.scale(flip,1);
- ctx.textAlign="center";ctx.font="bold 16px Arial";
- ctx.fillStyle="#52b9ff";ctx.fillText("MR JELLYBEAN",0,-164);
- ctx.font="bold 13px Arial";ctx.fillStyle="#bdbdbd";ctx.fillText("< PAIN >",0,-145);
- ctx.restore();
-}
-
-function render(){drawForest();drawNPC();drawRabbit();drawPlayer()}
-
-function loop(){
- if(keys.w||keys.arrowup)player.y-=player.speed;
- if(keys.s||keys.arrowdown)player.y+=player.speed;
- if(keys.a||keys.arrowleft){player.x-=player.speed;player.dir=-1}
- if(keys.d||keys.arrowright){player.x+=player.speed;player.dir=1}
- player.x=Math.max(100,Math.min(W-100,player.x));
- player.y=Math.max(390,Math.min(H-105,player.y));
- render();requestAnimationFrame(loop)
-}
-function popup(t){
- let p=document.getElementById("popup");p.textContent=t;p.style.opacity=1;
- clearTimeout(window.pt);window.pt=setTimeout(()=>p.style.opacity=0,700)
-}
-function attack(){popup("⚔  1,284 DAMAGE")}
-function chat(){
- let i=document.getElementById("chatInput");
- if(i.value.trim()){popup("💬 "+i.value.trim());i.value=""}
-}
-render();loop();
 </script>
-</div>
+
 </body>
 </html>
-'''
-
-p=Path("/mnt/data/index.html")
-p.write_text(html,encoding="utf-8")
-print(f"Rebuilt: {p}")
-print(f"Size: {p.stat().st_size:,} bytes")
