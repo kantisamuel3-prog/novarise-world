@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Novarise World - AQW Edition</title>
+<title>Novarise World - AQW Complete Edition</title>
 
 <style>
 *{ box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
@@ -19,118 +19,30 @@ html, body{ width:100%; height:100%; overflow:hidden; background:#111; font-fami
 .aqw-avatar { width: 100%; height: 100%; transform-origin: bottom center; }
 .fallback-name{ position:absolute; left:50%; top:-25px; transform:translateX(-50%); color:white; white-space:nowrap; font-size:15px; font-weight:800; text-shadow: 0 2px 3px #000, 0 0 5px #000; }
 
-/* ======================================================
-   AQW SKELETON ANIMATION SYSTEM (IDLE, RUN, ATTACK)
-====================================================== */
-
+/* ANIMATIONS */
 #playerFallback.face-left .aqw-avatar { transform: scaleX(-1); }
+#playerFallback:not(.running):not(.attacking) .aqw-avatar { animation: aqwBreath 2s infinite alternate ease-in-out; }
+@keyframes aqwBreath { 0% { transform: translateY(0); } 100% { transform: translateY(-4px); } }
 
-/* 1. IDLE STATE */
-#playerFallback:not(.running):not(.attacking) .aqw-avatar {
-    animation: aqwBreath 2s infinite alternate ease-in-out;
-}
-@keyframes aqwBreath {
-    0% { transform: translateY(0); }
-    100% { transform: translateY(-4px); }
-}
-#playerFallback:not(.running):not(.attacking) .cape {
-    animation: aqwCapeBreath 2s infinite alternate ease-in-out;
-    transform-origin: top center;
-}
-@keyframes aqwCapeBreath {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(-5deg); }
-}
+#playerFallback.running .aqw-avatar { animation: aqwRunLean 0.25s infinite alternate ease-in-out; }
+@keyframes aqwRunLean { 0% { transform: translateY(0) rotate(8deg); } 100% { transform: translateY(-8px) rotate(14deg); } }
+#playerFallback.running .leg-left { animation: runLegLeft 0.25s infinite alternate ease-in-out; transform-origin: 50px 105px; }
+@keyframes runLegLeft { 0% { transform: rotate(-48deg); } 100% { transform: rotate(40deg); } }
+#playerFallback.running .leg-right { animation: runLegRight 0.25s infinite alternate ease-in-out; transform-origin: 66px 105px; }
+@keyframes runLegRight { 0% { transform: rotate(48deg); } 100% { transform: rotate(-40deg); } }
 
-/* 2. REAL RUNNING STATE */
-#playerFallback.running .aqw-avatar {
-    animation: aqwRunLean 0.25s infinite alternate ease-in-out;
-}
-@keyframes aqwRunLean {
-    0% { transform: translateY(0) rotate(8deg); }
-    100% { transform: translateY(-8px) rotate(14deg); }
-}
+#playerFallback.attacking .aqw-avatar { animation: aqwAttackSlash 0.4s ease-out; }
+@keyframes aqwAttackSlash { 0% { transform: translateY(0) rotate(-10deg); } 40% { transform: translateY(-5px) rotate(20deg) scale(1.05); } 100% { transform: translateY(0) rotate(0deg); } }
 
-#playerFallback.running .leg-left {
-    animation: runLegLeft 0.25s infinite alternate ease-in-out;
-    transform-origin: 50px 105px;
-}
-@keyframes runLegLeft {
-    0% { transform: rotate(-48deg); }
-    100% { transform: rotate(40deg); }
-}
+/* FLOATING DAMAGE */
+.damage-pop { position: absolute; color: #facc15; font-size: 26px; font-weight: 900; text-shadow: 0 2px 4px #000, 0 0 10px #ef4444; pointer-events: none; z-index: 100; animation: floatDamage 0.8s ease-out forwards; }
+@keyframes floatDamage { 0% { opacity: 1; transform: translate(-50%, 0) scale(0.8); } 50% { transform: translate(-50%, -40px) scale(1.2); } 100% { opacity: 0; transform: translate(-50%, -70px) scale(1); } }
 
-#playerFallback.running .leg-right {
-    animation: runLegRight 0.25s infinite alternate ease-in-out;
-    transform-origin: 66px 105px;
-}
-@keyframes runLegRight {
-    0% { transform: rotate(48deg); }
-    100% { transform: rotate(-40deg); }
-}
-
-#playerFallback.running .cape {
-    animation: runCapeWave 0.25s infinite alternate ease-in-out;
-    transform-origin: top center;
-}
-@keyframes runCapeWave {
-    0% { transform: rotate(-15deg) skewX(-10deg); }
-    100% { transform: rotate(-35deg) skewX(-25deg); }
-}
-
-#playerFallback.running .arm-weapon {
-    animation: runWeaponSwing 0.25s infinite alternate ease-in-out;
-    transform-origin: 75px 65px;
-}
-@keyframes runWeaponSwing {
-    0% { transform: rotate(-20deg); }
-    100% { transform: rotate(20deg); }
-}
-
-/* 3. ATTACK STATE */
-#playerFallback.attacking .aqw-avatar {
-    animation: aqwAttackSlash 0.4s ease-out;
-}
-@keyframes aqwAttackSlash {
-    0% { transform: translateY(0) rotate(-10deg); }
-    40% { transform: translateY(-5px) rotate(20deg) scale(1.05); }
-    100% { transform: translateY(0) rotate(0deg); }
-}
-
-#playerFallback.attacking .arm-weapon {
-    animation: aqwWeaponStrike 0.4s ease-out;
-    transform-origin: 75px 65px;
-}
-@keyframes aqwWeaponStrike {
-    0% { transform: rotate(-45deg); }
-    50% { transform: rotate(70deg) translateY(-10px); }
-    100% { transform: rotate(0deg); }
-}
-
-/* FLOATING DAMAGE TEXT */
-.damage-pop {
-    position: absolute;
-    color: #facc15;
-    font-size: 26px;
-    font-weight: 900;
-    text-shadow: 0 2px 4px #000, 0 0 10px #ef4444;
-    pointer-events: none;
-    z-index: 100;
-    animation: floatDamage 0.8s ease-out forwards;
-}
-@keyframes floatDamage {
-    0% { opacity: 1; transform: translate(-50%, 0) scale(0.8); }
-    50% { transform: translate(-50%, -40px) scale(1.2); }
-    100% { opacity: 0; transform: translate(-50%, -70px) scale(1); }
-}
-
-/* UI / HUD Styles */
+/* GAME OBJECTS */
 .world-object{ position:absolute; transform: translate(-50%,-100%); z-index:15; pointer-events:auto; }
 .npc{ left:24%; top:70%; width:100px; height:155px; }
 .npc-sprite{ width:100%; height:100%; background: url("assets/npcs/quest-npc.png") center bottom / contain no-repeat; }
 .object-name{ position:absolute; left:50%; top:-28px; transform:translateX(-50%); color:white; font-size:15px; font-weight:800; white-space:nowrap; text-shadow: 0 2px 3px #000; }
-.quest-mark{ position:absolute; left:50%; top:-75px; transform:translateX(-50%); width:38px; height:38px; display:flex; align-items:center; justify-content:center; border-radius:50%; background:#ef2020; border:3px solid white; color:#ffe600; font-size:23px; font-weight:900; box-shadow: 0 0 10px rgba(255,0,0,.65); animation: questPulse 1s infinite alternate; }
-@keyframes questPulse{ from{ transform: translateX(-50%) scale(.9); } to{ transform: translateX(-50%) scale(1.08); } }
 
 .monster{ position:absolute; left:70%; top:73%; width:145px; height:120px; transform: translate(-50%,-100%); z-index:15; cursor:pointer; }
 .monster-sprite{ width:100%; height:100%; background: url("assets/monsters/forest-wolf.png") center bottom / contain no-repeat; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.5)); }
@@ -138,12 +50,10 @@ html, body{ width:100%; height:100%; overflow:hidden; background:#111; font-fami
 .monster-hp{ position:absolute; left:50%; top:-13px; transform:translateX(-50%); width:105px; height:9px; border:1px solid #111; background:#111; border-radius:4px; overflow:hidden; }
 .monster-hp-fill{ width:100%; height:100%; background:#dc2626; transition: width 0.2s; }
 
-.portal{ position:absolute; right:5%; top:62%; width:105px; height:155px; transform: translateY(-100%); z-index:14; background: url("assets/portal.png") center / contain no-repeat; filter: drop-shadow(0 0 16px rgba(0,170,255,.75)); }
-.portal-name{ position:absolute; left:50%; top:-25px; transform:translateX(-50%); color:white; font-weight:800; text-shadow: 0 2px 4px #000; }
-
 #moveMarker{ position:absolute; width:32px; height:15px; border-radius:50%; border:2px solid rgba(255,255,255,.85); box-shadow: 0 0 10px rgba(40,140,255,.9); transform: translate(-50%,-50%); z-index:10; pointer-events:none; animation: marker .65s infinite alternate; }
 @keyframes marker{ from{ opacity:.35; transform: translate(-50%,-50%) scale(.75); } to{ opacity:1; transform: translate(-50%,-50%) scale(1); } }
 
+/* UI PANELS & HUDS */
 .player-hud{ position:fixed; left:12px; top:12px; z-index:50; width:330px; padding:10px; display:flex; gap:10px; border: 2px solid #80652e; border-radius:16px; background: rgba(8,13,19,.93); box-shadow: 0 7px 22px rgba(0,0,0,.45); }
 .avatar{ width:66px; height:66px; flex:none; border-radius:50%; border:2px solid #c69c42; background: linear-gradient(#111827,#05070a); display:flex; align-items:center; justify-content:center; color:white; font-size:25px; }
 .hud-info{ flex:1; }
@@ -159,16 +69,17 @@ html, body{ width:100%; height:100%; overflow:hidden; background:#111; font-fami
 .location-title{ font-size:17px; font-weight:800; }
 .location-time{ margin-top:3px; color:#e6d28e; font-size:12px; }
 
-.chat{ position:fixed; left:12px; bottom:12px; z-index:50; width:430px; height:175px; overflow:hidden; border: 2px solid #725a2e; border-radius:12px; background: rgba(5,9,14,.95); box-shadow: 0 7px 25px rgba(0,0,0,.5); }
-.chat-tabs{ display:flex; height:35px; background:#151b24; }
-.chat-tab{ padding:8px 20px; color:#b8bec7; font-size:13px; font-weight:bold; }
-.chat-tab.active{ color:white; background:#1760c8; }
-.chat-messages{ height:93px; padding:8px 12px; overflow:auto; color:#d9e0e8; font-size:12px; }
-.chat-welcome{ color:#ffe000; font-weight:bold; }
-.chat-input{ display:flex; height:45px; border-top: 1px solid #303640; }
-.chat-input input{ flex:1; min-width:0; border:0; outline:0; padding:0 12px; color:white; background:#0b1118; }
-.chat-input button{ width:70px; border:0; color:white; font-weight:800; background:#df901c; cursor:pointer; }
+/* MODALS (Inventory / Join Room) */
+.modal { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; }
+.modal-content { width: 450px; background: #111827; border: 2px solid #80652e; border-radius: 12px; padding: 20px; color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.9); }
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #374151; padding-bottom: 8px; }
+.modal-header h2 { font-size: 18px; color: #facc15; }
+.close-btn { background: none; border: none; color: #fff; font-size: 20px; cursor: pointer; }
+.inv-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; max-height: 250px; overflow-y: auto; padding: 5px; }
+.inv-item { background: #1f2937; border: 1px solid #4b5563; border-radius: 8px; padding: 10px; text-align: center; cursor: pointer; font-size: 12px; }
+.inv-item:hover { border-color: #facc15; background: #374151; }
 
+/* SKILL BAR & MENU */
 .skill-bar{ position:fixed; left:50%; bottom:12px; transform:translateX(-50%); z-index:50; display:flex; gap:7px; padding:8px 12px; border: 2px solid #725a2e; border-radius:17px; background: rgba(7,11,16,.96); box-shadow: 0 7px 25px rgba(0,0,0,.5); }
 .skill{ position:relative; width:53px; height:53px; display:flex; align-items:center; justify-content:center; border: 2px solid #596474; border-radius:10px; background: linear-gradient(135deg, #1e2937, #080c11); color:white; font-size:24px; cursor:pointer; }
 .skill:hover{ border-color:#facc15; }
@@ -177,19 +88,6 @@ html, body{ width:100%; height:100%; overflow:hidden; background:#111; font-fami
 .menu{ position:fixed; right:12px; bottom:12px; z-index:50; display:flex; gap:10px; padding:8px 12px; border: 2px solid #725a2e; border-radius:17px; background: rgba(7,11,16,.96); }
 .menu-item{ width:62px; text-align:center; color:white; font-size:10px; cursor:pointer; text-decoration:none; }
 .menu-icon{ width:38px; height:38px; margin:auto auto 3px; display:flex; align-items:center; justify-content:center; border: 1px solid #6c5b38; border-radius:9px; background:#1a2430; font-size:19px; }
-
-@media(max-width:900px){
-    .player-hud{ width:250px; top:7px; left:7px; }
-    .avatar{ width:50px; height:50px; }
-    .hud-name{ font-size:14px; }
-    .location{ top:7px; right:7px; min-width:150px; padding:7px; }
-    .quest-panel{ display:none; }
-    .chat{ left:8px; right:8px; bottom:73px; width:auto; height:130px; }
-    .skill-bar{ left:auto; right:8px; bottom:8px; transform:none; }
-    .skill{ width:43px; height:43px; font-size:19px; }
-    .menu{ display:none; }
-    #player{ width:95px; height:125px; }
-}
 </style>
 </head>
 
@@ -202,29 +100,27 @@ html, body{ width:100%; height:100%; overflow:hidden; background:#111; font-fami
         <!-- PLAYER -->
         <div id="player">
             <div id="playerFallback">
-                <div class="fallback-name">LQS</div>
+                <div class="fallback-name" id="playerNameTag">LQS</div>
 
-                <!-- AQW FULL SKELETON VECTOR CHARACTER -->
+                <!-- AQW SKELETON VECTOR CHARACTER -->
                 <svg class="aqw-avatar" viewBox="0 0 120 180" xmlns="http://www.w3.org/2000/svg">
                     <ellipse cx="60" cy="172" rx="35" ry="6" fill="rgba(0,0,0,0.6)" />
 
-                    <!-- Cape -->
-                    <path class="cape" d="M 38 48 L 12 150 Q 60 160 90 150 L 70 48 Z" fill="#991b1b" stroke="#111" stroke-width="2" />
+                    <!-- Cape (Equipped) -->
+                    <path id="eqCape" d="M 38 48 L 12 150 Q 60 160 90 150 L 70 48 Z" fill="#991b1b" stroke="#111" stroke-width="2" />
 
-                    <!-- Left Leg Group -->
+                    <!-- Legs -->
                     <g class="leg-left">
                         <path d="M 45 105 Q 40 130 42 165 L 56 165 Q 54 130 55 105 Z" fill="#111827" stroke="#000" stroke-width="1.5" />
                         <path d="M 42 145 L 56 145 L 56 167 Q 48 170 40 167 Z" fill="#1e293b" stroke="#000" stroke-width="1.5" />
                     </g>
-
-                    <!-- Right Leg Group -->
                     <g class="leg-right">
                         <path d="M 60 105 Q 62 130 65 165 L 79 165 Q 74 130 70 105 Z" fill="#1e1e24" stroke="#000" stroke-width="1.5" />
                         <path d="M 64 142 L 80 142 L 81 167 Q 72 170 63 167 Z" fill="#ffffff" stroke="#111" stroke-width="1.5" />
                     </g>
 
-                    <!-- Torso -->
-                    <path d="M 40 50 Q 60 45 78 50 L 74 110 Q 60 115 42 110 Z" fill="#c084fc" stroke="#111" stroke-width="2" />
+                    <!-- Armor (Equipped) -->
+                    <path id="eqArmor" d="M 40 50 Q 60 45 78 50 L 74 110 Q 60 115 42 110 Z" fill="#c084fc" stroke="#111" stroke-width="2" />
                     <path d="M 42 100 Q 60 106 75 100" stroke="#cbd5e1" stroke-width="5" fill="none" />
                     <circle cx="58" cy="103" r="5" fill="#f59e0b" stroke="#111" stroke-width="1" />
 
@@ -232,28 +128,23 @@ html, body{ width:100%; height:100%; overflow:hidden; background:#111; font-fami
                     <path d="M 42 52 L 28 92 Q 26 96 30 100 Q 34 98 38 92 L 48 55 Z" fill="#c084fc" stroke="#111" stroke-width="1.5" />
                     <circle cx="28" cy="98" r="5" fill="#0f172a" />
 
-                    <!-- Head & Neck -->
+                    <!-- Head & Hair -->
                     <path d="M 52 38 L 66 38 L 64 54 L 54 54 Z" fill="#fbcfe8" />
                     <ellipse cx="59" cy="30" rx="14" ry="16" fill="#fbcfe8" stroke="#111" stroke-width="1.5" />
                     <path d="M 45 22 Q 60 10 73 22 L 72 58 Q 66 38 68 68 Q 60 40 50 68 Q 50 38 46 58 Z" fill="#7f1d1d" stroke="#111" stroke-width="1.5" />
 
-                    <!-- Shadow Knight Helm & Horns -->
-                    <path d="M 45 20 Q 60 8 73 20 L 70 30 Q 60 22 48 30 Z" fill="#991b1b" stroke="#111" stroke-width="1.5" />
+                    <!-- Helmet (Equipped) -->
+                    <path id="eqHelm" d="M 45 20 Q 60 8 73 20 L 70 30 Q 60 22 48 30 Z" fill="#991b1b" stroke="#111" stroke-width="1.5" />
                     <path d="M 48 16 C 30 5, 20 -5, 12 10 C 25 15, 35 22, 45 20 Z" fill="#334155" stroke="#111" stroke-width="1.5" />
                     <path d="M 70 16 C 88 5, 98 -5, 106 10 C 93 15, 83 22, 73 20 Z" fill="#334155" stroke="#111" stroke-width="1.5" />
-
                     <polygon points="53,28 59,26 57,32" fill="#111" />
                     <polygon points="67,28 61,26 63,32" fill="#111" />
 
-                    <!-- Right Arm & Staff Group -->
+                    <!-- Sword / Staff (Equipped) -->
                     <g class="arm-weapon">
-                        <line x1="10" y1="140" x2="108" y2="80" stroke="#d97706" stroke-width="6" stroke-linecap="round" />
+                        <line id="eqWeapon" x1="10" y1="140" x2="108" y2="80" stroke="#d97706" stroke-width="6" stroke-linecap="round" />
                         <line x1="10" y1="140" x2="108" y2="80" stroke="#fde047" stroke-width="2.5" stroke-linecap="round" />
-                        
-                        <path d="M 100 85 L 115 75 L 105 65 L 120 70 L 110 80 Z" fill="#38bdf8" stroke="#0284c7" stroke-width="1" />
                         <circle cx="108" cy="80" r="8" fill="#2563eb" stroke="#1d4ed8" stroke-width="1.5" />
-                        <circle cx="108" cy="80" r="4" fill="#38bdf8" />
-
                         <path d="M 72 52 L 88 92 Q 92 95 95 90 Q 94 85 80 50 Z" fill="#c084fc" stroke="#111" stroke-width="1.5" />
                         <circle cx="90" cy="91" r="5.5" fill="#111827" />
                     </g>
@@ -265,19 +156,45 @@ html, body{ width:100%; height:100%; overflow:hidden; background:#111; font-fami
         <div class="world-object npc" id="npc">
             <div class="npc-sprite"></div>
             <div class="object-name">Seraphine</div>
-            <div class="quest-mark">!</div>
         </div>
 
-        <!-- MONSTER -->
+        <!-- MONSTER (Dire Wolf) -->
         <div class="monster" id="monster" onclick="attackMonster()">
             <div class="monster-sprite"></div>
             <div class="monster-name">Dire Wolf — Lv. 3</div>
             <div class="monster-hp"><div class="monster-hp-fill" id="monsterHpBar"></div></div>
         </div>
 
-        <!-- PORTAL -->
-        <div class="portal" id="portal"><div class="portal-name">Portal</div></div>
         <div id="moveMarker" style="display:none"></div>
+    </div>
+</div>
+
+<!-- INVENTORY MODAL -->
+<div class="modal" id="inventoryModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>🎒 Inventory & Equipment</h2>
+            <button class="close-btn" onclick="toggleModal('inventoryModal', false)">×</button>
+        </div>
+        <p style="font-size: 13px; color: #9ca3af; margin-bottom: 10px;">I-click ang item para isuot:</p>
+        <div class="inv-grid" id="inventoryList">
+            <!-- Dynamic Items -->
+        </div>
+    </div>
+</div>
+
+<!-- JOIN ROOM MODAL -->
+<div class="modal" id="joinModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>🗺️ Join Room / Server</h2>
+            <button class="close-btn" onclick="toggleModal('joinModal', false)">×</button>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+            <label style="font-size: 12px; color: #9ca3af;">Pangalan ng Room (hal. yulgar-101, battleon):</label>
+            <input type="text" id="roomInput" value="yulgar-1205" style="padding: 10px; background: #1f2937; border: 1px solid #4b5563; color: white; border-radius: 6px;">
+            <button onclick="joinRoom()" style="padding: 10px; background: #2563eb; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">Pumunta sa Room</button>
+        </div>
     </div>
 </div>
 
@@ -285,29 +202,18 @@ html, body{ width:100%; height:100%; overflow:hidden; background:#111; font-fami
 <div class="player-hud">
     <div class="avatar">⚔</div>
     <div class="hud-info">
-        <div class="hud-name"><span>LQS</span><span class="hud-level">Lv. 1</span></div>
+        <div class="hud-name">
+            <span id=" hudPlayerName">LQS</span>
+            <span class="hud-level" id="playerLevelDisplay">Lv. 1</span>
+        </div>
         <div class="stat-bar"><div class="stat-fill hp-fill"></div><div class="stat-text">100 / 100</div></div>
         <div class="stat-bar"><div class="stat-fill mp-fill"></div><div class="stat-text">100 / 100</div></div>
     </div>
 </div>
 
-<!-- LOCATION -->
 <div class="location">
-    <div class="location-title">☀ Novarise Forest</div>
+    <div class="location-title" id="roomTitle">☀ Novarise Forest [yulgar-1205]</div>
     <div class="location-time" id="clock">--:--</div>
-</div>
-
-<!-- CHAT -->
-<div class="chat">
-    <div class="chat-tabs"><div class="chat-tab active">General</div><div class="chat-tab">Party</div></div>
-    <div class="chat-messages" id="chatMessages">
-        <div class="chat-welcome">Welcome to Novarise World!</div>
-        <div>Click monster or press 1-5 to Attack!</div>
-    </div>
-    <div class="chat-input">
-        <input id="chatInput" type="text" placeholder="Type a message...">
-        <button id="sendChat">SEND</button>
-    </div>
 </div>
 
 <!-- SKILLS -->
@@ -321,10 +227,10 @@ html, body{ width:100%; height:100%; overflow:hidden; background:#111; font-fami
 
 <!-- MENU -->
 <div class="menu">
-    <a href="character.html" class="menu-item"><div class="menu-icon">🧙</div>Character</a>
-    <div class="menu-item"><div class="menu-icon">🎒</div>Inventory</div>
-    <div class="menu-item"><div class="menu-icon">🔥</div>Skills</div>
-    <div class="menu-item"><div class="menu-icon">🗺</div>Map</div>
+    <a href="character.html" class="menu-item"><div class="menu-icon">🧙</div>Custom</a>
+    <div class="menu-item" onclick="toggleModal('inventoryModal', true)"><div class="menu-icon">🎒</div>Bag</div>
+    <div class="menu-item" onclick="toggleModal('joinModal', true)"><div class="menu-icon">🚪</div>Join</div>
+    <div class="menu-item" onclick="alert('Novarise World v2.5 - AQW Engine loaded successfully!')"><div class="menu-icon">⚙</div>Info</div>
 </div>
 
 <script>
@@ -337,13 +243,62 @@ let targetX = 50, targetY = 68;
 let moving = false;
 let monsterHp = 100;
 
+// Inventory Items Database
+const inventoryItems = [
+    { name: "Shadow Robe", type: "armor", color: "#374151" },
+    { name: "Mage Purple Robe", type: "armor", color: "#c084fc" },
+    { name: "Golden Horn Helm", type: "helm", color: "#f59e0b" },
+    { name: "Shadow Knight Helm", type: "helm", color: "#991b1b" },
+    { name: "Blood Cape", type: "cape", color: "#dc2626" },
+    { name: "Royal Blue Cape", type: "cape", color: "#2563eb" },
+    { name: "Crystal Staff", type: "weapon", color: "#38bdf8" },
+    { name: "Dragon Blade", type: "weapon", color: "#ef4444" }
+];
+
+function renderInventory() {
+    const list = document.getElementById("inventoryList");
+    list.innerHTML = "";
+    inventoryItems.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "inv-item";
+        div.innerHTML = `<strong>${item.name}</strong><br><span style="color:#9ca3af; font-size:10px;">${item.type}</span>`;
+        div.onclick = () => equipItem(item);
+        list.appendChild(div);
+    });
+}
+renderInventory();
+
+function equipItem(item) {
+    if(item.type === "armor") {
+        document.getElementById("eqArmor").setAttribute("fill", item.color);
+    } else if(item.type === "helm") {
+        document.getElementById("eqHelm").setAttribute("fill", item.color);
+    } else if(item.type === "cape") {
+        document.getElementById("eqCape").setAttribute("fill", item.color);
+    } else if(item.type === "weapon") {
+        document.getElementById("eqWeapon").setAttribute("stroke", item.color);
+    }
+    alert(`Na-equip ang ${item.name}!`);
+}
+
+function toggleModal(modalId, show) {
+    document.getElementById(modalId).style.display = show ? "flex" : "none";
+}
+
+function joinRoom() {
+    const roomName = document.getElementById("roomInput").value;
+    document.getElementById("roomTitle").textContent = `☀ Novarise Forest [${roomName}]`;
+    toggleModal('joinModal', false);
+    alert(`Matagumpay na pumasok sa room: ${roomName}`);
+}
+
 function updatePlayerPosition(){
     player.style.left = playerX + "%";
     player.style.top = playerY + "%";
 }
 
 document.getElementById("gameLayer").addEventListener("click", function(event){
-    if(event.target.closest(".world-object,.monster,.portal")) return;
+    if(event.target.closest(".world-object,.monster,.portal,.modal")) return;
     const rect = this.getBoundingClientRect();
     targetX = ((event.clientX - rect.left) / rect.width) * 100;
     targetY = ((event.clientY - rect.top) / rect.height) * 100;
@@ -381,20 +336,15 @@ movementLoop();
 function startWalking(){ fallback.classList.add("running"); }
 function stopWalking(){ fallback.classList.remove("running"); }
 
-/* ======================================================
-   ATTACK SYSTEM & FLOATING DAMAGE
-====================================================== */
 function attackMonster(){
     fallback.classList.remove("running");
     fallback.classList.add("attacking");
-
     setTimeout(() => { fallback.classList.remove("attacking"); }, 400);
 
     const dmg = Math.floor(Math.random() * 35) + 15;
     monsterHp = Math.max(0, monsterHp - dmg);
     document.getElementById("monsterHpBar").style.width = monsterHp + "%";
 
-    // Show Damage Pop
     const monsterElem = document.getElementById("monster");
     const rect = monsterElem.getBoundingClientRect();
     const pop = document.createElement("div");
@@ -408,7 +358,7 @@ function attackMonster(){
 
     if(monsterHp <= 0){
         setTimeout(() => {
-            alert("Monster Defeated!");
+            alert("Natalo ang Dire Wolf! Nakakuha ka ng EXP.");
             monsterHp = 100;
             document.getElementById("monsterHpBar").style.width = "100%";
         }, 300);
