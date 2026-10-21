@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Novarise World - AQW Animated Running</title>
+<title>Novarise World - AQW Real Sprint Animation</title>
 
 <style>
 *{ box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
@@ -22,76 +22,78 @@ html, body{ width:100%; height:100%; overflow:hidden; background:#111; font-fami
 .fallback-name{ position:absolute; left:50%; top:-22px; transform:translateX(-50%); color:white; white-space:nowrap; font-size:15px; font-weight:800; text-shadow: 0 2px 3px #000, 0 0 5px #000; }
 
 /* ======================================================
-   RUNNING / WALKING ANIMATIONS FOR BODY PARTS
+   REAL AQW SPRINT / RUNNING ANIMATION
 ====================================================== */
 
-/* Flipping direction based on movement */
+/* Pag-harap sa kaliwa */
 #playerFallback.face-left .aqw-avatar { transform: scaleX(-1); }
 
-/* Idle Breathing Movement */
+/* IDLE STATE: Mabilis at natural na paghinga */
 #playerFallback:not(.running) .aqw-avatar {
     animation: aqwIdleBreath 2s infinite alternate ease-in-out;
 }
 @keyframes aqwIdleBreath {
     0% { transform: translateY(0); }
-    100% { transform: translateY(-2px); }
+    100% { transform: translateY(-3px); }
 }
 
-/* 1. Body Bounce while Running */
+/* RUNNING STATE 1: Yumuyuko ang buong katawan at nagbo-bounce */
 #playerFallback.running .aqw-avatar {
-    animation: aqwRunBounce 0.3s infinite alternate ease-in-out;
+    animation: aqwRealRun 0.28s infinite alternate ease-in-out;
 }
-@keyframes aqwRunBounce {
-    0% { transform: translateY(0) rotate(-1deg); }
-    100% { transform: translateY(-6px) rotate(2deg); }
+@keyframes aqwRealRun {
+    0% { transform: translateY(0) rotate(10deg); }
+    100% { transform: translateY(-8px) rotate(14deg); }
 }
 
-/* 2. Left Leg Stepping */
+/* RUNNING STATE 2: Kaliwang Binti (Malaking Hakbang Pabalik at Paharap) */
 #playerFallback.running .leg-left {
-    animation: runLegLeft 0.3s infinite alternate ease-in-out;
-    transform-origin: top center;
+    animation: runLegLeftFull 0.28s infinite alternate ease-in-out;
+    transform-origin: 52px 115px;
 }
-@keyframes runLegLeft {
-    0% { transform: rotate(-25deg); }
-    100% { transform: rotate(25deg); }
+@keyframes runLegLeftFull {
+    0% { transform: rotate(-55deg) translateY(-2px); }
+    100% { transform: rotate(45deg) translateY(0); }
 }
 
-/* 3. Right Leg Stepping (Opposite) */
+/* RUNNING STATE 3: Kanang Binti (Kabaligtaran ng Kaliwang Binti) */
 #playerFallback.running .leg-right {
-    animation: runLegRight 0.3s infinite alternate ease-in-out;
-    transform-origin: top center;
+    animation: runLegRightFull 0.28s infinite alternate ease-in-out;
+    transform-origin: 68px 115px;
 }
-@keyframes runLegRight {
-    0% { transform: rotate(30deg); }
-    100% { transform: rotate(-20deg); }
+@keyframes runLegRightFull {
+    0% { transform: rotate(50deg) translateY(0); }
+    100% { transform: rotate(-50deg) translateY(-2px); }
 }
 
-/* 4. Arms & Weapon Motion */
+/* RUNNING STATE 4: Kaliwang Braso (Kaway at Pag-ayaw sa Hangin) */
 #playerFallback.running .arm-left {
-    animation: runArmLeft 0.3s infinite alternate ease-in-out;
-    transform-origin: top center;
+    animation: runArmLeftFull 0.28s infinite alternate ease-in-out;
+    transform-origin: 44px 68px;
 }
-@keyframes runArmLeft {
-    0% { transform: rotate(15deg); }
-    100% { transform: rotate(-25deg); }
+@keyframes runArmLeftFull {
+    0% { transform: rotate(45deg); }
+    100% { transform: rotate(-55deg); }
 }
 
+/* RUNNING STATE 5: Kanang Braso at Sandata (Ayon sa pagtakbo) */
 #playerFallback.running .arm-right-weapon {
-    animation: runArmWeapon 0.3s infinite alternate ease-in-out;
+    animation: runArmWeaponFull 0.28s infinite alternate ease-in-out;
     transform-origin: 74px 68px;
 }
-@keyframes runArmWeapon {
-    0% { transform: rotate(-8deg) translateY(0); }
-    100% { transform: rotate(10deg) translateY(-3px); }
+@keyframes runArmWeaponFull {
+    0% { transform: rotate(-25deg) translateY(2px); }
+    100% { transform: rotate(20deg) translateY(-4px); }
 }
 
+/* RUNNING STATE 6: Cape / Kapa na sumasayaw sa hangin */
 #playerFallback.running .cape {
-    animation: runCapeWave 0.3s infinite alternate ease-in-out;
+    animation: runCapeFly 0.28s infinite alternate ease-in-out;
     transform-origin: top center;
 }
-@keyframes runCapeWave {
-    0% { transform: skewX(-3deg) scaleY(0.98); }
-    100% { transform: skewX(8deg) scaleY(1.05); }
+@keyframes runCapeFly {
+    0% { transform: rotate(-15deg) skewX(-15deg) scaleY(0.9); }
+    100% { transform: rotate(-35deg) skewX(-25deg) scaleY(1.1); }
 }
 
 /* UI / HUD Styles */
@@ -179,7 +181,7 @@ html, body{ width:100%; height:100%; overflow:hidden; background:#111; font-fami
         <div id="player">
             <div id="playerSprite"></div>
 
-            <!-- AQW Fully Animated Body Parts SVG -->
+            <!-- AQW Fully Animated Vector Avatar -->
             <div id="playerFallback">
                 <div class="fallback-name">LQS</div>
 
@@ -227,13 +229,11 @@ html, body{ width:100%; height:100%; overflow:hidden; background:#111; font-fami
 
                     <!-- Right Arm & Staff Weapon Group -->
                     <g class="arm-right-weapon">
-                        <!-- Staff Staff -->
                         <line x1="15" y1="150" x2="105" y2="95" stroke="#b45309" stroke-width="5" stroke-linecap="round" />
                         <line x1="15" y1="150" x2="105" y2="95" stroke="#fde047" stroke-width="2" />
                         <circle cx="105" cy="95" r="9" fill="#0284c7" />
                         <circle cx="105" cy="95" r="5" fill="#38bdf8" />
 
-                        <!-- Right Arm -->
                         <path d="M 74 68 L 95 110" stroke="#c084fc" stroke-width="9" stroke-linecap="round" />
                         <circle cx="97" cy="113" r="5" fill="#111" />
                     </g>
@@ -353,7 +353,6 @@ document.getElementById("gameLayer").addEventListener("click", function(event){
     targetX = ((event.clientX - rect.left) / rect.width) * 100;
     targetY = ((event.clientY - rect.top) / rect.height) * 100;
 
-    // Face left/right direction when clicking
     if(targetX < playerX) {
         fallback.classList.add("face-left");
     } else {
