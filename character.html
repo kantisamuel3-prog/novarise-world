@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Novarise World - Character Showcase & Customizer</title>
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background: #0a0d14;
+    color: #fff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+header h1 {
+    font-size: 28px;
+    color: #facc15;
+    text-shadow: 0 0 10px rgba(250, 204, 21, 0.4);
+}
+
+header p {
+    color: #9ca3af;
+    font-size: 14px;
+}
+
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    max-width: 900px;
+    width: 100%;
+    background: #111827;
+    border: 2px solid #374151;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+}
+
+.stage {
+    flex: 1;
+    min-width: 300px;
+    height: 450px;
+    background: radial-gradient(circle at center bottom, #1f2937 0%, #030712 80%);
+    border: 1px solid #4b5563;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.character-wrapper {
+    position: relative;
+    width: 180px;
+    height: 280px;
+    filter: drop-shadow(0 10px 10px rgba(0,0,0,0.7));
+}
+
+/* Warrior SVG Animation */
+.warrior-svg {
+    width: 100%;
+    height: 100%;
+    transform-origin: bottom center;
+    animation: idleBreath 2.5s ease-in-out infinite alternate;
+}
+
+@keyframes idleBreath {
+    0% { transform: scaleY(1); }
+    100% { transform: scaleY(1.02) translateY(-2px); }
+}
+
+.controls {
+    flex: 1;
+    min-width: 280px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.panel {
+    background: #1f2937;
+    border: 1px solid #374151;
+    border-radius: 8px;
+    padding: 15px;
+}
+
+.panel h2 {
+    font-size: 16px;
+    color: #e5e7eb;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #374151;
+    padding-bottom: 5px;
+}
+
+.option-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+label {
+    font-size: 12px;
+    color: #9ca3af;
+}
+
+input[type="color"] {
+    -webkit-appearance: none;
+    border: none;
+    width: 100%;
+    height: 35px;
+    border-radius: 6px;
+    cursor: pointer;
+    background: transparent;
+}
+
+.btn-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+button {
+    flex: 1;
+    padding: 10px;
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+button:hover {
+    background: #1d4ed8;
+}
+
+.back-btn {
+    background: #374151;
+}
+
+.back-btn:hover {
+    background: #4b5563;
+}
+</style>
+</head>
+<body>
+
+<header>
+    <h1>⚔️ Novarise Warrior Customizer</h1>
+    <p>Ayusin ang kulay at baluti ng iyong Character</p>
+</header>
+
+<div class="container">
+    <!-- Character Display Stage -->
+    <div class="stage">
+        <div class="character-wrapper">
+            <svg class="warrior-svg" viewBox="0 0 100 160" xmlns="http://www.w3.org/2000/svg">
+                <!-- Shadow -->
+                <ellipse cx="50" cy="155" rx="30" ry="5" fill="rgba(0,0,0,0.5)" />
+                
+                <!-- Cape -->
+                <path d="M 32 45 L 20 145 L 80 145 L 68 45 Z" fill="#b91c1c" id="capeColor" />
+                
+                <!-- Legs / Boots -->
+                <rect x="36" y="100" width="10" height="48" rx="3" fill="#111827" />
+                <rect x="54" y="100" width="10" height="48" rx="3" fill="#111827" />
+                <!-- Greaves -->
+                <rect x="35" y="110" width="12" height="25" rx="2" fill="#4b5563" id="armorColor1" />
+                <rect x="53" y="110" width="12" height="25" rx="2" fill="#4b5563" id="armorColor2" />
+
+                <!-- Torso / Chestplate -->
+                <path d="M 30 42 L 70 42 L 64 102 L 36 102 Z" fill="#374151" id="chestColor" />
+                <path d="M 40 45 L 60 45 L 56 85 L 44 85 Z" fill="#eab308" id="trimColor" />
+
+                <!-- Left Arm & Shield -->
+                <rect x="20" y="45" width="10" height="40" rx="4" fill="#1f2937" />
+                <polygon points="12,50 25,50 25,85 18,95 12,85" fill="#1d4ed8" id="shieldColor" />
+
+                <!-- Right Arm & Sword -->
+                <rect x="70" y="45" width="10" height="40" rx="4" fill="#1f2937" />
+                <!-- Greatsword -->
+                <path d="M 77 10 L 83 10 L 82 75 L 78 75 Z" fill="#e2e8f0" />
+                <rect x="72" y="75" width="16" height="4" fill="#f59e0b" />
+                <rect x="78" y="79" width="4" height="15" fill="#475569" />
+
+                <!-- Pauldrons (Shoulders) -->
+                <circle cx="28" cy="45" r="10" fill="#6b7280" />
+                <circle cx="72" cy="45" r="10" fill="#6b7280" />
+
+                <!-- Head / Helmet -->
+                <circle cx="50" cy="28" r="12" fill="#f87171" id="skinColor" />
+                <path d="M 38 18 Q 50 10 62 18 L 62 34 Q 50 38 38 34 Z" fill="#4b5563" />
+                <!-- Visor Slot -->
+                <rect x="42" y="26" width="16" height="4" fill="#090d16" />
+                <path d="M 50 8 C 45 0, 42 -5, 38 -8 C 48 -2, 52 -2, 62 -8 C 58 -5, 55 0, 50 8 Z" fill="#dc2626" />
+            </svg>
+        </div>
+    </div>
+
+    <!-- Customization Options -->
+    <div class="controls">
+        <div class="panel">
+            <h2>🎨 Appearance Settings</h2>
+            
+            <div class="option-group">
+                <label>Chestplate & Armor</label>
+                <input type="color" id="chestPicker" value="#374151">
+            </div>
+
+            <div class="option-group">
+                <label>Cape Color</label>
+                <input type="color" id="capePicker" value="#b91c1c">
+            </div>
+
+            <div class="option-group">
+                <label>Shield Crest</label>
+                <input type="color" id="shieldPicker" value="#1d4ed8">
+            </div>
+
+            <div class="option-group">
+                <label>Gold Trim</label>
+                <input type="color" id="trimPicker" value="#eab308">
+            </div>
+        </div>
+
+        <div class="btn-group">
+            <button onclick="window.location.href='index.html'" class="back-btn">⬅️ Bumalik sa Laro</button>
+            <button onclick="alert('Na-save ang Character Customization!')">💾 Save Character</button>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('chestPicker').addEventListener('input', (e) => {
+    document.getElementById('chestColor').setAttribute('fill', e.target.value);
+});
+document.getElementById('capePicker').addEventListener('input', (e) => {
+    document.getElementById('capeColor').setAttribute('fill', e.target.value);
+});
+document.getElementById('shieldPicker').addEventListener('input', (e) => {
+    document.getElementById('shieldColor').setAttribute('fill', e.target.value);
+});
+document.getElementById('trimPicker').addEventListener('input', (e) => {
+    document.getElementById('trimColor').setAttribute('fill', e.target.value);
+});
+</script>
+
+</body>
+</html>
