@@ -38,12 +38,9 @@ body{
 #map{
     position:absolute;
     inset:0;
-
     width:100%;
     height:100%;
-
     object-fit:cover;
-
     user-select:none;
     pointer-events:none;
 }
@@ -55,7 +52,6 @@ body{
 #gameLayer{
     position:absolute;
     inset:0;
-
     overflow:hidden;
 }
 
@@ -65,212 +61,69 @@ body{
 
 #player{
     position:absolute;
-
     left:50%;
     top:68%;
-
     width:120px;
     height:150px;
-
-    transform:
-        translate(-50%,-100%);
-
+    transform: translate(-50%,-100%);
     z-index:20;
-
     pointer-events:none;
 }
 
-/*
-   This is the actual sprite container.
-
-   Later:
-   idle.png
-   walk.png
-   attack.png
-
-   will be loaded here.
-*/
-
 #playerSprite{
     position:absolute;
-
     left:50%;
     bottom:0;
-
     width:100%;
     height:100%;
-
-    transform:
-        translateX(-50%);
-
-    background-image:
-        url("assets/player/idle.png");
-
+    transform: translateX(-50%);
+    background-image: url("assets/player/idle.png");
     background-repeat:no-repeat;
     background-position:center bottom;
     background-size:contain;
-
     image-rendering:auto;
-
-    filter:
-        drop-shadow(
-            0 8px 6px
-            rgba(0,0,0,.55)
-        );
+    filter: drop-shadow(0 8px 6px rgba(0,0,0,.55));
 }
 
-/*
-   If sprite doesn't exist yet,
-   show a simple temporary humanoid
-   silhouette so the movement system
-   can still be tested.
-
-   This disappears automatically
-   when idle.png exists.
-*/
-
+/* Realistic Humanoid Warrior SVG Avatar */
 #playerFallback{
     position:absolute;
-
     left:50%;
-    bottom:5px;
-
-    width:72px;
-    height:118px;
-
-    transform:
-        translateX(-50%);
-
+    bottom:0;
+    width:100px;
+    height:140px;
+    transform: translateX(-50%);
     display:flex;
-
     flex-direction:column;
     align-items:center;
-
-    filter:
-        drop-shadow(
-            0 7px 5px
-            rgba(0,0,0,.55)
-        );
+    filter: drop-shadow(0 7px 5px rgba(0,0,0,.65));
 }
 
-.fallback-head{
-    width:38px;
-    height:38px;
-
-    border-radius:50%;
-
-    background:
-        radial-gradient(
-            circle at 50% 65%,
-            #f0bd82 0 54%,
-            #171717 55% 100%
-        );
-
-    border:2px solid #111;
+.warrior-avatar {
+    width: 100%;
+    height: 100%;
+    transform-origin: bottom center;
 }
 
-.fallback-body{
-    position:relative;
-
-    width:45px;
-    height:53px;
-
-    margin-top:-1px;
-
-    border-radius:10px 10px 5px 5px;
-
-    background:
-        linear-gradient(
-            90deg,
-            #111827,
-            #596579,
-            #111827
-        );
-
-    border:2px solid #d0d5db;
+#playerFallback.walking .warrior-avatar {
+    animation: warriorWalk 0.35s infinite alternate ease-in-out;
 }
 
-.fallback-arm{
-    position:absolute;
-
-    top:8px;
-
-    width:10px;
-    height:43px;
-
-    border-radius:7px;
-
-    background:#263244;
-}
-
-.fallback-arm.left{
-    left:-10px;
-    transform:rotate(18deg);
-}
-
-.fallback-arm.right{
-    right:-10px;
-    transform:rotate(-25deg);
-}
-
-.fallback-leg{
-    width:14px;
-    height:35px;
-
-    margin-top:-1px;
-
-    border-radius:0 0 6px 6px;
-
-    background:#171d27;
-}
-
-.fallback-legs{
-    display:flex;
-    gap:7px;
-}
-
-.fallback-sword{
-    position:absolute;
-
-    right:-22px;
-    top:22px;
-
-    width:9px;
-    height:68px;
-
-    background:
-        linear-gradient(
-            90deg,
-            #64748b,
-            #f8fafc,
-            #64748b
-        );
-
-    border:1px solid #111;
-
-    transform:rotate(38deg);
-
-    transform-origin:bottom;
+@keyframes warriorWalk {
+    0% { transform: translateY(0) rotate(-1deg); }
+    100% { transform: translateY(-4px) rotate(1deg); }
 }
 
 .fallback-name{
     position:absolute;
-
     left:50%;
-    top:-29px;
-
+    top:-25px;
     transform:translateX(-50%);
-
     color:white;
-
     white-space:nowrap;
-
     font-size:15px;
     font-weight:800;
-
-    text-shadow:
-        0 2px 3px #000,
-        0 0 5px #000;
+    text-shadow: 0 2px 3px #000, 0 0 5px #000;
 }
 
 /* =========================================
@@ -279,19 +132,14 @@ body{
 
 .world-object{
     position:absolute;
-
-    transform:
-        translate(-50%,-100%);
-
+    transform: translate(-50%,-100%);
     z-index:15;
-
     pointer-events:auto;
 }
 
 .npc{
     left:24%;
     top:70%;
-
     width:100px;
     height:155px;
 }
@@ -299,79 +147,44 @@ body{
 .npc-sprite{
     width:100%;
     height:100%;
-
-    background:
-        url("assets/npcs/quest-npc.png")
-        center bottom /
-        contain
-        no-repeat;
+    background: url("assets/npcs/quest-npc.png") center bottom / contain no-repeat;
 }
 
 .object-name{
     position:absolute;
-
     left:50%;
     top:-28px;
-
     transform:translateX(-50%);
-
     color:white;
-
     font-size:15px;
     font-weight:800;
-
     white-space:nowrap;
-
-    text-shadow:
-        0 2px 3px #000;
+    text-shadow: 0 2px 3px #000;
 }
 
 .quest-mark{
     position:absolute;
-
     left:50%;
     top:-75px;
-
     transform:translateX(-50%);
-
     width:38px;
     height:38px;
-
     display:flex;
     align-items:center;
     justify-content:center;
-
     border-radius:50%;
-
     background:#ef2020;
-
     border:3px solid white;
-
     color:#ffe600;
-
     font-size:23px;
     font-weight:900;
-
-    box-shadow:
-        0 0 10px
-        rgba(255,0,0,.65);
-
-    animation:
-        questPulse 1s infinite alternate;
+    box-shadow: 0 0 10px rgba(255,0,0,.65);
+    animation: questPulse 1s infinite alternate;
 }
 
 @keyframes questPulse{
-    from{
-        transform:
-            translateX(-50%)
-            scale(.9);
-    }
-
-    to{
-        transform:
-            translateX(-50%)
-            scale(1.08);
-    }
+    from{ transform: translateX(-50%) scale(.9); }
+    to{ transform: translateX(-50%) scale(1.08); }
 }
 
 /* =========================================
@@ -380,68 +193,45 @@ body{
 
 .monster{
     position:absolute;
-
     left:78%;
     top:73%;
-
     width:145px;
     height:120px;
-
-    transform:
-        translate(-50%,-100%);
-
+    transform: translate(-50%,-100%);
     z-index:15;
 }
 
 .monster-sprite{
     width:100%;
     height:100%;
-
-    background:
-        url("assets/monsters/forest-wolf.png")
-        center bottom /
-        contain
-        no-repeat;
+    background: url("assets/monsters/forest-wolf.png") center bottom / contain no-repeat;
 }
 
 .monster-name{
     position:absolute;
-
     left:50%;
     top:-32px;
-
     transform:translateX(-50%);
-
     color:white;
-
     white-space:nowrap;
-
     font-weight:800;
-
-    text-shadow:
-        0 2px 3px #000;
+    text-shadow: 0 2px 3px #000;
 }
 
 .monster-hp{
     position:absolute;
-
     left:50%;
     top:-13px;
-
     transform:translateX(-50%);
-
     width:105px;
     height:9px;
-
     border:1px solid #111;
-
     background:#111;
 }
 
 .monster-hp-fill{
     width:100%;
     height:100%;
-
     background:#dc2626;
 }
 
@@ -451,45 +241,24 @@ body{
 
 .portal{
     position:absolute;
-
     right:5%;
     top:62%;
-
     width:105px;
     height:155px;
-
-    transform:
-        translateY(-100%);
-
+    transform: translateY(-100%);
     z-index:14;
-
-    background:
-        url("assets/portal.png")
-        center /
-        contain
-        no-repeat;
-
-    filter:
-        drop-shadow(
-            0 0 16px
-            rgba(0,170,255,.75)
-        );
+    background: url("assets/portal.png") center / contain no-repeat;
+    filter: drop-shadow(0 0 16px rgba(0,170,255,.75));
 }
 
 .portal-name{
     position:absolute;
-
     left:50%;
     top:-25px;
-
     transform:translateX(-50%);
-
     color:white;
-
     font-weight:800;
-
-    text-shadow:
-        0 2px 4px #000;
+    text-shadow: 0 2px 4px #000;
 }
 
 /* =========================================
@@ -498,593 +267,101 @@ body{
 
 #moveMarker{
     position:absolute;
-
     width:32px;
     height:15px;
-
     border-radius:50%;
-
     border:2px solid rgba(255,255,255,.85);
-
-    box-shadow:
-        0 0 10px
-        rgba(40,140,255,.9);
-
-    transform:
-        translate(-50%,-50%);
-
+    box-shadow: 0 0 10px rgba(40,140,255,.9);
+    transform: translate(-50%,-50%);
     z-index:10;
-
     pointer-events:none;
-
-    animation:
-        marker .65s infinite alternate;
+    animation: marker .65s infinite alternate;
 }
 
 @keyframes marker{
-    from{
-        opacity:.35;
-        transform:
-            translate(-50%,-50%)
-            scale(.75);
-    }
-
-    to{
-        opacity:1;
-        transform:
-            translate(-50%,-50%)
-            scale(1);
-    }
+    from{ opacity:.35; transform: translate(-50%,-50%) scale(.75); }
+    to{ opacity:1; transform: translate(-50%,-50%) scale(1); }
 }
 
-/* =========================================
-   TOP PLAYER HUD
-========================================= */
-
+/* HUD & UI */
 .player-hud{
-    position:fixed;
-
-    left:12px;
-    top:12px;
-
-    z-index:50;
-
-    width:330px;
-
-    padding:10px;
-
-    display:flex;
-    gap:10px;
-
-    border:
-        2px solid
-        #80652e;
-
-    border-radius:16px;
-
-    background:
-        rgba(8,13,19,.93);
-
-    box-shadow:
-        0 7px 22px
-        rgba(0,0,0,.45);
+    position:fixed; left:12px; top:12px; z-index:50; width:330px; padding:10px; display:flex; gap:10px;
+    border: 2px solid #80652e; border-radius:16px; background: rgba(8,13,19,.93); box-shadow: 0 7px 22px rgba(0,0,0,.45);
 }
-
 .avatar{
-    width:66px;
-    height:66px;
-
-    flex:none;
-
-    border-radius:50%;
-
-    border:2px solid #c69c42;
-
-    background:
-        linear-gradient(
-            #111827,
-            #05070a
-        );
-
-    display:flex;
-
-    align-items:center;
-    justify-content:center;
-
-    color:white;
-
-    font-size:25px;
+    width:66px; height:66px; flex:none; border-radius:50%; border:2px solid #c69c42;
+    background: linear-gradient(#111827,#05070a); display:flex; align-items:center; justify-content:center; color:white; font-size:25px;
 }
-
-.hud-info{
-    flex:1;
-}
-
-.hud-name{
-    display:flex;
-    justify-content:space-between;
-
-    color:white;
-
-    font-size:18px;
-    font-weight:800;
-
-    margin-bottom:6px;
-}
-
-.hud-level{
-    color:#ffd34d;
-}
-
-.stat-bar{
-    position:relative;
-
-    height:15px;
-
-    overflow:hidden;
-
-    margin-bottom:5px;
-
-    border-radius:8px;
-
-    background:#111827;
-
-    border:1px solid #111;
-}
-
-.stat-fill{
-    height:100%;
-    width:100%;
-}
-
-.hp-fill{
-    background:
-        linear-gradient(
-            90deg,
-            #991b1b,
-            #ef4444
-        );
-}
-
-.mp-fill{
-    background:
-        linear-gradient(
-            90deg,
-            #1d4ed8,
-            #38bdf8
-        );
-}
-
-.stat-text{
-    position:absolute;
-
-    inset:0;
-
-    display:flex;
-
-    align-items:center;
-    justify-content:center;
-
-    color:white;
-
-    font-size:10px;
-    font-weight:bold;
-
-    text-shadow:
-        0 1px 2px #000;
-}
-
-/* =========================================
-   LOCATION
-========================================= */
+.hud-info{ flex:1; }
+.hud-name{ display:flex; justify-content:space-between; color:white; font-size:18px; font-weight:800; margin-bottom:6px; }
+.hud-level{ color:#ffd34d; }
+.stat-bar{ position:relative; height:15px; overflow:hidden; margin-bottom:5px; border-radius:8px; background:#111827; border:1px solid #111; }
+.stat-fill{ height:100%; width:100%; }
+.hp-fill{ background: linear-gradient(90deg, #991b1b, #ef4444); }
+.mp-fill{ background: linear-gradient(90deg, #1d4ed8, #38bdf8); }
+.stat-text{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:white; font-size:10px; font-weight:bold; text-shadow: 0 1px 2px #000; }
 
 .location{
-    position:fixed;
-
-    top:12px;
-    right:12px;
-
-    z-index:50;
-
-    min-width:270px;
-
-    padding:10px 18px;
-
-    text-align:center;
-
-    border:
-        2px solid
-        #80652e;
-
-    border-radius:16px;
-
-    background:
-        rgba(8,13,19,.93);
-
-    color:white;
+    position:fixed; top:12px; right:12px; z-index:50; min-width:270px; padding:10px 18px; text-align:center;
+    border: 2px solid #80652e; border-radius:16px; background: rgba(8,13,19,.93); color:white;
 }
-
-.location-title{
-    font-size:17px;
-    font-weight:800;
-}
-
-.location-time{
-    margin-top:3px;
-
-    color:#e6d28e;
-
-    font-size:12px;
-}
-
-/* =========================================
-   QUEST PANEL
-========================================= */
+.location-title{ font-size:17px; font-weight:800; }
+.location-time{ margin-top:3px; color:#e6d28e; font-size:12px; }
 
 .quest-panel{
-    position:fixed;
-
-    left:10px;
-    top:115px;
-
-    z-index:50;
-
-    width:180px;
-
-    padding:9px 12px;
-
-    border-radius:10px;
-
-    background:
-        rgba(5,10,15,.9);
-
-    border:
-        1px solid #555;
-
-    color:white;
+    position:fixed; left:10px; top:115px; z-index:50; width:180px; padding:9px 12px; border-radius:10px;
+    background: rgba(5,10,15,.9); border: 1px solid #555; color:white;
 }
-
-.quest-panel strong{
-    font-size:16px;
-}
-
-.quest-status{
-    margin-top:3px;
-
-    color:#bfc5cc;
-
-    font-size:13px;
-}
-
-/* =========================================
-   CHAT
-========================================= */
+.quest-panel strong{ font-size:16px; }
+.quest-status{ margin-top:3px; color:#bfc5cc; font-size:13px; }
 
 .chat{
-    position:fixed;
-
-    left:12px;
-    bottom:12px;
-
-    z-index:50;
-
-    width:430px;
-    height:175px;
-
-    overflow:hidden;
-
-    border:
-        2px solid
-        #725a2e;
-
-    border-radius:12px;
-
-    background:
-        rgba(5,9,14,.95);
-
-    box-shadow:
-        0 7px 25px
-        rgba(0,0,0,.5);
+    position:fixed; left:12px; bottom:12px; z-index:50; width:430px; height:175px; overflow:hidden;
+    border: 2px solid #725a2e; border-radius:12px; background: rgba(5,9,14,.95); box-shadow: 0 7px 25px rgba(0,0,0,.5);
 }
-
-.chat-tabs{
-    display:flex;
-
-    height:35px;
-
-    background:#151b24;
-}
-
-.chat-tab{
-    padding:8px 20px;
-
-    color:#b8bec7;
-
-    font-size:13px;
-    font-weight:bold;
-}
-
-.chat-tab.active{
-    color:white;
-
-    background:#1760c8;
-}
-
-.chat-messages{
-    height:93px;
-
-    padding:8px 12px;
-
-    overflow:auto;
-
-    color:#d9e0e8;
-
-    font-size:12px;
-}
-
-.chat-welcome{
-    color:#ffe000;
-    font-weight:bold;
-}
-
-.chat-location{
-    margin-top:5px;
-    color:#20d8ff;
-}
-
-.chat-input{
-    display:flex;
-
-    height:45px;
-
-    border-top:
-        1px solid
-        #303640;
-}
-
-.chat-input input{
-    flex:1;
-
-    min-width:0;
-
-    border:0;
-    outline:0;
-
-    padding:0 12px;
-
-    color:white;
-
-    background:#0b1118;
-}
-
-.chat-input button{
-    width:70px;
-
-    border:0;
-
-    color:white;
-
-    font-weight:800;
-
-    background:#df901c;
-
-    cursor:pointer;
-}
-
-/* =========================================
-   SKILL BAR
-========================================= */
+.chat-tabs{ display:flex; height:35px; background:#151b24; }
+.chat-tab{ padding:8px 20px; color:#b8bec7; font-size:13px; font-weight:bold; }
+.chat-tab.active{ color:white; background:#1760c8; }
+.chat-messages{ height:93px; padding:8px 12px; overflow:auto; color:#d9e0e8; font-size:12px; }
+.chat-welcome{ color:#ffe000; font-weight:bold; }
+.chat-location{ margin-top:5px; color:#20d8ff; }
+.chat-input{ display:flex; height:45px; border-top: 1px solid #303640; }
+.chat-input input{ flex:1; min-width:0; border:0; outline:0; padding:0 12px; color:white; background:#0b1118; }
+.chat-input button{ width:70px; border:0; color:white; font-weight:800; background:#df901c; cursor:pointer; }
 
 .skill-bar{
-    position:fixed;
-
-    left:50%;
-    bottom:12px;
-
-    transform:translateX(-50%);
-
-    z-index:50;
-
-    display:flex;
-    gap:7px;
-
-    padding:8px 12px;
-
-    border:
-        2px solid
-        #725a2e;
-
-    border-radius:17px;
-
-    background:
-        rgba(7,11,16,.96);
-
-    box-shadow:
-        0 7px 25px
-        rgba(0,0,0,.5);
+    position:fixed; left:50%; bottom:12px; transform:translateX(-50%); z-index:50; display:flex; gap:7px;
+    padding:8px 12px; border: 2px solid #725a2e; border-radius:17px; background: rgba(7,11,16,.96); box-shadow: 0 7px 25px rgba(0,0,0,.5);
 }
-
 .skill{
-    position:relative;
-
-    width:53px;
-    height:53px;
-
-    display:flex;
-
-    align-items:center;
-    justify-content:center;
-
-    border:
-        2px solid
-        #596474;
-
-    border-radius:10px;
-
-    background:
-        linear-gradient(
-            135deg,
-            #1e2937,
-            #080c11
-        );
-
-    color:white;
-
-    font-size:24px;
-
-    cursor:pointer;
+    position:relative; width:53px; height:53px; display:flex; align-items:center; justify-content:center;
+    border: 2px solid #596474; border-radius:10px; background: linear-gradient(135deg, #1e2937, #080c11); color:white; font-size:24px; cursor:pointer;
 }
-
-.skill:hover{
-    border-color:#facc15;
-}
-
-.skill-number{
-    position:absolute;
-
-    right:4px;
-    bottom:2px;
-
-    color:white;
-
-    font-size:10px;
-}
-
-/* =========================================
-   MENU
-========================================= */
+.skill:hover{ border-color:#facc15; }
+.skill-number{ position:absolute; right:4px; bottom:2px; color:white; font-size:10px; }
 
 .menu{
-    position:fixed;
-
-    right:12px;
-    bottom:12px;
-
-    z-index:50;
-
-    display:flex;
-
-    gap:10px;
-
-    padding:8px 12px;
-
-    border:
-        2px solid
-        #725a2e;
-
-    border-radius:17px;
-
-    background:
-        rgba(7,11,16,.96);
+    position:fixed; right:12px; bottom:12px; z-index:50; display:flex; gap:10px; padding:8px 12px;
+    border: 2px solid #725a2e; border-radius:17px; background: rgba(7,11,16,.96);
 }
-
-.menu-item{
-    width:62px;
-
-    text-align:center;
-
-    color:white;
-
-    font-size:10px;
-
-    cursor:pointer;
-}
-
+.menu-item{ width:62px; text-align:center; color:white; font-size:10px; cursor:pointer; text-decoration:none; }
 .menu-icon{
-    width:38px;
-    height:38px;
-
-    margin:auto auto 3px;
-
-    display:flex;
-
-    align-items:center;
-    justify-content:center;
-
-    border:
-        1px solid
-        #6c5b38;
-
-    border-radius:9px;
-
-    background:#1a2430;
-
-    font-size:19px;
+    width:38px; height:38px; margin:auto auto 3px; display:flex; align-items:center; justify-content:center;
+    border: 1px solid #6c5b38; border-radius:9px; background:#1a2430; font-size:19px;
 }
-
-/* =========================================
-   MOBILE
-========================================= */
 
 @media(max-width:900px){
-
-    .player-hud{
-        width:250px;
-        top:7px;
-        left:7px;
-    }
-
-    .avatar{
-        width:50px;
-        height:50px;
-    }
-
-    .hud-name{
-        font-size:14px;
-    }
-
-    .location{
-        top:7px;
-        right:7px;
-
-        min-width:150px;
-
-        padding:7px;
-    }
-
-    .location-title{
-        font-size:12px;
-    }
-
-    .quest-panel{
-        top:82px;
-        left:7px;
-
-        width:150px;
-    }
-
-    .chat{
-        left:8px;
-        right:8px;
-        bottom:73px;
-
-        width:auto;
-        height:130px;
-    }
-
-    .skill-bar{
-        left:auto;
-        right:8px;
-        bottom:8px;
-
-        transform:none;
-    }
-
-    .skill{
-        width:43px;
-        height:43px;
-
-        font-size:19px;
-    }
-
-    .menu{
-        display:none;
-    }
-
-    #player{
-        width:95px;
-        height:125px;
-    }
+    .player-hud{ width:250px; top:7px; left:7px; }
+    .avatar{ width:50px; height:50px; }
+    .hud-name{ font-size:14px; }
+    .location{ top:7px; right:7px; min-width:150px; padding:7px; }
+    .location-title{ font-size:12px; }
+    .quest-panel{ top:82px; left:7px; width:150px; }
+    .chat{ left:8px; right:8px; bottom:73px; width:auto; height:130px; }
+    .skill-bar{ left:auto; right:8px; bottom:8px; transform:none; }
+    .skill{ width:43px; height:43px; font-size:19px; }
+    .menu{ display:none; }
+    #player{ width:95px; height:125px; }
 }
 </style>
 </head>
@@ -1092,870 +369,310 @@ body{
 <body>
 
 <div id="world">
-
     <!-- BACKGROUND -->
-    <img
-        id="map"
-        src="novarise-forest.png"
-        alt="Novarise Forest"
-    >
+    <img id="map" src="novarise-forest.png" alt="Novarise Forest">
 
     <div id="gameLayer">
-
         <!-- PLAYER -->
         <div id="player">
-
             <div id="playerSprite"></div>
 
-            <!-- temporary fallback -->
+            <!-- Detailed Humanoid Warrior Character Vector -->
             <div id="playerFallback">
+                <div class="fallback-name">LQS</div>
 
-                <div class="fallback-name">
-                    LQS
-                </div>
+                <svg class="warrior-avatar" viewBox="0 0 100 160" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Shadow -->
+                    <ellipse cx="50" cy="155" rx="30" ry="5" fill="rgba(0,0,0,0.5)" />
+                    
+                    <!-- Red Cape -->
+                    <path d="M 32 45 L 20 145 L 80 145 L 68 45 Z" fill="#b91c1c" />
+                    
+                    <!-- Legs / Armor Boots -->
+                    <rect x="36" y="100" width="10" height="48" rx="3" fill="#111827" />
+                    <rect x="54" y="100" width="10" height="48" rx="3" fill="#111827" />
+                    <rect x="35" y="110" width="12" height="25" rx="2" fill="#4b5563" />
+                    <rect x="53" y="110" width="12" height="25" rx="2" fill="#4b5563" />
 
-                <div class="fallback-sword"></div>
+                    <!-- Torso / Heavy Plate Armor -->
+                    <path d="M 30 42 L 70 42 L 64 102 L 36 102 Z" fill="#374151" />
+                    <path d="M 40 45 L 60 45 L 56 85 L 44 85 Z" fill="#eab308" />
 
-                <div class="fallback-head"></div>
+                    <!-- Left Arm & Shield -->
+                    <rect x="20" y="45" width="10" height="40" rx="4" fill="#1f2937" />
+                    <polygon points="12,50 25,50 25,85 18,95 12,85" fill="#1d4ed8" />
 
-                <div class="fallback-body">
+                    <!-- Right Arm & Sword -->
+                    <rect x="70" y="45" width="10" height="40" rx="4" fill="#1f2937" />
+                    <path d="M 77 10 L 83 10 L 82 75 L 78 75 Z" fill="#e2e8f0" />
+                    <rect x="72" y="75" width="16" height="4" fill="#f59e0b" />
+                    <rect x="78" y="79" width="4" height="15" fill="#475569" />
 
-                    <div class="fallback-arm left"></div>
-                    <div class="fallback-arm right"></div>
+                    <!-- Shoulder Pauldrons -->
+                    <circle cx="28" cy="45" r="10" fill="#6b7280" />
+                    <circle cx="72" cy="45" r="10" fill="#6b7280" />
 
-                </div>
-
-                <div class="fallback-legs">
-
-                    <div class="fallback-leg"></div>
-                    <div class="fallback-leg"></div>
-
-                </div>
-
+                    <!-- Helmet & Face Visor -->
+                    <circle cx="50" cy="28" r="12" fill="#f87171" />
+                    <path d="M 38 18 Q 50 10 62 18 L 62 34 Q 50 38 38 34 Z" fill="#4b5563" />
+                    <rect x="42" y="26" width="16" height="4" fill="#090d16" />
+                    <path d="M 50 8 C 45 0, 42 -5, 38 -8 C 48 -2, 52 -2, 62 -8 C 58 -5, 55 0, 50 8 Z" fill="#dc2626" />
+                </svg>
             </div>
-
         </div>
 
         <!-- NPC -->
-        <div
-            class="world-object npc"
-            id="npc"
-        >
-
+        <div class="world-object npc" id="npc">
             <div class="npc-sprite"></div>
-
-            <div class="object-name">
-                Seraphine
-            </div>
-
-            <div class="quest-mark">
-                !
-            </div>
-
+            <div class="object-name">Seraphine</div>
+            <div class="quest-mark">!</div>
         </div>
 
         <!-- MONSTER -->
-        <div
-            class="monster"
-            id="monster"
-        >
-
+        <div class="monster" id="monster">
             <div class="monster-sprite"></div>
-
-            <div class="monster-name">
-                Dire Wolf — Lv. 3
-            </div>
-
-            <div class="monster-hp">
-
-                <div class="monster-hp-fill"></div>
-
-            </div>
-
+            <div class="monster-name">Dire Wolf — Lv. 3</div>
+            <div class="monster-hp"><div class="monster-hp-fill"></div></div>
         </div>
 
         <!-- PORTAL -->
-        <div
-            class="portal"
-            id="portal"
-        >
-
-            <div class="portal-name">
-                Portal
-            </div>
-
+        <div class="portal" id="portal">
+            <div class="portal-name">Portal</div>
         </div>
 
         <!-- MOVE MARKER -->
-        <div
-            id="moveMarker"
-            style="display:none"
-        ></div>
-
+        <div id="moveMarker" style="display:none"></div>
     </div>
-
 </div>
 
-
-<!-- =========================================
-     PLAYER HUD
-========================================= -->
-
+<!-- HUD -->
 <div class="player-hud">
-
-    <div class="avatar">
-        ⚔
-    </div>
-
+    <div class="avatar">⚔</div>
     <div class="hud-info">
-
         <div class="hud-name">
-
-            <span>
-                LQS
-            </span>
-
-            <span class="hud-level">
-                Lv. 1
-            </span>
-
+            <span>LQS</span>
+            <span class="hud-level">Lv. 1</span>
         </div>
-
         <div class="stat-bar">
-
-            <div
-                class="stat-fill hp-fill"
-            ></div>
-
-            <div class="stat-text">
-                100 / 100
-            </div>
-
+            <div class="stat-fill hp-fill"></div>
+            <div class="stat-text">100 / 100</div>
         </div>
-
         <div class="stat-bar">
-
-            <div
-                class="stat-fill mp-fill"
-            ></div>
-
-            <div class="stat-text">
-                100 / 100
-            </div>
-
+            <div class="stat-fill mp-fill"></div>
+            <div class="stat-text">100 / 100</div>
         </div>
-
     </div>
-
 </div>
-
 
 <!-- LOCATION -->
-
 <div class="location">
-
-    <div class="location-title">
-        ☀ Novarise Forest
-    </div>
-
-    <div
-        class="location-time"
-        id="clock"
-    >
-        --:--
-    </div>
-
+    <div class="location-title">☀ Novarise Forest</div>
+    <div class="location-time" id="clock">--:--</div>
 </div>
-
 
 <!-- QUEST -->
-
 <div class="quest-panel">
-
-    <strong>
-        Lucy
-    </strong>
-
-    <div class="quest-status">
-        Out of range
-    </div>
-
+    <strong>Lucy</strong>
+    <div class="quest-status">Out of range</div>
 </div>
-
 
 <!-- CHAT -->
-
 <div class="chat">
-
     <div class="chat-tabs">
-
-        <div class="chat-tab active">
-            General
-        </div>
-
-        <div class="chat-tab">
-            Party
-        </div>
-
-        <div class="chat-tab">
-            Guild
-        </div>
-
+        <div class="chat-tab active">General</div>
+        <div class="chat-tab">Party</div>
+        <div class="chat-tab">Guild</div>
     </div>
-
-    <div
-        class="chat-messages"
-        id="chatMessages"
-    >
-
-        <div class="chat-welcome">
-            Welcome to Novarise World!
-        </div>
-
-        <div>
-            Type /help for commands.
-        </div>
-
-        <div class="chat-location">
-            You are now in: Novarise Forest
-        </div>
-
+    <div class="chat-messages" id="chatMessages">
+        <div class="chat-welcome">Welcome to Novarise World!</div>
+        <div>Type /help for commands.</div>
+        <div class="chat-location">You are now in: Novarise Forest</div>
     </div>
-
     <div class="chat-input">
-
-        <input
-            id="chatInput"
-            type="text"
-            placeholder="Type a message..."
-        >
-
-        <button id="sendChat">
-            SEND
-        </button>
-
+        <input id="chatInput" type="text" placeholder="Type a message...">
+        <button id="sendChat">SEND</button>
     </div>
-
 </div>
-
 
 <!-- SKILLS -->
-
 <div class="skill-bar">
-
-    <button class="skill">
-        ⚔
-        <span class="skill-number">1</span>
-    </button>
-
-    <button class="skill">
-        ✦
-        <span class="skill-number">2</span>
-    </button>
-
-    <button class="skill">
-        🔥
-        <span class="skill-number">3</span>
-    </button>
-
-    <button class="skill">
-        🛡
-        <span class="skill-number">4</span>
-    </button>
-
-    <button class="skill">
-        🧪
-        <span class="skill-number">5</span>
-    </button>
-
+    <button class="skill">⚔<span class="skill-number">1</span></button>
+    <button class="skill">✦<span class="skill-number">2</span></button>
+    <button class="skill">🔥<span class="skill-number">3</span></button>
+    <button class="skill">🛡<span class="skill-number">4</span></button>
+    <button class="skill">🧪<span class="skill-number">5</span></button>
 </div>
 
-
 <!-- MENU -->
-
 <div class="menu">
-
-    <div class="menu-item">
+    <a href="character.html" class="menu-item">
         <div class="menu-icon">🧙</div>
         Character
-    </div>
-
+    </a>
     <div class="menu-item">
         <div class="menu-icon">🎒</div>
         Inventory
     </div>
-
     <div class="menu-item">
         <div class="menu-icon">🔥</div>
         Skills
     </div>
-
     <div class="menu-item">
         <div class="menu-icon">❗</div>
         Quest
     </div>
-
     <div class="menu-item">
         <div class="menu-icon">🗺</div>
         Map
     </div>
-
     <div class="menu-item">
         <div class="menu-icon">⚙</div>
         Settings
     </div>
-
 </div>
 
-
 <script>
-
-/* ======================================================
-   NOVARISE SPRITE GAME
-====================================================== */
-
-const player =
-    document.getElementById("player");
-
-const playerSprite =
-    document.getElementById("playerSprite");
-
-const fallback =
-    document.getElementById("playerFallback");
-
-const marker =
-    document.getElementById("moveMarker");
-
-
-/* ======================================================
-   SPRITE CHECK
-====================================================== */
+const player = document.getElementById("player");
+const playerSprite = document.getElementById("playerSprite");
+const fallback = document.getElementById("playerFallback");
+const marker = document.getElementById("moveMarker");
 
 function checkSprite(){
-
-    const image =
-        new Image();
-
-    image.src =
-        "assets/player/idle.png";
-
+    const image = new Image();
+    image.src = "assets/player/idle.png";
     image.onload = function(){
-
-        playerSprite.style.display =
-            "block";
-
-        fallback.style.display =
-            "none";
-
+        playerSprite.style.display = "block";
+        fallback.style.display = "none";
     };
-
     image.onerror = function(){
-
-        playerSprite.style.display =
-            "none";
-
-        fallback.style.display =
-            "flex";
-
+        playerSprite.style.display = "none";
+        fallback.style.display = "flex";
     };
-
 }
-
 checkSprite();
 
-
-/* ======================================================
-   PLAYER POSITION
-====================================================== */
-
-let playerX = 50;
-let playerY = 68;
-
-let targetX = 50;
-let targetY = 68;
-
+let playerX = 50, playerY = 68;
+let targetX = 50, targetY = 68;
 let moving = false;
 
-
-/* ======================================================
-   SET POSITION
-====================================================== */
-
 function updatePlayerPosition(){
-
-    player.style.left =
-        playerX + "%";
-
-    player.style.top =
-        playerY + "%";
-
+    player.style.left = playerX + "%";
+    player.style.top = playerY + "%";
 }
 
+document.getElementById("gameLayer").addEventListener("click", function(event){
+    if(event.target.closest(".world-object,.monster,.portal")) return;
 
-/* ======================================================
-   CLICK TO MOVE
-====================================================== */
+    const rect = this.getBoundingClientRect();
+    targetX = ((event.clientX - rect.left) / rect.width) * 100;
+    targetY = ((event.clientY - rect.top) / rect.height) * 100;
 
-document
-.getElementById("gameLayer")
-.addEventListener(
-    "click",
-    function(event){
+    targetX = Math.max(5, Math.min(95, targetX));
+    targetY = Math.max(25, Math.min(87, targetY));
 
-        /*
-           Ignore clicks on UI objects.
-        */
-
-        if(
-            event.target.closest(
-                ".world-object,.monster,.portal"
-            )
-        ){
-            return;
-        }
-
-        const rect =
-            this.getBoundingClientRect();
-
-        targetX =
-            (
-                (event.clientX -
-                rect.left)
-                /
-                rect.width
-            ) * 100;
-
-        targetY =
-            (
-                (event.clientY -
-                rect.top)
-                /
-                rect.height
-            ) * 100;
-
-
-        /*
-           Keep player inside
-           playable area.
-        */
-
-        targetX =
-            Math.max(
-                5,
-                Math.min(
-                    95,
-                    targetX
-                )
-            );
-
-        targetY =
-            Math.max(
-                25,
-                Math.min(
-                    87,
-                    targetY
-                )
-            );
-
-        moving = true;
-
-        showMarker(
-            event.clientX,
-            event.clientY
-        );
-
-        startWalking();
-
-    }
-);
-
-
-/* ======================================================
-   MOVEMENT
-====================================================== */
+    moving = true;
+    showMarker(event.clientX, event.clientY);
+    startWalking();
+});
 
 function movementLoop(){
-
     if(moving){
-
-        const dx =
-            targetX -
-            playerX;
-
-        const dy =
-            targetY -
-            playerY;
-
-        const distance =
-            Math.sqrt(
-                dx * dx +
-                dy * dy
-            );
+        const dx = targetX - playerX;
+        const dy = targetY - playerY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
 
         if(distance < .35){
-
-            playerX =
-                targetX;
-
-            playerY =
-                targetY;
-
+            playerX = targetX;
+            playerY = targetY;
             moving = false;
-
             stopWalking();
-
-        }else{
-
-            const speed =
-                .35;
-
-            playerX +=
-                (dx / distance) *
-                speed;
-
-            playerY +=
-                (dy / distance) *
-                speed;
-
+        } else {
+            const speed = .35;
+            playerX += (dx / distance) * speed;
+            playerY += (dy / distance) * speed;
         }
-
         updatePlayerPosition();
-
     }
-
-    requestAnimationFrame(
-        movementLoop
-    );
-
+    requestAnimationFrame(movementLoop);
 }
-
 movementLoop();
 
-
-/* ======================================================
-   WALK SPRITE
-====================================================== */
-
 let walkTimer;
-
 function startWalking(){
-
-    /*
-       Once walk.png exists,
-       this switches to it.
-    */
-
-    const walk =
-        new Image();
-
-    walk.src =
-        "assets/player/walk.png";
-
-    walk.onload = function(){
-
-        playerSprite.style.backgroundImage =
-            'url("assets/player/walk.png")';
-
-    };
-
-    /*
-       Small movement animation.
-    */
-
-    clearInterval(walkTimer);
-
-    walkTimer =
-        setInterval(
-            ()=>{
-
-                playerSprite.classList.toggle(
-                    "walking"
-                );
-
-            },
-            180
-        );
-
+    fallback.classList.add("walking");
 }
 
 function stopWalking(){
-
-    clearInterval(walkTimer);
-
-    playerSprite.style.backgroundImage =
-        'url("assets/player/idle.png")';
-
+    fallback.classList.remove("walking");
 }
-
-
-/* ======================================================
-   MOVE MARKER
-====================================================== */
 
 function showMarker(x,y){
-
-    marker.style.left =
-        x + "px";
-
-    marker.style.top =
-        y + "px";
-
-    marker.style.display =
-        "block";
-
-    clearTimeout(
-        marker.timer
-    );
-
-    marker.timer =
-        setTimeout(
-            function(){
-
-                marker.style.display =
-                    "none";
-
-            },
-            700
-        );
-
+    marker.style.left = x + "px";
+    marker.style.top = y + "px";
+    marker.style.display = "block";
+    clearTimeout(marker.timer);
+    marker.timer = setTimeout(function(){ marker.style.display = "none"; }, 700);
 }
-
-
-/* ======================================================
-   KEYBOARD
-====================================================== */
 
 const keys = {};
-
-window.addEventListener(
-    "keydown",
-    function(event){
-
-        keys[
-            event.key.toLowerCase()
-        ] = true;
-
-    }
-);
-
-window.addEventListener(
-    "keyup",
-    function(event){
-
-        keys[
-            event.key.toLowerCase()
-        ] = false;
-
-    }
-);
-
+window.addEventListener("keydown", (e) => keys[e.key.toLowerCase()] = true);
+window.addEventListener("keyup", (e) => keys[e.key.toLowerCase()] = false);
 
 function keyboardMovement(){
+    let dx = 0, dy = 0;
+    if(keys["w"] || keys["arrowup"]) dy = -1;
+    if(keys["s"] || keys["arrowdown"]) dy = 1;
+    if(keys["a"] || keys["arrowleft"]) dx = -1;
+    if(keys["d"] || keys["arrowright"]) dx = 1;
 
-    let dx = 0;
-    let dy = 0;
+    if(dx === 0 && dy === 0) return;
 
-    if(
-        keys["w"] ||
-        keys["arrowup"]
-    ){
-        dy = -1;
-    }
+    const length = Math.sqrt(dx*dx + dy*dy);
+    dx /= length; dy /= length;
 
-    if(
-        keys["s"] ||
-        keys["arrowdown"]
-    ){
-        dy = 1;
-    }
+    playerX += dx * .45;
+    playerY += dy * .45;
+    playerX = Math.max(5, Math.min(95, playerX));
+    playerY = Math.max(25, Math.min(87, playerY));
 
-    if(
-        keys["a"] ||
-        keys["arrowleft"]
-    ){
-        dx = -1;
-    }
-
-    if(
-        keys["d"] ||
-        keys["arrowright"]
-    ){
-        dx = 1;
-    }
-
-    if(dx === 0 && dy === 0)
-        return;
-
-    const length =
-        Math.sqrt(
-            dx*dx +
-            dy*dy
-        );
-
-    dx /= length;
-    dy /= length;
-
-    playerX +=
-        dx * .45;
-
-    playerY +=
-        dy * .45;
-
-    playerX =
-        Math.max(
-            5,
-            Math.min(
-                95,
-                playerX
-            )
-        );
-
-    playerY =
-        Math.max(
-            25,
-            Math.min(
-                87,
-                playerY
-            )
-        );
-
-    targetX =
-        playerX;
-
-    targetY =
-        playerY;
-
+    targetX = playerX; targetY = playerY;
     moving = true;
-
     startWalking();
-
     updatePlayerPosition();
-
 }
-
-setInterval(
-    keyboardMovement,
-    16
-);
-
-
-/* ======================================================
-   CLOCK
-====================================================== */
+setInterval(keyboardMovement, 16);
 
 function updateClock(){
-
-    const now =
-        new Date();
-
-    document
-    .getElementById("clock")
-    .textContent =
-        now.toLocaleTimeString(
-            [],
-            {
-                hour:"numeric",
-                minute:"2-digit"
-            }
-        );
-
+    const now = new Date();
+    document.getElementById("clock").textContent = now.toLocaleTimeString([], {hour:"numeric", minute:"2-digit"});
 }
-
-setInterval(
-    updateClock,
-    1000
-);
-
+setInterval(updateClock, 1000);
 updateClock();
 
-
-/* ======================================================
-   CHAT
-====================================================== */
-
 function sendChat(){
+    const input = document.getElementById("chatInput");
+    const message = input.value.trim();
+    if(!message) return;
 
-    const input =
-        document.getElementById(
-            "chatInput"
-        );
+    const messages = document.getElementById("chatMessages");
+    const row = document.createElement("div");
+    row.style.marginTop = "4px";
 
-    const message =
-        input.value.trim();
-
-    if(!message)
-        return;
-
-    const messages =
-        document.getElementById(
-            "chatMessages"
-        );
-
-    const row =
-        document.createElement(
-            "div"
-        );
-
-    row.style.marginTop =
-        "4px";
-
-    const name =
-        document.createElement(
-            "strong"
-        );
-
-    name.textContent =
-        "Novarise: ";
-
-    name.style.color =
-        "#60a5fa";
+    const name = document.createElement("strong");
+    name.textContent = "Novarise: ";
+    name.style.color = "#60a5fa";
 
     row.appendChild(name);
-
-    row.appendChild(
-        document.createTextNode(
-            message
-        )
-    );
-
+    row.appendChild(document.createTextNode(message));
     messages.appendChild(row);
-
     input.value = "";
-
-    messages.scrollTop =
-        messages.scrollHeight;
-
+    messages.scrollTop = messages.scrollHeight;
 }
 
-document
-.getElementById("sendChat")
-.addEventListener(
-    "click",
-    sendChat
-);
-
-document
-.getElementById("chatInput")
-.addEventListener(
-    "keydown",
-    function(event){
-
-        if(event.key === "Enter"){
-
-            sendChat();
-
-        }
-
-    }
-);
-
-
-/* ======================================================
-   INITIALIZE
-====================================================== */
+document.getElementById("sendChat").addEventListener("click", sendChat);
+document.getElementById("chatInput").addEventListener("keydown", (e) => { if(e.key === "Enter") sendChat(); });
 
 updatePlayerPosition();
-
 </script>
 
 </body>
