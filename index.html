@@ -2,296 +2,120 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
-<title>Novarise World</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Novarise World - AQW Animated Running</title>
 
 <style>
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-    -webkit-tap-highlight-color:transparent;
+*{ box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+html, body{ width:100%; height:100%; overflow:hidden; background:#111; font-family:Arial,Helvetica,sans-serif; }
+#world{ position:fixed; inset:0; overflow:hidden; background:#111; }
+#map{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; user-select:none; pointer-events:none; }
+#gameLayer{ position:absolute; inset:0; overflow:hidden; }
+
+/* PLAYER CONTAINER */
+#player{ position:absolute; left:50%; top:68%; width:120px; height:150px; transform: translate(-50%,-100%); z-index:20; pointer-events:none; }
+#playerSprite{ position:absolute; left:50%; bottom:0; width:100%; height:100%; transform: translateX(-50%); background-image: url("assets/player/idle.png"); background-repeat:no-repeat; background-position:center bottom; background-size:contain; filter: drop-shadow(0 8px 6px rgba(0,0,0,.55)); }
+
+/* AQW VECTOR CHARACTER */
+#playerFallback{ position:absolute; left:50%; bottom:0; width:105px; height:145px; transform: translateX(-50%); display:flex; flex-direction:column; align-items:center; filter: drop-shadow(0 7px 5px rgba(0,0,0,.65)); }
+.aqw-avatar { width: 100%; height: 100%; transform-origin: bottom center; }
+.fallback-name{ position:absolute; left:50%; top:-22px; transform:translateX(-50%); color:white; white-space:nowrap; font-size:15px; font-weight:800; text-shadow: 0 2px 3px #000, 0 0 5px #000; }
+
+/* ======================================================
+   RUNNING / WALKING ANIMATIONS FOR BODY PARTS
+====================================================== */
+
+/* Flipping direction based on movement */
+#playerFallback.face-left .aqw-avatar { transform: scaleX(-1); }
+
+/* Idle Breathing Movement */
+#playerFallback:not(.running) .aqw-avatar {
+    animation: aqwIdleBreath 2s infinite alternate ease-in-out;
+}
+@keyframes aqwIdleBreath {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-2px); }
 }
 
-html,
-body{
-    width:100%;
-    height:100%;
-    overflow:hidden;
-    background:#111;
-    font-family:Arial,Helvetica,sans-serif;
+/* 1. Body Bounce while Running */
+#playerFallback.running .aqw-avatar {
+    animation: aqwRunBounce 0.3s infinite alternate ease-in-out;
 }
-
-#world{
-    position:fixed;
-    inset:0;
-    overflow:hidden;
-    background:#111;
-}
-
-/* =========================================
-   MAP
-========================================= */
-
-#map{
-    position:absolute;
-    inset:0;
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    user-select:none;
-    pointer-events:none;
-}
-
-/* =========================================
-   GAME LAYER
-========================================= */
-
-#gameLayer{
-    position:absolute;
-    inset:0;
-    overflow:hidden;
-}
-
-/* =========================================
-   PLAYER
-========================================= */
-
-#player{
-    position:absolute;
-    left:50%;
-    top:68%;
-    width:120px;
-    height:150px;
-    transform: translate(-50%,-100%);
-    z-index:20;
-    pointer-events:none;
-}
-
-#playerSprite{
-    position:absolute;
-    left:50%;
-    bottom:0;
-    width:100%;
-    height:100%;
-    transform: translateX(-50%);
-    background-image: url("assets/player/idle.png");
-    background-repeat:no-repeat;
-    background-position:center bottom;
-    background-size:contain;
-    image-rendering:auto;
-    filter: drop-shadow(0 8px 6px rgba(0,0,0,.55));
-}
-
-/* Realistic Humanoid Warrior SVG Avatar */
-#playerFallback{
-    position:absolute;
-    left:50%;
-    bottom:0;
-    width:100px;
-    height:140px;
-    transform: translateX(-50%);
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    filter: drop-shadow(0 7px 5px rgba(0,0,0,.65));
-}
-
-.warrior-avatar {
-    width: 100%;
-    height: 100%;
-    transform-origin: bottom center;
-}
-
-#playerFallback.walking .warrior-avatar {
-    animation: warriorWalk 0.35s infinite alternate ease-in-out;
-}
-
-@keyframes warriorWalk {
+@keyframes aqwRunBounce {
     0% { transform: translateY(0) rotate(-1deg); }
-    100% { transform: translateY(-4px) rotate(1deg); }
+    100% { transform: translateY(-6px) rotate(2deg); }
 }
 
-.fallback-name{
-    position:absolute;
-    left:50%;
-    top:-25px;
-    transform:translateX(-50%);
-    color:white;
-    white-space:nowrap;
-    font-size:15px;
-    font-weight:800;
-    text-shadow: 0 2px 3px #000, 0 0 5px #000;
+/* 2. Left Leg Stepping */
+#playerFallback.running .leg-left {
+    animation: runLegLeft 0.3s infinite alternate ease-in-out;
+    transform-origin: top center;
+}
+@keyframes runLegLeft {
+    0% { transform: rotate(-25deg); }
+    100% { transform: rotate(25deg); }
 }
 
-/* =========================================
-   NPC
-========================================= */
-
-.world-object{
-    position:absolute;
-    transform: translate(-50%,-100%);
-    z-index:15;
-    pointer-events:auto;
+/* 3. Right Leg Stepping (Opposite) */
+#playerFallback.running .leg-right {
+    animation: runLegRight 0.3s infinite alternate ease-in-out;
+    transform-origin: top center;
+}
+@keyframes runLegRight {
+    0% { transform: rotate(30deg); }
+    100% { transform: rotate(-20deg); }
 }
 
-.npc{
-    left:24%;
-    top:70%;
-    width:100px;
-    height:155px;
+/* 4. Arms & Weapon Motion */
+#playerFallback.running .arm-left {
+    animation: runArmLeft 0.3s infinite alternate ease-in-out;
+    transform-origin: top center;
+}
+@keyframes runArmLeft {
+    0% { transform: rotate(15deg); }
+    100% { transform: rotate(-25deg); }
 }
 
-.npc-sprite{
-    width:100%;
-    height:100%;
-    background: url("assets/npcs/quest-npc.png") center bottom / contain no-repeat;
+#playerFallback.running .arm-right-weapon {
+    animation: runArmWeapon 0.3s infinite alternate ease-in-out;
+    transform-origin: 74px 68px;
+}
+@keyframes runArmWeapon {
+    0% { transform: rotate(-8deg) translateY(0); }
+    100% { transform: rotate(10deg) translateY(-3px); }
 }
 
-.object-name{
-    position:absolute;
-    left:50%;
-    top:-28px;
-    transform:translateX(-50%);
-    color:white;
-    font-size:15px;
-    font-weight:800;
-    white-space:nowrap;
-    text-shadow: 0 2px 3px #000;
+#playerFallback.running .cape {
+    animation: runCapeWave 0.3s infinite alternate ease-in-out;
+    transform-origin: top center;
+}
+@keyframes runCapeWave {
+    0% { transform: skewX(-3deg) scaleY(0.98); }
+    100% { transform: skewX(8deg) scaleY(1.05); }
 }
 
-.quest-mark{
-    position:absolute;
-    left:50%;
-    top:-75px;
-    transform:translateX(-50%);
-    width:38px;
-    height:38px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    border-radius:50%;
-    background:#ef2020;
-    border:3px solid white;
-    color:#ffe600;
-    font-size:23px;
-    font-weight:900;
-    box-shadow: 0 0 10px rgba(255,0,0,.65);
-    animation: questPulse 1s infinite alternate;
-}
+/* UI / HUD Styles */
+.world-object{ position:absolute; transform: translate(-50%,-100%); z-index:15; pointer-events:auto; }
+.npc{ left:24%; top:70%; width:100px; height:155px; }
+.npc-sprite{ width:100%; height:100%; background: url("assets/npcs/quest-npc.png") center bottom / contain no-repeat; }
+.object-name{ position:absolute; left:50%; top:-28px; transform:translateX(-50%); color:white; font-size:15px; font-weight:800; white-space:nowrap; text-shadow: 0 2px 3px #000; }
+.quest-mark{ position:absolute; left:50%; top:-75px; transform:translateX(-50%); width:38px; height:38px; display:flex; align-items:center; justify-content:center; border-radius:50%; background:#ef2020; border:3px solid white; color:#ffe600; font-size:23px; font-weight:900; box-shadow: 0 0 10px rgba(255,0,0,.65); animation: questPulse 1s infinite alternate; }
+@keyframes questPulse{ from{ transform: translateX(-50%) scale(.9); } to{ transform: translateX(-50%) scale(1.08); } }
 
-@keyframes questPulse{
-    from{ transform: translateX(-50%) scale(.9); }
-    to{ transform: translateX(-50%) scale(1.08); }
-}
+.monster{ position:absolute; left:78%; top:73%; width:145px; height:120px; transform: translate(-50%,-100%); z-index:15; }
+.monster-sprite{ width:100%; height:100%; background: url("assets/monsters/forest-wolf.png") center bottom / contain no-repeat; }
+.monster-name{ position:absolute; left:50%; top:-32px; transform:translateX(-50%); color:white; white-space:nowrap; font-weight:800; text-shadow: 0 2px 3px #000; }
+.monster-hp{ position:absolute; left:50%; top:-13px; transform:translateX(-50%); width:105px; height:9px; border:1px solid #111; background:#111; }
+.monster-hp-fill{ width:100%; height:100%; background:#dc2626; }
 
-/* =========================================
-   MONSTER
-========================================= */
+.portal{ position:absolute; right:5%; top:62%; width:105px; height:155px; transform: translateY(-100%); z-index:14; background: url("assets/portal.png") center / contain no-repeat; filter: drop-shadow(0 0 16px rgba(0,170,255,.75)); }
+.portal-name{ position:absolute; left:50%; top:-25px; transform:translateX(-50%); color:white; font-weight:800; text-shadow: 0 2px 4px #000; }
 
-.monster{
-    position:absolute;
-    left:78%;
-    top:73%;
-    width:145px;
-    height:120px;
-    transform: translate(-50%,-100%);
-    z-index:15;
-}
+#moveMarker{ position:absolute; width:32px; height:15px; border-radius:50%; border:2px solid rgba(255,255,255,.85); box-shadow: 0 0 10px rgba(40,140,255,.9); transform: translate(-50%,-50%); z-index:10; pointer-events:none; animation: marker .65s infinite alternate; }
+@keyframes marker{ from{ opacity:.35; transform: translate(-50%,-50%) scale(.75); } to{ opacity:1; transform: translate(-50%,-50%) scale(1); } }
 
-.monster-sprite{
-    width:100%;
-    height:100%;
-    background: url("assets/monsters/forest-wolf.png") center bottom / contain no-repeat;
-}
-
-.monster-name{
-    position:absolute;
-    left:50%;
-    top:-32px;
-    transform:translateX(-50%);
-    color:white;
-    white-space:nowrap;
-    font-weight:800;
-    text-shadow: 0 2px 3px #000;
-}
-
-.monster-hp{
-    position:absolute;
-    left:50%;
-    top:-13px;
-    transform:translateX(-50%);
-    width:105px;
-    height:9px;
-    border:1px solid #111;
-    background:#111;
-}
-
-.monster-hp-fill{
-    width:100%;
-    height:100%;
-    background:#dc2626;
-}
-
-/* =========================================
-   PORTAL
-========================================= */
-
-.portal{
-    position:absolute;
-    right:5%;
-    top:62%;
-    width:105px;
-    height:155px;
-    transform: translateY(-100%);
-    z-index:14;
-    background: url("assets/portal.png") center / contain no-repeat;
-    filter: drop-shadow(0 0 16px rgba(0,170,255,.75));
-}
-
-.portal-name{
-    position:absolute;
-    left:50%;
-    top:-25px;
-    transform:translateX(-50%);
-    color:white;
-    font-weight:800;
-    text-shadow: 0 2px 4px #000;
-}
-
-/* =========================================
-   MOVE MARKER
-========================================= */
-
-#moveMarker{
-    position:absolute;
-    width:32px;
-    height:15px;
-    border-radius:50%;
-    border:2px solid rgba(255,255,255,.85);
-    box-shadow: 0 0 10px rgba(40,140,255,.9);
-    transform: translate(-50%,-50%);
-    z-index:10;
-    pointer-events:none;
-    animation: marker .65s infinite alternate;
-}
-
-@keyframes marker{
-    from{ opacity:.35; transform: translate(-50%,-50%) scale(.75); }
-    to{ opacity:1; transform: translate(-50%,-50%) scale(1); }
-}
-
-/* HUD & UI */
-.player-hud{
-    position:fixed; left:12px; top:12px; z-index:50; width:330px; padding:10px; display:flex; gap:10px;
-    border: 2px solid #80652e; border-radius:16px; background: rgba(8,13,19,.93); box-shadow: 0 7px 22px rgba(0,0,0,.45);
-}
-.avatar{
-    width:66px; height:66px; flex:none; border-radius:50%; border:2px solid #c69c42;
-    background: linear-gradient(#111827,#05070a); display:flex; align-items:center; justify-content:center; color:white; font-size:25px;
-}
+.player-hud{ position:fixed; left:12px; top:12px; z-index:50; width:330px; padding:10px; display:flex; gap:10px; border: 2px solid #80652e; border-radius:16px; background: rgba(8,13,19,.93); box-shadow: 0 7px 22px rgba(0,0,0,.45); }
+.avatar{ width:66px; height:66px; flex:none; border-radius:50%; border:2px solid #c69c42; background: linear-gradient(#111827,#05070a); display:flex; align-items:center; justify-content:center; color:white; font-size:25px; }
 .hud-info{ flex:1; }
 .hud-name{ display:flex; justify-content:space-between; color:white; font-size:18px; font-weight:800; margin-bottom:6px; }
 .hud-level{ color:#ffd34d; }
@@ -301,24 +125,15 @@ body{
 .mp-fill{ background: linear-gradient(90deg, #1d4ed8, #38bdf8); }
 .stat-text{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:white; font-size:10px; font-weight:bold; text-shadow: 0 1px 2px #000; }
 
-.location{
-    position:fixed; top:12px; right:12px; z-index:50; min-width:270px; padding:10px 18px; text-align:center;
-    border: 2px solid #80652e; border-radius:16px; background: rgba(8,13,19,.93); color:white;
-}
+.location{ position:fixed; top:12px; right:12px; z-index:50; min-width:270px; padding:10px 18px; text-align:center; border: 2px solid #80652e; border-radius:16px; background: rgba(8,13,19,.93); color:white; }
 .location-title{ font-size:17px; font-weight:800; }
 .location-time{ margin-top:3px; color:#e6d28e; font-size:12px; }
 
-.quest-panel{
-    position:fixed; left:10px; top:115px; z-index:50; width:180px; padding:9px 12px; border-radius:10px;
-    background: rgba(5,10,15,.9); border: 1px solid #555; color:white;
-}
+.quest-panel{ position:fixed; left:10px; top:115px; z-index:50; width:180px; padding:9px 12px; border-radius:10px; background: rgba(5,10,15,.9); border: 1px solid #555; color:white; }
 .quest-panel strong{ font-size:16px; }
 .quest-status{ margin-top:3px; color:#bfc5cc; font-size:13px; }
 
-.chat{
-    position:fixed; left:12px; bottom:12px; z-index:50; width:430px; height:175px; overflow:hidden;
-    border: 2px solid #725a2e; border-radius:12px; background: rgba(5,9,14,.95); box-shadow: 0 7px 25px rgba(0,0,0,.5);
-}
+.chat{ position:fixed; left:12px; bottom:12px; z-index:50; width:430px; height:175px; overflow:hidden; border: 2px solid #725a2e; border-radius:12px; background: rgba(5,9,14,.95); box-shadow: 0 7px 25px rgba(0,0,0,.5); }
 .chat-tabs{ display:flex; height:35px; background:#151b24; }
 .chat-tab{ padding:8px 20px; color:#b8bec7; font-size:13px; font-weight:bold; }
 .chat-tab.active{ color:white; background:#1760c8; }
@@ -329,26 +144,14 @@ body{
 .chat-input input{ flex:1; min-width:0; border:0; outline:0; padding:0 12px; color:white; background:#0b1118; }
 .chat-input button{ width:70px; border:0; color:white; font-weight:800; background:#df901c; cursor:pointer; }
 
-.skill-bar{
-    position:fixed; left:50%; bottom:12px; transform:translateX(-50%); z-index:50; display:flex; gap:7px;
-    padding:8px 12px; border: 2px solid #725a2e; border-radius:17px; background: rgba(7,11,16,.96); box-shadow: 0 7px 25px rgba(0,0,0,.5);
-}
-.skill{
-    position:relative; width:53px; height:53px; display:flex; align-items:center; justify-content:center;
-    border: 2px solid #596474; border-radius:10px; background: linear-gradient(135deg, #1e2937, #080c11); color:white; font-size:24px; cursor:pointer;
-}
+.skill-bar{ position:fixed; left:50%; bottom:12px; transform:translateX(-50%); z-index:50; display:flex; gap:7px; padding:8px 12px; border: 2px solid #725a2e; border-radius:17px; background: rgba(7,11,16,.96); box-shadow: 0 7px 25px rgba(0,0,0,.5); }
+.skill{ position:relative; width:53px; height:53px; display:flex; align-items:center; justify-content:center; border: 2px solid #596474; border-radius:10px; background: linear-gradient(135deg, #1e2937, #080c11); color:white; font-size:24px; cursor:pointer; }
 .skill:hover{ border-color:#facc15; }
 .skill-number{ position:absolute; right:4px; bottom:2px; color:white; font-size:10px; }
 
-.menu{
-    position:fixed; right:12px; bottom:12px; z-index:50; display:flex; gap:10px; padding:8px 12px;
-    border: 2px solid #725a2e; border-radius:17px; background: rgba(7,11,16,.96);
-}
+.menu{ position:fixed; right:12px; bottom:12px; z-index:50; display:flex; gap:10px; padding:8px 12px; border: 2px solid #725a2e; border-radius:17px; background: rgba(7,11,16,.96); }
 .menu-item{ width:62px; text-align:center; color:white; font-size:10px; cursor:pointer; text-decoration:none; }
-.menu-icon{
-    width:38px; height:38px; margin:auto auto 3px; display:flex; align-items:center; justify-content:center;
-    border: 1px solid #6c5b38; border-radius:9px; background:#1a2430; font-size:19px;
-}
+.menu-icon{ width:38px; height:38px; margin:auto auto 3px; display:flex; align-items:center; justify-content:center; border: 1px solid #6c5b38; border-radius:9px; background:#1a2430; font-size:19px; }
 
 @media(max-width:900px){
     .player-hud{ width:250px; top:7px; left:7px; }
@@ -369,7 +172,6 @@ body{
 <body>
 
 <div id="world">
-    <!-- BACKGROUND -->
     <img id="map" src="novarise-forest.png" alt="Novarise Forest">
 
     <div id="gameLayer">
@@ -377,46 +179,64 @@ body{
         <div id="player">
             <div id="playerSprite"></div>
 
-            <!-- Detailed Humanoid Warrior Character Vector -->
+            <!-- AQW Fully Animated Body Parts SVG -->
             <div id="playerFallback">
                 <div class="fallback-name">LQS</div>
 
-                <svg class="warrior-avatar" viewBox="0 0 100 160" xmlns="http://www.w3.org/2000/svg">
-                    <!-- Shadow -->
-                    <ellipse cx="50" cy="155" rx="30" ry="5" fill="rgba(0,0,0,0.5)" />
-                    
-                    <!-- Red Cape -->
-                    <path d="M 32 45 L 20 145 L 80 145 L 68 45 Z" fill="#b91c1c" />
-                    
-                    <!-- Legs / Armor Boots -->
-                    <rect x="36" y="100" width="10" height="48" rx="3" fill="#111827" />
-                    <rect x="54" y="100" width="10" height="48" rx="3" fill="#111827" />
-                    <rect x="35" y="110" width="12" height="25" rx="2" fill="#4b5563" />
-                    <rect x="53" y="110" width="12" height="25" rx="2" fill="#4b5563" />
+                <svg class="aqw-avatar" viewBox="0 0 120 180" xmlns="http://www.w3.org/2000/svg">
+                    <ellipse cx="60" cy="172" rx="35" ry="6" fill="rgba(0,0,0,0.6)" />
 
-                    <!-- Torso / Heavy Plate Armor -->
-                    <path d="M 30 42 L 70 42 L 64 102 L 36 102 Z" fill="#374151" />
-                    <path d="M 40 45 L 60 45 L 56 85 L 44 85 Z" fill="#eab308" />
+                    <!-- Cape -->
+                    <path class="cape" d="M 32 45 L 18 145 L 82 145 L 68 45 Z" fill="#991b1b" />
 
-                    <!-- Left Arm & Shield -->
-                    <rect x="20" y="45" width="10" height="40" rx="4" fill="#1f2937" />
-                    <polygon points="12,50 25,50 25,85 18,95 12,85" fill="#1d4ed8" />
+                    <!-- Left Leg Group -->
+                    <g class="leg-left">
+                        <path d="M 50 115 L 48 165 L 58 165 L 56 115 Z" fill="#1e293b" />
+                        <path d="M 48 150 L 58 150 L 58 168 L 48 168 Z" fill="#0f172a" />
+                    </g>
 
-                    <!-- Right Arm & Sword -->
-                    <rect x="70" y="45" width="10" height="40" rx="4" fill="#1f2937" />
-                    <path d="M 77 10 L 83 10 L 82 75 L 78 75 Z" fill="#e2e8f0" />
-                    <rect x="72" y="75" width="16" height="4" fill="#f59e0b" />
-                    <rect x="78" y="79" width="4" height="15" fill="#475569" />
+                    <!-- Right Leg Group -->
+                    <g class="leg-right">
+                        <path d="M 62 115 L 65 165 L 75 165 L 70 115 Z" fill="#334155" />
+                        <path d="M 64 150 L 74 150 L 74 168 L 64 168 Z" fill="#ffffff" />
+                    </g>
 
-                    <!-- Shoulder Pauldrons -->
-                    <circle cx="28" cy="45" r="10" fill="#6b7280" />
-                    <circle cx="72" cy="45" r="10" fill="#6b7280" />
+                    <!-- Torso Body -->
+                    <path d="M 42 65 Q 60 60 78 65 L 75 120 Q 60 125 45 120 Z" fill="#c084fc" />
+                    <path d="M 44 110 Q 60 116 76 110" stroke="#cbd5e1" stroke-width="4" fill="none" />
+                    <circle cx="60" cy="113" r="4" fill="#f59e0b" />
 
-                    <!-- Helmet & Face Visor -->
-                    <circle cx="50" cy="28" r="12" fill="#f87171" />
-                    <path d="M 38 18 Q 50 10 62 18 L 62 34 Q 50 38 38 34 Z" fill="#4b5563" />
-                    <rect x="42" y="26" width="16" height="4" fill="#090d16" />
-                    <path d="M 50 8 C 45 0, 42 -5, 38 -8 C 48 -2, 52 -2, 62 -8 C 58 -5, 55 0, 50 8 Z" fill="#dc2626" />
+                    <!-- Left Arm Group -->
+                    <g class="arm-left">
+                        <path d="M 44 68 L 32 105" stroke="#c084fc" stroke-width="8" stroke-linecap="round" />
+                        <circle cx="30" cy="108" r="4" fill="#cbd5e1" />
+                    </g>
+
+                    <!-- Head & Horned Helmet -->
+                    <path d="M 50 35 L 70 35 L 68 62 L 52 62 Z" fill="#fbcfe8" />
+                    <ellipse cx="60" cy="28" rx="16" ry="18" fill="#fbcfe8" />
+                    <path d="M 44 20 Q 60 10 76 20 L 72 55 Q 60 30 48 55 Z" fill="#7f1d1d" />
+                    <polygon points="53,26 59,24 57,30" fill="#111" />
+                    <polygon points="67,26 61,24 63,30" fill="#111" />
+
+                    <path d="M 45 22 Q 60 8 75 22 L 70 32 Q 60 25 50 32 Z" fill="#7f1d1d" />
+                    <path d="M 48 18 Q 32 5 22 18 Q 35 25 46 22 Z" fill="#334155" />
+                    <path d="M 45 15 Q 35 8 28 15" stroke="#1e293b" stroke-width="2" fill="none" />
+                    <path d="M 72 18 Q 88 5 98 18 Q 85 25 74 22 Z" fill="#334155" />
+                    <path d="M 75 15 Q 85 8 92 15" stroke="#1e293b" stroke-width="2" fill="none" />
+
+                    <!-- Right Arm & Staff Weapon Group -->
+                    <g class="arm-right-weapon">
+                        <!-- Staff Staff -->
+                        <line x1="15" y1="150" x2="105" y2="95" stroke="#b45309" stroke-width="5" stroke-linecap="round" />
+                        <line x1="15" y1="150" x2="105" y2="95" stroke="#fde047" stroke-width="2" />
+                        <circle cx="105" cy="95" r="9" fill="#0284c7" />
+                        <circle cx="105" cy="95" r="5" fill="#38bdf8" />
+
+                        <!-- Right Arm -->
+                        <path d="M 74 68 L 95 110" stroke="#c084fc" stroke-width="9" stroke-linecap="round" />
+                        <circle cx="97" cy="113" r="5" fill="#111" />
+                    </g>
                 </svg>
             </div>
         </div>
@@ -440,43 +260,30 @@ body{
             <div class="portal-name">Portal</div>
         </div>
 
-        <!-- MOVE MARKER -->
         <div id="moveMarker" style="display:none"></div>
     </div>
 </div>
 
-<!-- HUD -->
+<!-- HUD, CHAT, MENU -->
 <div class="player-hud">
     <div class="avatar">⚔</div>
     <div class="hud-info">
-        <div class="hud-name">
-            <span>LQS</span>
-            <span class="hud-level">Lv. 1</span>
-        </div>
-        <div class="stat-bar">
-            <div class="stat-fill hp-fill"></div>
-            <div class="stat-text">100 / 100</div>
-        </div>
-        <div class="stat-bar">
-            <div class="stat-fill mp-fill"></div>
-            <div class="stat-text">100 / 100</div>
-        </div>
+        <div class="hud-name"><span>LQS</span><span class="hud-level">Lv. 1</span></div>
+        <div class="stat-bar"><div class="stat-fill hp-fill"></div><div class="stat-text">100 / 100</div></div>
+        <div class="stat-bar"><div class="stat-fill mp-fill"></div><div class="stat-text">100 / 100</div></div>
     </div>
 </div>
 
-<!-- LOCATION -->
 <div class="location">
     <div class="location-title">☀ Novarise Forest</div>
     <div class="location-time" id="clock">--:--</div>
 </div>
 
-<!-- QUEST -->
 <div class="quest-panel">
     <strong>Lucy</strong>
     <div class="quest-status">Out of range</div>
 </div>
 
-<!-- CHAT -->
 <div class="chat">
     <div class="chat-tabs">
         <div class="chat-tab active">General</div>
@@ -494,7 +301,6 @@ body{
     </div>
 </div>
 
-<!-- SKILLS -->
 <div class="skill-bar">
     <button class="skill">⚔<span class="skill-number">1</span></button>
     <button class="skill">✦<span class="skill-number">2</span></button>
@@ -503,32 +309,13 @@ body{
     <button class="skill">🧪<span class="skill-number">5</span></button>
 </div>
 
-<!-- MENU -->
 <div class="menu">
-    <a href="character.html" class="menu-item">
-        <div class="menu-icon">🧙</div>
-        Character
-    </a>
-    <div class="menu-item">
-        <div class="menu-icon">🎒</div>
-        Inventory
-    </div>
-    <div class="menu-item">
-        <div class="menu-icon">🔥</div>
-        Skills
-    </div>
-    <div class="menu-item">
-        <div class="menu-icon">❗</div>
-        Quest
-    </div>
-    <div class="menu-item">
-        <div class="menu-icon">🗺</div>
-        Map
-    </div>
-    <div class="menu-item">
-        <div class="menu-icon">⚙</div>
-        Settings
-    </div>
+    <a href="character.html" class="menu-item"><div class="menu-icon">🧙</div>Character</a>
+    <div class="menu-item"><div class="menu-icon">🎒</div>Inventory</div>
+    <div class="menu-item"><div class="menu-icon">🔥</div>Skills</div>
+    <div class="menu-item"><div class="menu-icon">❗</div>Quest</div>
+    <div class="menu-item"><div class="menu-icon">🗺</div>Map</div>
+    <div class="menu-item"><div class="menu-icon">⚙</div>Settings</div>
 </div>
 
 <script>
@@ -562,14 +349,19 @@ function updatePlayerPosition(){
 
 document.getElementById("gameLayer").addEventListener("click", function(event){
     if(event.target.closest(".world-object,.monster,.portal")) return;
-
     const rect = this.getBoundingClientRect();
     targetX = ((event.clientX - rect.left) / rect.width) * 100;
     targetY = ((event.clientY - rect.top) / rect.height) * 100;
 
+    // Face left/right direction when clicking
+    if(targetX < playerX) {
+        fallback.classList.add("face-left");
+    } else {
+        fallback.classList.remove("face-left");
+    }
+
     targetX = Math.max(5, Math.min(95, targetX));
     targetY = Math.max(25, Math.min(87, targetY));
-
     moving = true;
     showMarker(event.clientX, event.clientY);
     startWalking();
@@ -580,10 +372,8 @@ function movementLoop(){
         const dx = targetX - playerX;
         const dy = targetY - playerY;
         const distance = Math.sqrt(dx * dx + dy * dy);
-
         if(distance < .35){
-            playerX = targetX;
-            playerY = targetY;
+            playerX = targetX; playerY = targetY;
             moving = false;
             stopWalking();
         } else {
@@ -597,14 +387,8 @@ function movementLoop(){
 }
 movementLoop();
 
-let walkTimer;
-function startWalking(){
-    fallback.classList.add("walking");
-}
-
-function stopWalking(){
-    fallback.classList.remove("walking");
-}
+function startWalking(){ fallback.classList.add("running"); }
+function stopWalking(){ fallback.classList.remove("running"); }
 
 function showMarker(x,y){
     marker.style.left = x + "px";
@@ -622,19 +406,15 @@ function keyboardMovement(){
     let dx = 0, dy = 0;
     if(keys["w"] || keys["arrowup"]) dy = -1;
     if(keys["s"] || keys["arrowdown"]) dy = 1;
-    if(keys["a"] || keys["arrowleft"]) dx = -1;
-    if(keys["d"] || keys["arrowright"]) dx = 1;
-
+    if(keys["a"] || keys["arrowleft"]) { dx = -1; fallback.classList.add("face-left"); }
+    if(keys["d"] || keys["arrowright"]) { dx = 1; fallback.classList.remove("face-left"); }
     if(dx === 0 && dy === 0) return;
 
     const length = Math.sqrt(dx*dx + dy*dy);
     dx /= length; dy /= length;
-
-    playerX += dx * .45;
-    playerY += dy * .45;
+    playerX += dx * .45; playerY += dy * .45;
     playerX = Math.max(5, Math.min(95, playerX));
     playerY = Math.max(25, Math.min(87, playerY));
-
     targetX = playerX; targetY = playerY;
     moving = true;
     startWalking();
@@ -653,15 +433,12 @@ function sendChat(){
     const input = document.getElementById("chatInput");
     const message = input.value.trim();
     if(!message) return;
-
     const messages = document.getElementById("chatMessages");
     const row = document.createElement("div");
     row.style.marginTop = "4px";
-
     const name = document.createElement("strong");
     name.textContent = "Novarise: ";
     name.style.color = "#60a5fa";
-
     row.appendChild(name);
     row.appendChild(document.createTextNode(message));
     messages.appendChild(row);
