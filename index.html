@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Novarise World - AQW Real Sprint Animation</title>
+<title>Novarise World - Fixed AQW Character</title>
 
 <style>
 *{ box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
@@ -13,87 +13,77 @@ html, body{ width:100%; height:100%; overflow:hidden; background:#111; font-fami
 #gameLayer{ position:absolute; inset:0; overflow:hidden; }
 
 /* PLAYER CONTAINER */
-#player{ position:absolute; left:50%; top:68%; width:120px; height:150px; transform: translate(-50%,-100%); z-index:20; pointer-events:none; }
+#player{ position:absolute; left:50%; top:68%; width:130px; height:160px; transform: translate(-50%,-100%); z-index:20; pointer-events:none; }
 #playerSprite{ position:absolute; left:50%; bottom:0; width:100%; height:100%; transform: translateX(-50%); background-image: url("assets/player/idle.png"); background-repeat:no-repeat; background-position:center bottom; background-size:contain; filter: drop-shadow(0 8px 6px rgba(0,0,0,.55)); }
 
-/* AQW VECTOR CHARACTER */
-#playerFallback{ position:absolute; left:50%; bottom:0; width:105px; height:145px; transform: translateX(-50%); display:flex; flex-direction:column; align-items:center; filter: drop-shadow(0 7px 5px rgba(0,0,0,.65)); }
+/* AQW FIXED CHARACTER */
+#playerFallback{ position:absolute; left:50%; bottom:0; width:120px; height:155px; transform: translateX(-50%); display:flex; flex-direction:column; align-items:center; filter: drop-shadow(0 8px 6px rgba(0,0,0,.65)); }
 .aqw-avatar { width: 100%; height: 100%; transform-origin: bottom center; }
-.fallback-name{ position:absolute; left:50%; top:-22px; transform:translateX(-50%); color:white; white-space:nowrap; font-size:15px; font-weight:800; text-shadow: 0 2px 3px #000, 0 0 5px #000; }
+.fallback-name{ position:absolute; left:50%; top:-25px; transform:translateX(-50%); color:white; white-space:nowrap; font-size:15px; font-weight:800; text-shadow: 0 2px 3px #000, 0 0 5px #000; }
 
 /* ======================================================
-   REAL AQW SPRINT / RUNNING ANIMATION
+   PROPER AQW SPRINT & MOVEMENT ANIMATION
 ====================================================== */
 
-/* Pag-harap sa kaliwa */
+/* Humarap sa Kaliwa kapag pakaliwa ang lakad */
 #playerFallback.face-left .aqw-avatar { transform: scaleX(-1); }
 
-/* IDLE STATE: Mabilis at natural na paghinga */
+/* IDLE: Mabilis at natural na paghinga */
 #playerFallback:not(.running) .aqw-avatar {
-    animation: aqwIdleBreath 2s infinite alternate ease-in-out;
+    animation: aqwIdleBreath 1.8s infinite alternate ease-in-out;
 }
 @keyframes aqwIdleBreath {
     0% { transform: translateY(0); }
     100% { transform: translateY(-3px); }
 }
 
-/* RUNNING STATE 1: Yumuyuko ang buong katawan at nagbo-bounce */
+/* RUNNING STATE: Dynamic bounce at lean */
 #playerFallback.running .aqw-avatar {
-    animation: aqwRealRun 0.28s infinite alternate ease-in-out;
+    animation: aqwRunLean 0.28s infinite alternate ease-in-out;
 }
-@keyframes aqwRealRun {
-    0% { transform: translateY(0) rotate(10deg); }
-    100% { transform: translateY(-8px) rotate(14deg); }
+@keyframes aqwRunLean {
+    0% { transform: translateY(0) rotate(6deg); }
+    100% { transform: translateY(-7px) rotate(10deg); }
 }
 
-/* RUNNING STATE 2: Kaliwang Binti (Malaking Hakbang Pabalik at Paharap) */
+/* Kaliwang Binti (Hakbang Pabalik) */
 #playerFallback.running .leg-left {
-    animation: runLegLeftFull 0.28s infinite alternate ease-in-out;
-    transform-origin: 52px 115px;
+    animation: runLegLeft 0.28s infinite alternate ease-in-out;
+    transform-origin: 50px 105px;
 }
-@keyframes runLegLeftFull {
-    0% { transform: rotate(-55deg) translateY(-2px); }
-    100% { transform: rotate(45deg) translateY(0); }
+@keyframes runLegLeft {
+    0% { transform: rotate(-40deg); }
+    100% { transform: rotate(35deg); }
 }
 
-/* RUNNING STATE 3: Kanang Binti (Kabaligtaran ng Kaliwang Binti) */
+/* Kanang Binti (Hakbang Paharap) */
 #playerFallback.running .leg-right {
-    animation: runLegRightFull 0.28s infinite alternate ease-in-out;
-    transform-origin: 68px 115px;
+    animation: runLegRight 0.28s infinite alternate ease-in-out;
+    transform-origin: 66px 105px;
 }
-@keyframes runLegRightFull {
-    0% { transform: rotate(50deg) translateY(0); }
-    100% { transform: rotate(-50deg) translateY(-2px); }
-}
-
-/* RUNNING STATE 4: Kaliwang Braso (Kaway at Pag-ayaw sa Hangin) */
-#playerFallback.running .arm-left {
-    animation: runArmLeftFull 0.28s infinite alternate ease-in-out;
-    transform-origin: 44px 68px;
-}
-@keyframes runArmLeftFull {
-    0% { transform: rotate(45deg); }
-    100% { transform: rotate(-55deg); }
+@keyframes runLegRight {
+    0% { transform: rotate(40deg); }
+    100% { transform: rotate(-35deg); }
 }
 
-/* RUNNING STATE 5: Kanang Braso at Sandata (Ayon sa pagtakbo) */
-#playerFallback.running .arm-right-weapon {
-    animation: runArmWeaponFull 0.28s infinite alternate ease-in-out;
-    transform-origin: 74px 68px;
-}
-@keyframes runArmWeaponFull {
-    0% { transform: rotate(-25deg) translateY(2px); }
-    100% { transform: rotate(20deg) translateY(-4px); }
-}
-
-/* RUNNING STATE 6: Cape / Kapa na sumasayaw sa hangin */
+/* Kapa Wave */
 #playerFallback.running .cape {
-    animation: runCapeFly 0.28s infinite alternate ease-in-out;
+    animation: runCapeWave 0.28s infinite alternate ease-in-out;
     transform-origin: top center;
 }
-@keyframes runCapeFly {
-    0% { transform: rotate(-15deg) skewX(-15deg) scaleY(0.9); }
-    100% { transform: rotate(-35deg) skewX(-25deg) scaleY(1.1); }
+@keyframes runCapeWave {
+    0% { transform: rotate(-10deg) skewX(-10deg); }
+    100% { transform: rotate(-28deg) skewX(-20deg); }
+}
+
+/* Braso at Sandata Animation */
+#playerFallback.running .arm-weapon {
+    animation: runWeaponSwing 0.28s infinite alternate ease-in-out;
+    transform-origin: 75px 65px;
+}
+@keyframes runWeaponSwing {
+    0% { transform: rotate(-15deg); }
+    100% { transform: rotate(15deg); }
 }
 
 /* UI / HUD Styles */
@@ -181,61 +171,71 @@ html, body{ width:100%; height:100%; overflow:hidden; background:#111; font-fami
         <div id="player">
             <div id="playerSprite"></div>
 
-            <!-- AQW Fully Animated Vector Avatar -->
+            <!-- DETAILED AQW HUMAN CHARACTER VECTOR -->
             <div id="playerFallback">
                 <div class="fallback-name">LQS</div>
 
                 <svg class="aqw-avatar" viewBox="0 0 120 180" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Shadow -->
                     <ellipse cx="60" cy="172" rx="35" ry="6" fill="rgba(0,0,0,0.6)" />
 
                     <!-- Cape -->
-                    <path class="cape" d="M 32 45 L 18 145 L 82 145 L 68 45 Z" fill="#991b1b" />
+                    <path class="cape" d="M 38 48 L 12 150 Q 60 160 90 150 L 70 48 Z" fill="#991b1b" stroke="#111" stroke-width="2" />
 
-                    <!-- Left Leg Group -->
+                    <!-- Left Leg Group (Background) -->
                     <g class="leg-left">
-                        <path d="M 50 115 L 48 165 L 58 165 L 56 115 Z" fill="#1e293b" />
-                        <path d="M 48 150 L 58 150 L 58 168 L 48 168 Z" fill="#0f172a" />
+                        <path d="M 45 105 Q 40 130 42 165 L 56 165 Q 54 130 55 105 Z" fill="#111827" stroke="#000" stroke-width="1.5" />
+                        <path d="M 42 145 L 56 145 L 56 167 Q 48 170 40 167 Z" fill="#1e293b" stroke="#000" stroke-width="1.5" />
                     </g>
 
-                    <!-- Right Leg Group -->
+                    <!-- Right Leg Group (Foreground) -->
                     <g class="leg-right">
-                        <path d="M 62 115 L 65 165 L 75 165 L 70 115 Z" fill="#334155" />
-                        <path d="M 64 150 L 74 150 L 74 168 L 64 168 Z" fill="#ffffff" />
+                        <path d="M 60 105 Q 62 130 65 165 L 79 165 Q 74 130 70 105 Z" fill="#1e1e24" stroke="#000" stroke-width="1.5" />
+                        <path d="M 64 142 L 80 142 L 81 167 Q 72 170 63 167 Z" fill="#ffffff" stroke="#111" stroke-width="1.5" />
                     </g>
 
-                    <!-- Torso Body -->
-                    <path d="M 42 65 Q 60 60 78 65 L 75 120 Q 60 125 45 120 Z" fill="#c084fc" />
-                    <path d="M 44 110 Q 60 116 76 110" stroke="#cbd5e1" stroke-width="4" fill="none" />
-                    <circle cx="60" cy="113" r="4" fill="#f59e0b" />
+                    <!-- Torso / Dress Body -->
+                    <path d="M 40 50 Q 60 45 78 50 L 74 110 Q 60 115 42 110 Z" fill="#c084fc" stroke="#111" stroke-width="2" />
+                    <!-- Belt -->
+                    <path d="M 42 100 Q 60 106 75 100" stroke="#cbd5e1" stroke-width="5" fill="none" />
+                    <circle cx="58" cy="103" r="5" fill="#f59e0b" stroke="#111" stroke-width="1" />
 
-                    <!-- Left Arm Group -->
-                    <g class="arm-left">
-                        <path d="M 44 68 L 32 105" stroke="#c084fc" stroke-width="8" stroke-linecap="round" />
-                        <circle cx="30" cy="108" r="4" fill="#cbd5e1" />
-                    </g>
+                    <!-- Left Arm -->
+                    <path d="M 42 52 L 28 92 Q 26 96 30 100 Q 34 98 38 92 L 48 55 Z" fill="#c084fc" stroke="#111" stroke-width="1.5" />
+                    <circle cx="28" cy="98" r="5" fill="#0f172a" />
 
-                    <!-- Head & Horned Helmet -->
-                    <path d="M 50 35 L 70 35 L 68 62 L 52 62 Z" fill="#fbcfe8" />
-                    <ellipse cx="60" cy="28" rx="16" ry="18" fill="#fbcfe8" />
-                    <path d="M 44 20 Q 60 10 76 20 L 72 55 Q 60 30 48 55 Z" fill="#7f1d1d" />
-                    <polygon points="53,26 59,24 57,30" fill="#111" />
-                    <polygon points="67,26 61,24 63,30" fill="#111" />
+                    <!-- Head & Neck -->
+                    <path d="M 52 38 L 66 38 L 64 54 L 54 54 Z" fill="#fbcfe8" />
+                    <ellipse cx="59" cy="30" rx="14" ry="16" fill="#fbcfe8" stroke="#111" stroke-width="1.5" />
+                    
+                    <!-- Long Red Hair -->
+                    <path d="M 45 22 Q 60 10 73 22 L 72 58 Q 66 38 68 68 Q 60 40 50 68 Q 50 38 46 58 Z" fill="#7f1d1d" stroke="#111" stroke-width="1.5" />
 
-                    <path d="M 45 22 Q 60 8 75 22 L 70 32 Q 60 25 50 32 Z" fill="#7f1d1d" />
-                    <path d="M 48 18 Q 32 5 22 18 Q 35 25 46 22 Z" fill="#334155" />
-                    <path d="M 45 15 Q 35 8 28 15" stroke="#1e293b" stroke-width="2" fill="none" />
-                    <path d="M 72 18 Q 88 5 98 18 Q 85 25 74 22 Z" fill="#334155" />
-                    <path d="M 75 15 Q 85 8 92 15" stroke="#1e293b" stroke-width="2" fill="none" />
+                    <!-- Shadow Knight Helm & Horns -->
+                    <path d="M 45 20 Q 60 8 73 20 L 70 30 Q 60 22 48 30 Z" fill="#991b1b" stroke="#111" stroke-width="1.5" />
+                    <!-- Left Horn -->
+                    <path d="M 48 16 C 30 5, 20 -5, 12 10 C 25 15, 35 22, 45 20 Z" fill="#334155" stroke="#111" stroke-width="1.5" />
+                    <!-- Right Horn -->
+                    <path d="M 70 16 C 88 5, 98 -5, 106 10 C 93 15, 83 22, 73 20 Z" fill="#334155" stroke="#111" stroke-width="1.5" />
 
-                    <!-- Right Arm & Staff Weapon Group -->
-                    <g class="arm-right-weapon">
-                        <line x1="15" y1="150" x2="105" y2="95" stroke="#b45309" stroke-width="5" stroke-linecap="round" />
-                        <line x1="15" y1="150" x2="105" y2="95" stroke="#fde047" stroke-width="2" />
-                        <circle cx="105" cy="95" r="9" fill="#0284c7" />
-                        <circle cx="105" cy="95" r="5" fill="#38bdf8" />
+                    <!-- Eyes -->
+                    <polygon points="53,28 59,26 57,32" fill="#111" />
+                    <polygon points="67,28 61,26 63,32" fill="#111" />
 
-                        <path d="M 74 68 L 95 110" stroke="#c084fc" stroke-width="9" stroke-linecap="round" />
-                        <circle cx="97" cy="113" r="5" fill="#111" />
+                    <!-- Right Arm & Staff Group -->
+                    <g class="arm-weapon">
+                        <!-- Golden Staff Shaft -->
+                        <line x1="10" y1="140" x2="108" y2="80" stroke="#d97706" stroke-width="6" stroke-linecap="round" />
+                        <line x1="10" y1="140" x2="108" y2="80" stroke="#fde047" stroke-width="2.5" stroke-linecap="round" />
+                        
+                        <!-- Staff Magical Headpiece -->
+                        <path d="M 100 85 L 115 75 L 105 65 L 120 70 L 110 80 Z" fill="#38bdf8" stroke="#0284c7" stroke-width="1" />
+                        <circle cx="108" cy="80" r="8" fill="#2563eb" stroke="#1d4ed8" stroke-width="1.5" />
+                        <circle cx="108" cy="80" r="4" fill="#38bdf8" />
+
+                        <!-- Right Arm (Gloved) -->
+                        <path d="M 72 52 L 88 92 Q 92 95 95 90 Q 94 85 80 50 Z" fill="#c084fc" stroke="#111" stroke-width="1.5" />
+                        <circle cx="90" cy="91" r="5.5" fill="#111827" />
                     </g>
                 </svg>
             </div>
