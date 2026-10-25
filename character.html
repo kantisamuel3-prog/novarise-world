@@ -11,7 +11,8 @@ header { text-align: center; margin-bottom: 20px; }
 header h1 { font-size: 28px; color: #facc15; }
 .container { display: flex; flex-wrap: wrap; gap: 20px; max-width: 850px; width: 100%; background: #111827; border: 2px solid #374151; border-radius: 16px; padding: 20px; }
 .stage { flex: 1; min-width: 280px; height: 380px; background: radial-gradient(circle at center bottom, #1f2937 0%, #030712 80%); border-radius: 12px; display: flex; justify-content: center; align-items: center; }
-.character-wrapper { width: 180px; height: 260px; }
+.character-wrapper { width: 220px; height: 440px; display:flex; align-items:flex-end; justify-content:center; }
+.warrior-reference { width:100%; height:100%; object-fit:contain; object-position:center bottom; }
 .aqw-avatar { width: 100%; height: 100%; }
 .controls { flex: 1; min-width: 260px; display: flex; flex-direction: column; gap: 15px; }
 .panel { background: #1f2937; border-radius: 8px; padding: 15px; }
@@ -30,42 +31,21 @@ button:hover { background: #1d4ed8; }
 <div class="container">
     <div class="stage">
         <div class="character-wrapper">
-            <svg class="aqw-avatar" viewBox="0 0 120 180" xmlns="http://www.w3.org/2000/svg">
-                <ellipse cx="60" cy="172" rx="35" ry="6" fill="rgba(0,0,0,0.6)" />
-                <path id="capeColor" d="M 38 48 L 12 150 Q 60 160 90 150 L 70 48 Z" fill="#991b1b" stroke="#111" stroke-width="2" />
-                <path d="M 45 105 Q 40 130 42 165 L 56 165 Q 54 130 55 105 Z" fill="#111827" stroke="#000" stroke-width="1.5" />
-                <path d="M 60 105 Q 62 130 65 165 L 79 165 Q 74 130 70 105 Z" fill="#1e1e24" stroke="#000" stroke-width="1.5" />
-                <path id="armorColor" d="M 40 50 Q 60 45 78 50 L 74 110 Q 60 115 42 110 Z" fill="#c084fc" stroke="#111" stroke-width="2" />
-                <path id="hairColor" d="M 45 22 Q 60 10 73 22 L 72 58 Q 66 38 68 68 Q 60 40 50 68 Q 50 38 46 58 Z" fill="#7f1d1d" stroke="#111" stroke-width="1.5" />
-                <path id="helmColor" d="M 45 20 Q 60 8 73 20 L 70 30 Q 60 22 48 30 Z" fill="#991b1b" stroke="#111" stroke-width="1.5" />
-            </svg>
+            <img class="warrior-reference" src="warrior-reference.png" alt="Original armored warrior reference artwork">
         </div>
     </div>
 
     <div class="controls">
         <div class="panel">
-            <div class="option-group">
-                <label>Armor Color</label>
-                <input type="color" id="armorPicker" value="#c084fc">
-            </div>
-            <div class="option-group">
-                <label>Hair Color</label>
-                <input type="color" id="hairPicker" value="#7f1d1d">
-            </div>
-            <div class="option-group">
-                <label>Cape Color</label>
-                <input type="color" id="capePicker" value="#991b1b">
-            </div>
+            <h3 style="color:#facc15;margin-bottom:10px;">Original Warrior Artwork</h3>
+            <p style="color:#cbd5e1;font-size:14px;line-height:1.5;">Ginagamit dito ang mismong warrior image na ibinigay mo para tumugma ang character preview sa game.</p>
         </div>
         <button onclick="window.location.href='index.html'">⬅️ Save & Return to Game</button>
     </div>
 </div>
 
 <script>
-document.getElementById('armorPicker').addEventListener('input', (e) => document.getElementById('armorColor').setAttribute('fill', e.target.value));
-document.getElementById('hairPicker').addEventListener('input', (e) => document.getElementById('hairColor').setAttribute('fill', e.target.value));
-document.getElementById('capePicker').addEventListener('input', (e) => document.getElementById('capeColor').setAttribute('fill', e.target.value));
+/* The supplied warrior artwork is preserved as-is so the preview matches the game. */
 </script>
-
 </body>
 </html>
