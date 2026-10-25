@@ -13,26 +13,55 @@ html, body{ width:100%; height:100%; overflow:hidden; background:#111; font-fami
 #gameLayer{ position:absolute; inset:0; overflow:hidden; }
 
 /* PLAYER CONTAINER */
-#player{ position:absolute; left:50%; top:68%; width:130px; height:160px; transform: translate(-50%,-100%); z-index:20; pointer-events:none; }
+#player{ position:absolute; left:50%; top:68%; width:150px; height:220px; transform: translate(-50%,-100%); z-index:20; pointer-events:none; }
 
-#playerFallback{ position:absolute; left:50%; bottom:0; width:120px; height:155px; transform: translateX(-50%); display:flex; flex-direction:column; align-items:center; filter: drop-shadow(0 8px 6px rgba(0,0,0,.65)); }
-.aqw-avatar { width: 100%; height: 100%; transform-origin: bottom center; }
+#playerFallback{ position:absolute; left:50%; bottom:0; width:130px; height:220px; transform: translateX(-50%); display:flex; flex-direction:column; align-items:center; filter: drop-shadow(0 8px 6px rgba(0,0,0,.65)); }
+.aqw-avatar { width: 100%; height: 100%; object-fit: contain; object-position: center bottom; transform-origin: bottom center; }
+.warrior-art { position:relative; z-index:1; }
+.warrior-sword-overlay { position:absolute; z-index:2; width:44%; height:76%; right:-3%; top:8%; overflow:visible; transform-origin:45% 75%; }
+#playerFallback.running .warrior-art { animation: warriorArtRun .24s infinite alternate ease-in-out; }
+#playerFallback.jumping .warrior-art { animation: warriorArtJump .62s cubic-bezier(.25,.7,.35,1); }
+#playerFallback.attacking .warrior-art { animation: warriorArtAttack .38s ease-out; }
+#playerFallback.face-left .warrior-art { transform:scaleX(-1); }
+#playerFallback.running .warrior-sword-overlay { animation: swordRun .24s infinite alternate ease-in-out; }
+#playerFallback.jumping .warrior-sword-overlay { animation: swordJump .62s ease-in-out; }
+#playerFallback.attacking .warrior-sword-overlay { animation: swordSlash .38s ease-out; }
+@keyframes warriorArtRun { from { translate:0 0; rotate:-2deg; } to { translate:0 -5px; rotate:2deg; } }
+@keyframes warriorArtJump { 0%,100% { translate:0 0; } 35%,65% { translate:0 -48px; } }
+@keyframes warriorArtAttack { 0%,100% { translate:0 0; } 35% { translate:0 -4px; rotate:5deg; } }
+@keyframes swordRun { from { rotate:-5deg; } to { rotate:8deg; } }
+@keyframes swordJump { 0%,100% { rotate:0; } 35%,65% { rotate:-18deg; } }
+.aqw-swf-player { width:100%; height:100%; display:block; background:transparent; }
+#aqwSwfHost { position:absolute; inset:0; display:none; z-index:4; }
+#playerFallback.swf-mode .warrior-art, #playerFallback.swf-mode .warrior-sword-overlay { display:none; }
+#playerFallback.swf-mode #aqwSwfHost { display:block; }
 .fallback-name{ position:absolute; left:50%; top:-25px; transform:translateX(-50%); color:white; white-space:nowrap; font-size:15px; font-weight:800; text-shadow: 0 2px 3px #000, 0 0 5px #000; }
 
-/* ANIMATIONS */
+/* AQW-inspired movement: grounded idle, alternating run cycle, sword slash and jump */
+#playerFallback .aqw-avatar { overflow: visible; }
 #playerFallback.face-left .aqw-avatar { transform: scaleX(-1); }
-#playerFallback:not(.running):not(.attacking) .aqw-avatar { animation: aqwBreath 2s infinite alternate ease-in-out; }
-@keyframes aqwBreath { 0% { transform: translateY(0); } 100% { transform: translateY(-4px); } }
-
-#playerFallback.running .aqw-avatar { animation: aqwRunLean 0.25s infinite alternate ease-in-out; }
-@keyframes aqwRunLean { 0% { transform: translateY(0) rotate(8deg); } 100% { transform: translateY(-8px) rotate(14deg); } }
-#playerFallback.running .leg-left { animation: runLegLeft 0.25s infinite alternate ease-in-out; transform-origin: 50px 105px; }
-@keyframes runLegLeft { 0% { transform: rotate(-48deg); } 100% { transform: rotate(40deg); } }
-#playerFallback.running .leg-right { animation: runLegRight 0.25s infinite alternate ease-in-out; transform-origin: 66px 105px; }
-@keyframes runLegRight { 0% { transform: rotate(48deg); } 100% { transform: rotate(-40deg); } }
-
-#playerFallback.attacking .aqw-avatar { animation: aqwAttackSlash 0.4s ease-out; }
-@keyframes aqwAttackSlash { 0% { transform: translateY(0) rotate(-10deg); } 40% { transform: translateY(-5px) rotate(20deg) scale(1.05); } 100% { transform: translateY(0) rotate(0deg); } }
+#playerFallback:not(.running):not(.attacking):not(.jumping) .aqw-avatar { animation: aqwBreath 2s infinite alternate ease-in-out; }
+@keyframes aqwBreath { from { translate: 0 0; } to { translate: 0 -2px; } }
+#playerFallback.running .aqw-avatar { animation: aqwRunBob .24s infinite alternate ease-in-out; }
+#playerFallback.face-left.running .aqw-avatar { animation-name: aqwRunBobLeft; }
+@keyframes aqwRunBob { from { transform: translateY(0) rotate(-2deg); } to { transform: translateY(-5px) rotate(2deg); } }
+@keyframes aqwRunBobLeft { from { transform: scaleX(-1) translateY(0) rotate(-2deg); } to { transform: scaleX(-1) translateY(-5px) rotate(2deg); } }
+#playerFallback.running .leg-left { animation: runLegLeft .22s infinite alternate ease-in-out; transform-box: view-box; transform-origin: 43px 112px; }
+#playerFallback.running .leg-right { animation: runLegRight .22s infinite alternate ease-in-out; transform-box: view-box; transform-origin: 67px 112px; }
+#playerFallback.running .arm-left { animation: runArmLeft .22s infinite alternate ease-in-out; transform-box: view-box; transform-origin: 40px 65px; }
+#playerFallback.running .arm-right { animation: runArmRight .22s infinite alternate ease-in-out; transform-box: view-box; transform-origin: 77px 65px; }
+@keyframes runLegLeft { from { transform: rotate(24deg); } to { transform: rotate(-25deg); } }
+@keyframes runLegRight { from { transform: rotate(-24deg); } to { transform: rotate(25deg); } }
+@keyframes runArmLeft { from { transform: rotate(-16deg); } to { transform: rotate(17deg); } }
+@keyframes runArmRight { from { transform: rotate(15deg); } to { transform: rotate(-18deg); } }
+#playerFallback.attacking .warrior-sword { animation: swordSlash .38s ease-out; transform-box: view-box; transform-origin: 87px 92px; }
+#playerFallback.attacking .aqw-avatar { animation: aqwAttackSlash .38s ease-out; }
+@keyframes swordSlash { 0% { transform: rotate(-45deg); } 55% { transform: rotate(30deg); } 100% { transform: rotate(0); } }
+@keyframes aqwAttackSlash { 0% { translate: 0 0; } 35% { translate: 0 -4px; } 100% { translate: 0 0; } }
+#playerFallback.jumping .aqw-avatar { animation: warriorJump .62s cubic-bezier(.25,.7,.35,1); }
+#playerFallback.jumping .warrior-sword { animation: jumpSword .62s ease-in-out; transform-box: view-box; transform-origin: 87px 92px; }
+@keyframes warriorJump { 0% { translate: 0 0; } 35% { translate: 0 -48px; } 65% { translate: 0 -48px; } 100% { translate: 0 0; } }
+@keyframes jumpSword { 0%,100% { transform: rotate(0); } 35%,65% { transform: rotate(-18deg); } }
 
 /* FLOATING DAMAGE */
 .damage-pop { position: absolute; color: #facc15; font-size: 26px; font-weight: 900; text-shadow: 0 2px 4px #000, 0 0 10px #ef4444; pointer-events: none; z-index: 100; animation: floatDamage 0.8s ease-out forwards; }
@@ -93,6 +122,7 @@ html, body{ width:100%; height:100%; overflow:hidden; background:#111; font-fami
 .menu-item{ width:62px; text-align:center; color:white; font-size:10px; cursor:pointer; text-decoration:none; }
 .menu-icon{ width:38px; height:38px; margin:auto auto 3px; display:flex; align-items:center; justify-content:center; border: 1px solid #6c5b38; border-radius:9px; background:#1a2430; font-size:19px; }
 </style>
+<script src="https://unpkg.com/@ruffle-rs/ruffle"></script>
 </head>
 
 <body>
@@ -106,53 +136,15 @@ html, body{ width:100%; height:100%; overflow:hidden; background:#111; font-fami
             <div id="playerFallback">
                 <div class="fallback-name" id="playerNameTag">LQS</div>
 
-                <!-- AQW SKELETON VECTOR CHARACTER -->
-                <svg class="aqw-avatar" viewBox="0 0 120 180" xmlns="http://www.w3.org/2000/svg">
-                    <ellipse cx="60" cy="172" rx="35" ry="6" fill="rgba(0,0,0,0.6)" />
-
-                    <!-- Cape (Equipped) -->
-                    <path id="eqCape" d="M 38 48 L 12 150 Q 60 160 90 150 L 70 48 Z" fill="#991b1b" stroke="#111" stroke-width="2" />
-
-                    <!-- Legs -->
-                    <g class="leg-left">
-                        <path d="M 45 105 Q 40 130 42 165 L 56 165 Q 54 130 55 105 Z" fill="#111827" stroke="#000" stroke-width="1.5" />
-                        <path d="M 42 145 L 56 145 L 56 167 Q 48 170 40 167 Z" fill="#1e293b" stroke="#000" stroke-width="1.5" />
-                    </g>
-                    <g class="leg-right">
-                        <path d="M 60 105 Q 62 130 65 165 L 79 165 Q 74 130 70 105 Z" fill="#1e1e24" stroke="#000" stroke-width="1.5" />
-                        <path d="M 64 142 L 80 142 L 81 167 Q 72 170 63 167 Z" fill="#ffffff" stroke="#111" stroke-width="1.5" />
-                    </g>
-
-                    <!-- Armor (Equipped) -->
-                    <path id="eqArmor" d="M 40 50 Q 60 45 78 50 L 74 110 Q 60 115 42 110 Z" fill="#c084fc" stroke="#111" stroke-width="2" />
-                    <path d="M 42 100 Q 60 106 75 100" stroke="#cbd5e1" stroke-width="5" fill="none" />
-                    <circle cx="58" cy="103" r="5" fill="#f59e0b" stroke="#111" stroke-width="1" />
-
-                    <!-- Left Arm -->
-                    <path d="M 42 52 L 28 92 Q 26 96 30 100 Q 34 98 38 92 L 48 55 Z" fill="#c084fc" stroke="#111" stroke-width="1.5" />
-                    <circle cx="28" cy="98" r="5" fill="#0f172a" />
-
-                    <!-- Head & Hair -->
-                    <path d="M 52 38 L 66 38 L 64 54 L 54 54 Z" fill="#fbcfe8" />
-                    <ellipse cx="59" cy="30" rx="14" ry="16" fill="#fbcfe8" stroke="#111" stroke-width="1.5" />
-                    <path d="M 45 22 Q 60 10 73 22 L 72 58 Q 66 38 68 68 Q 60 40 50 68 Q 50 38 46 58 Z" fill="#7f1d1d" stroke="#111" stroke-width="1.5" />
-
-                    <!-- Helmet (Equipped) -->
-                    <path id="eqHelm" d="M 45 20 Q 60 8 73 20 L 70 30 Q 60 22 48 30 Z" fill="#991b1b" stroke="#111" stroke-width="1.5" />
-                    <path d="M 48 16 C 30 5, 20 -5, 12 10 C 25 15, 35 22, 45 20 Z" fill="#334155" stroke="#111" stroke-width="1.5" />
-                    <path d="M 70 16 C 88 5, 98 -5, 106 10 C 93 15, 83 22, 73 20 Z" fill="#334155" stroke="#111" stroke-width="1.5" />
-                    <polygon points="53,28 59,26 57,32" fill="#111" />
-                    <polygon points="67,28 61,26 63,32" fill="#111" />
-
-                    <!-- Sword / Staff (Equipped) -->
-                    <g class="arm-weapon">
-                        <line id="eqWeapon" x1="10" y1="140" x2="108" y2="80" stroke="#d97706" stroke-width="6" stroke-linecap="round" />
-                        <line x1="10" y1="140" x2="108" y2="80" stroke="#fde047" stroke-width="2.5" stroke-linecap="round" />
-                        <circle cx="108" cy="80" r="8" fill="#2563eb" stroke="#1d4ed8" stroke-width="1.5" />
-                        <path d="M 72 52 L 88 92 Q 92 95 95 90 Q 94 85 80 50 Z" fill="#c084fc" stroke="#111" stroke-width="1.5" />
-                        <circle cx="90" cy="91" r="5.5" fill="#111827" />
-                    </g>
+                <!-- Original warrior artwork supplied by the player -->
+                <img class="aqw-avatar warrior-art" src="warrior-reference.png" alt="Armored fantasy warrior with spiky brown hair">
+                <svg class="warrior-sword-overlay" viewBox="0 0 60 150" aria-hidden="true">
+                  <path d="M37 12 L49 18 L28 104 L18 113 L21 96 Z" fill="#dbeafe" stroke="#334155" stroke-width="3" stroke-linejoin="round"/>
+                  <path d="M18 102 L39 108 L35 116 L14 110 Z" fill="#8b5e34" stroke="#2b2118" stroke-width="3"/>
+                  <path d="M24 111 L17 139" stroke="#5b4633" stroke-width="9" stroke-linecap="round"/>
+                  <path d="M24 111 L17 139" stroke="#d6b37a" stroke-width="2" stroke-linecap="round"/>
                 </svg>
+                <div id="aqwSwfHost" aria-label="Optional AQW-style SWF character renderer"></div>
             </div>
         </div>
 
@@ -252,7 +244,7 @@ html, body{ width:100%; height:100%; overflow:hidden; background:#111; font-fami
     <a href="character.html" class="menu-item"><div class="menu-icon">🧙</div>Custom</a>
     <div class="menu-item" onclick="toggleModal('inventoryModal', true)"><div class="menu-icon">🎒</div>Bag</div>
     <div class="menu-item" onclick="toggleModal('joinModal', true)"><div class="menu-icon">🚪</div>Join</div>
-    <div class="menu-item" onclick="alert('Novarise World v2.5 - AQW Engine loaded successfully!')"><div class="menu-icon">⚙</div>Info</div>
+    <div class="menu-item" onclick="toggleAqwRenderer()"><div class="menu-icon">⚙</div>Info</div>
 </div>
 
 <script>
@@ -269,6 +261,55 @@ let monsterRespawnTimer = null;
 let playerLevel = 1;
 let playerExp = 0;
 let expNeeded = 50;
+
+// Optional SWF renderer. The supplied PNG remains the default, reliable renderer.
+// Toggle it from the Info button; if Ruffle/SWF cannot render, switch back to the PNG.
+let aqwRendererEnabled = false;
+let aqwRufflePlayer = null;
+async function toggleAqwRenderer(){
+    const host = document.getElementById("aqwSwfHost");
+    if(aqwRendererEnabled){
+        aqwRendererEnabled = false;
+        fallback.classList.remove("swf-mode");
+        host.innerHTML = "";
+        aqwRufflePlayer = null;
+        return;
+    }
+    try{
+        if(!window.RufflePlayer || !window.RufflePlayer.newest){
+            alert("Hindi pa na-load ang Ruffle. I-check ang internet connection at subukan ulit.");
+            return;
+        }
+        window.RufflePlayer.config = { autoplay: "on", unmuteOverlay: "hidden", letterbox: "on", backgroundColor: "#00000000", logLevel: "error" };
+        const ruffle = window.RufflePlayer.newest();
+        const playerEl = ruffle.createPlayer();
+        playerEl.className = "aqw-swf-player";
+        host.innerHTML = "";
+        host.appendChild(playerEl);
+        aqwRufflePlayer = playerEl;
+        await playerEl.load({
+            url: "character5.swf",
+            parameters: {
+                intColorHair: "0x6b3f20", intColorSkin: "0xf0c18b", intColorEye: "0x2d9cdb",
+                intColorTrim: "0x64748b", intColorBase: "0x334155", intColorAccessory: "0x8b5e34",
+                ia1: "13600", strGender: "M", strHairFile: "", strHairName: "", strName: "LQS",
+                intLevel: "1", strClassName: "Warrior", strClassFile: "", strClassLink: "",
+                strArmorName: "Warrior", strWeaponFile: "", strWeaponLink: "", strWeaponType: "Sword",
+                strWeaponName: "Warrior Sword", strCapeFile: "", strCapeLink: "", strCapeName: "",
+                strHelmFile: "", strHelmLink: "", strHelmName: "", strPetFile: "", strPetLink: "",
+                strPetName: "", bgindex: "9", strFaction: "Warrior"
+            }
+        });
+        aqwRendererEnabled = true;
+        fallback.classList.add("swf-mode");
+    }catch(err){
+        host.innerHTML = "";
+        fallback.classList.remove("swf-mode");
+        aqwRendererEnabled = false;
+        alert("Hindi ma-load ang character5.swf sa browser na ito. Ibinalik ang warrior image. Siguraduhing nasa parehong GitHub folder ang character5.swf.");
+        console.error("AQW SWF renderer error:", err);
+    }
+}
 
 // Inventory Items Database
 const inventoryItems = [
@@ -297,13 +338,13 @@ renderInventory();
 
 function equipItem(item) {
     if(item.type === "armor") {
-        document.getElementById("eqArmor").setAttribute("fill", item.color);
+        if(document.getElementById("eqArmor")) document.getElementById("eqArmor").setAttribute("fill", item.color);
     } else if(item.type === "helm") {
-        document.getElementById("eqHelm").setAttribute("fill", item.color);
+        if(document.getElementById("eqHelm")) document.getElementById("eqHelm").setAttribute("fill", item.color);
     } else if(item.type === "cape") {
-        document.getElementById("eqCape").setAttribute("fill", item.color);
+        if(document.getElementById("eqCape")) document.getElementById("eqCape").setAttribute("fill", item.color);
     } else if(item.type === "weapon") {
-        document.getElementById("eqWeapon").setAttribute("stroke", item.color);
+        if(document.querySelector(".warrior-sword > path")) document.querySelector(".warrior-sword > path").setAttribute("fill", item.color);
     }
     alert(`Na-equip ang ${item.name}!`);
 }
@@ -362,6 +403,18 @@ movementLoop();
 
 function startWalking(){ fallback.classList.add("running"); }
 function stopWalking(){ fallback.classList.remove("running"); }
+
+let jumpLock = false;
+function jumpCharacter(){
+    if(jumpLock) return;
+    jumpLock = true;
+    fallback.classList.remove("running");
+    fallback.classList.add("jumping");
+    setTimeout(() => {
+        fallback.classList.remove("jumping");
+        jumpLock = false;
+    }, 640);
+}
 
 function attackMonster(){
     if(!monsterAlive) return;
@@ -433,7 +486,13 @@ function showMarker(x,y){
 
 const keys = {};
 window.addEventListener("keydown", (e) => {
-    keys[e.key.toLowerCase()] = true;
+    const key = e.key.toLowerCase();
+    if(key === " " || key === "spacebar"){
+        e.preventDefault();
+        if(!e.repeat) jumpCharacter();
+        return;
+    }
+    keys[key] = true;
     if(["1","2","3","4","5"].includes(e.key)) attackMonster();
 });
 window.addEventListener("keyup", (e) => keys[e.key.toLowerCase()] = false);
@@ -468,11 +527,11 @@ updateClock();
 // Apply colors saved from the Character Customizer.
 [['nvrArmor','eqArmor'],['nvrHair',null],['nvrCape','eqCape']].forEach(([key,id])=>{
     const color = localStorage.getItem(key);
-    if(color && id) document.getElementById(id).setAttribute('fill', color);
+    if(color && id && document.getElementById(id)) document.getElementById(id).setAttribute('fill', color);
 });
 const savedHair = localStorage.getItem('nvrHair');
 if(savedHair){
-    const hairPath = document.querySelector('#playerFallback .aqw-avatar path[fill="#7f1d1d"]');
+    const hairPath = document.getElementById('eqHair');
     if(hairPath) hairPath.setAttribute('fill', savedHair);
 }
 updatePlayerPosition();
