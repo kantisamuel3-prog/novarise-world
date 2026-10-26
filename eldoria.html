@@ -1,0 +1,511 @@
+<!doctype html>
+<html lang="tl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101525">
+  <title>Mga Lupain ng Eldoria</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      background: #101525;
+      color: #f4f1e8;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(ellipse at 50% 0, #293252 0, transparent 55%),
+        #101525;
+    }
+
+    .page {
+      width: min(100% - 28px, 1000px);
+      margin: 0 auto;
+      padding: 28px 0 40px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0;
+      color: #f4d27a;
+      font-size: clamp(1.45rem, 5vw, 2.25rem);
+      letter-spacing: .04em;
+    }
+
+    .subtitle, .hint { color: #b8bfd1; }
+    .subtitle { margin: 5px 0 0; font-size: .92rem; }
+
+    .level {
+      flex: 0 0 auto;
+      padding: 9px 13px;
+      border: 1px solid #65708d;
+      border-radius: 999px;
+      color: #f4d27a;
+      background: #1b2235;
+      font-weight: 700;
+    }
+
+    .game {
+      overflow: hidden;
+      border: 1px solid #65708d;
+      border-radius: 16px;
+      background: #182137;
+      box-shadow: 0 18px 60px #05081299;
+    }
+
+    .bars {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      padding: 15px;
+      background: #1b2235;
+    }
+
+    .bar-label {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 6px;
+      color: #dce2ef;
+      font-size: .83rem;
+      font-weight: 700;
+    }
+
+    .track {
+      height: 12px;
+      overflow: hidden;
+      border: 1px solid #ffffff25;
+      border-radius: 20px;
+      background: #0b1020;
+    }
+
+    .fill {
+      width: 100%;
+      height: 100%;
+      border-radius: inherit;
+      transition: width .2s ease;
+    }
+
+    #healthFill { background: linear-gradient(90deg, #d04456, #ff7880); }
+    #xpFill { background: linear-gradient(90deg, #5379eb, #9aaeff); }
+
+    canvas {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      min-height: 250px;
+      max-height: 560px;
+      background: #26344a;
+      image-rendering: pixelated;
+      touch-action: none;
+    }
+
+    .below {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: center;
+      padding: 14px 16px;
+    }
+
+    #message {
+      min-height: 24px;
+      margin: 0;
+      color: #f4d27a;
+      font-weight: 650;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    button {
+      min-height: 42px;
+      padding: 9px 15px;
+      border: 1px solid #7e8ba8;
+      border-radius: 10px;
+      color: #f4f1e8;
+      background: #2a3550;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    button:hover { background: #39496d; }
+    button:active { transform: translateY(1px); }
+    button:focus-visible { outline: 3px solid #f4d27a; outline-offset: 2px; }
+    #attack { border-color: #d97968; background: #813e43; }
+    #attack:hover { background: #a34e50; }
+
+    .hint {
+      margin: 14px 2px 0;
+      font-size: .85rem;
+      line-height: 1.6;
+      text-align: center;
+    }
+
+    @media (max-width: 600px) {
+      .page { width: min(100% - 18px, 1000px); padding-top: 18px; }
+      .bars { gap: 10px; padding: 12px; }
+      .below { grid-template-columns: 1fr; }
+      .controls { justify-content: center; }
+      .controls button { flex: 1 1 28%; }
+      canvas { min-height: 220px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header>
+      <div>
+        <h1>Mga Lupain ng Eldoria</h1>
+        <p class="subtitle">Isang munting pakikipagsapalaran sa mahiwagang gubat</p>
+      </div>
+      <div class="level" id="level">Antas 1</div>
+    </header>
+
+    <section class="game" aria-label="Laro">
+      <div class="bars">
+        <div>
+          <div class="bar-label"><span>Buhay</span><span id="healthText">100 / 100</span></div>
+          <div class="track"><div class="fill" id="healthFill"></div></div>
+        </div>
+        <div>
+          <div class="bar-label"><span>Karanasan</span><span id="xpText">0 / 100 XP</span></div>
+          <div class="track"><div class="fill" id="xpFill" style="width:0%"></div></div>
+        </div>
+      </div>
+      <canvas id="world" width="960" height="540" aria-label="Gubat ng Eldoria"></canvas>
+      <div class="below">
+        <p id="message" role="status">Talunin ang mga anino para makakuha ng karanasan!</p>
+        <div class="controls">
+          <button type="button" id="left" aria-label="Kaliwa">◀</button>
+          <button type="button" id="right" aria-label="Kanan">▶</button>
+          <button type="button" id="attack">⚔ Atake</button>
+        </div>
+      </div>
+    </section>
+    <p class="hint">Gamitin ang A / D o ← / → para gumalaw. Pindutin ang Space para umatake.<br>
+      Sa cellphone, gamitin ang mga button. Lumapit sa halimaw bago umatake.</p>
+  </main>
+
+  <script>
+    (() => {
+      const canvas = document.querySelector("#world");
+      const ctx = canvas.getContext("2d");
+      const healthFill = document.querySelector("#healthFill");
+      const healthText = document.querySelector("#healthText");
+      const xpFill = document.querySelector("#xpFill");
+      const xpText = document.querySelector("#xpText");
+      const levelLabel = document.querySelector("#level");
+      const message = document.querySelector("#message");
+
+      const player = { x: 230, y: 386, hp: 100, maxHp: 100, xp: 0, level: 1, facing: 1, swing: 0, invulnerable: 0 };
+      const keys = new Set();
+      let monsters = [];
+      let lastTime = 0;
+      let messageTimer = 0;
+
+      function makeMonster(x) {
+        return { x, y: 396, hp: 40, maxHp: 40, alive: true, hit: 0, attackTimer: 1 + Math.random() * 2, phase: Math.random() * 6 };
+      }
+
+      function showMessage(text, seconds = 2.5) {
+        message.textContent = text;
+        messageTimer = seconds;
+      }
+
+      function updateBars() {
+        healthFill.style.width = `${Math.max(0, player.hp / player.maxHp * 100)}%`;
+        healthText.textContent = `${player.hp} / ${player.maxHp}`;
+        xpFill.style.width = `${player.xp}%`;
+        xpText.textContent = `${player.xp} / 100 XP`;
+        levelLabel.textContent = `Antas ${player.level}`;
+      }
+
+      function attack() {
+        if (player.hp <= 0 || player.swing > 0) return;
+        player.swing = .28;
+        const target = monsters.find(monster => monster.alive && Math.abs(monster.x - player.x) < 105);
+        if (!target) {
+          showMessage("Walang halimaw sa abot ng espada mo.");
+          return;
+        }
+        target.hp -= 20 + (player.level - 1) * 5;
+        target.hit = .18;
+        if (target.hp <= 0) {
+          target.alive = false;
+          player.xp += 25;
+          showMessage("Natalo mo ang anino! +25 XP");
+          if (player.xp >= 100) {
+            player.xp -= 100;
+            player.level++;
+            player.maxHp += 15;
+            player.hp = player.maxHp;
+            showMessage(`Tumaas ka sa Antas ${player.level}! Bumalik ang iyong buhay.`, 3);
+          }
+        } else {
+          showMessage("Tinamaan mo ang anino!");
+        }
+        updateBars();
+      }
+
+      function drawBackground() {
+        const sky = ctx.createLinearGradient(0, 0, 0, 540);
+        sky.addColorStop(0, "#18253f");
+        sky.addColorStop(.68, "#53614b");
+        sky.addColorStop(1, "#283c32");
+        ctx.fillStyle = sky;
+        ctx.fillRect(0, 0, 960, 540);
+
+        ctx.fillStyle = "#f6d78a";
+        ctx.beginPath();
+        ctx.arc(770, 95, 38, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "#18253f";
+        ctx.beginPath();
+        ctx.arc(785, 83, 34, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = "#314352";
+        ctx.beginPath();
+        ctx.moveTo(0, 300); ctx.lineTo(180, 105); ctx.lineTo(350, 300);
+        ctx.lineTo(520, 125); ctx.lineTo(740, 315); ctx.lineTo(900, 150);
+        ctx.lineTo(960, 225); ctx.lineTo(960, 430); ctx.lineTo(0, 430);
+        ctx.fill();
+        ctx.fillStyle = "#465644";
+        ctx.fillRect(0, 405, 960, 135);
+
+        for (let i = 0; i < 12; i++) {
+          const x = i * 94 - 15;
+          const h = 105 + (i * 37 % 75);
+          ctx.fillStyle = i % 2 ? "#1d302e" : "#263a32";
+          ctx.fillRect(x + 28, 400 - h * .35, 18, h);
+          ctx.beginPath();
+          ctx.moveTo(x - 14, 410 - h * .35);
+          ctx.lineTo(x + 37, 330 - h);
+          ctx.lineTo(x + 88, 410 - h * .35);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.moveTo(x - 9, 372 - h * .25);
+          ctx.lineTo(x + 37, 300 - h * .68);
+          ctx.lineTo(x + 83, 372 - h * .25);
+          ctx.fill();
+        }
+
+        ctx.fillStyle = "#c5a76d";
+        ctx.fillRect(0, 430, 960, 110);
+        ctx.fillStyle = "#a18a5f";
+        for (let i = 0; i < 18; i++) {
+          ctx.fillRect((i * 71 + 20) % 960, 442 + (i * 29) % 82, 3, 3);
+        }
+        ctx.fillStyle = "#78884c";
+        for (let i = 0; i < 17; i++) {
+          const x = (i * 83 + 32) % 940;
+          ctx.fillRect(x, 425 + (i * 17) % 100, 5, 4);
+          ctx.fillRect(x + 5, 429 + (i * 17) % 100, 5, 3);
+        }
+      }
+
+      function drawPlayer() {
+        const blink = player.invulnerable > 0 && Math.floor(player.invulnerable * 18) % 2 === 0;
+        if (blink) return;
+        const x = player.x;
+        const y = player.y;
+        ctx.save();
+        ctx.translate(x, y);
+        if (player.facing < 0) ctx.scale(-1, 1);
+        ctx.fillStyle = "#2a1d23";
+        ctx.fillRect(-15, 30, 12, 21);
+        ctx.fillRect(4, 30, 12, 21);
+        ctx.fillStyle = "#d7c8a8";
+        ctx.fillRect(-20, -8, 40, 43);
+        ctx.fillStyle = "#4274a2";
+        ctx.fillRect(-19, 1, 38, 27);
+        ctx.fillStyle = "#e5bd8e";
+        ctx.fillRect(-13, -37, 27, 28);
+        ctx.fillStyle = "#3b2830";
+        ctx.fillRect(-15, -41, 31, 11);
+        ctx.fillRect(-10, -48, 22, 10);
+        ctx.fillStyle = "#202735";
+        ctx.fillRect(3, -28, 4, 4);
+        ctx.fillStyle = "#8d513e";
+        ctx.fillRect(-11, -12, 22, 4);
+        ctx.fillStyle = "#a9c9e5";
+        ctx.fillRect(14, -2, 8, 26);
+        ctx.fillStyle = "#e6e8e8";
+        ctx.save();
+        if (player.swing > 0) ctx.rotate(-.75);
+        ctx.fillRect(20, -18, 5, 48);
+        ctx.fillStyle = "#806044";
+        ctx.fillRect(17, 19, 11, 5);
+        ctx.restore();
+        ctx.restore();
+      }
+
+      function drawMonster(monster) {
+        if (!monster.alive) return;
+        const bounce = Math.sin(monster.phase) * 3;
+        const x = monster.x;
+        const y = monster.y + bounce;
+        ctx.fillStyle = "#182032";
+        ctx.fillRect(x - 19, y - 1, 38, 35);
+        ctx.fillRect(x - 12, y + 31, 10, 16);
+        ctx.fillRect(x + 4, y + 31, 10, 16);
+        ctx.fillStyle = monster.hit > 0 ? "#f1b3a0" : "#697fa8";
+        ctx.fillRect(x - 23, y - 34, 46, 36);
+        ctx.fillStyle = "#8498bc";
+        ctx.fillRect(x - 16, y - 45, 9, 17);
+        ctx.fillRect(x + 7, y - 45, 9, 17);
+        ctx.fillStyle = "#f1d982";
+        ctx.fillRect(x - 12, y - 21, 7, 6);
+        ctx.fillRect(x + 6, y - 21, 7, 6);
+        ctx.fillStyle = "#392b42";
+        ctx.fillRect(x - 10, y - 5, 20, 5);
+        ctx.fillStyle = "#271f2b";
+        ctx.fillRect(x - 22, y - 58, 44, 6);
+        ctx.fillStyle = "#d55261";
+        ctx.fillRect(x - 21, y - 57, 42 * (monster.hp / monster.maxHp), 4);
+        ctx.fillStyle = "#e1e6f2";
+        ctx.font = "12px system-ui";
+        ctx.textAlign = "center";
+        ctx.fillText("Anino", x, y - 64);
+      }
+
+      function draw() {
+        drawBackground();
+        monsters.forEach(drawMonster);
+        drawPlayer();
+        if (player.hp <= 0) {
+          ctx.fillStyle = "#101525bb";
+          ctx.fillRect(0, 0, 960, 540);
+          ctx.fillStyle = "#fff2dc";
+          ctx.textAlign = "center";
+          ctx.font = "bold 42px system-ui";
+          ctx.fillText("Nakahinga ka na", 480, 250);
+          ctx.font = "20px system-ui";
+          ctx.fillText("Pindutin ang Muling Subukan para maglaro ulit.", 480, 292);
+        }
+      }
+
+      function tick(time) {
+        const dt = Math.min((time - lastTime) / 1000 || 0, .04);
+        lastTime = time;
+
+        if (player.hp > 0) {
+          const speed = 220 * dt;
+          if (keys.has("ArrowLeft") || keys.has("a")) {
+            player.x -= speed;
+            player.facing = -1;
+          }
+          if (keys.has("ArrowRight") || keys.has("d")) {
+            player.x += speed;
+            player.facing = 1;
+          }
+          player.x = Math.max(32, Math.min(928, player.x));
+          player.swing = Math.max(0, player.swing - dt);
+          player.invulnerable = Math.max(0, player.invulnerable - dt);
+          if (messageTimer > 0) {
+            messageTimer -= dt;
+            if (messageTimer <= 0 && player.hp > 0) message.textContent = "Talunin ang mga anino para makakuha ng karanasan!";
+          }
+
+          for (const monster of monsters) {
+            if (!monster.alive) continue;
+            monster.phase += dt * 4;
+            monster.hit = Math.max(0, monster.hit - dt);
+            monster.attackTimer -= dt;
+            if (Math.abs(monster.x - player.x) < 45 && monster.attackTimer <= 0 && player.invulnerable <= 0) {
+              player.hp = Math.max(0, player.hp - 10);
+              player.invulnerable = .8;
+              monster.attackTimer = 1.2;
+              showMessage(player.hp > 0 ? "Tinamaan ka ng anino! Mag-ingat ka." : "Nakahinga ka na. Pindutin ang Muling Subukan.");
+              updateBars();
+            }
+          }
+
+          if (monsters.filter(monster => monster.alive).length < 3) {
+            const rightmost = Math.max(560, ...monsters.map(monster => monster.x));
+            monsters.push(makeMonster(Math.min(900, rightmost + 120)));
+          }
+        }
+
+        draw();
+        requestAnimationFrame(tick);
+      }
+
+      function resetGame() {
+        player.x = 230;
+        player.hp = player.maxHp = 100;
+        player.xp = 0;
+        player.level = 1;
+        player.swing = 0;
+        player.invulnerable = 0;
+        monsters = [makeMonster(520), makeMonster(720)];
+        message.textContent = "Talunin ang mga anino para makakuha ng karanasan!";
+        messageTimer = 0;
+        updateBars();
+      }
+
+      document.addEventListener("keydown", event => {
+        const key = event.key.length === 1 ? event.key.toLowerCase() : event.key;
+        if (["ArrowLeft", "ArrowRight", " "].includes(event.key)) event.preventDefault();
+        keys.add(key);
+        if (event.code === "Space" && !event.repeat) attack();
+        if (player.hp <= 0 && (event.key.toLowerCase() === "r")) resetGame();
+      });
+      document.addEventListener("keyup", event => {
+        const key = event.key.length === 1 ? event.key.toLowerCase() : event.key;
+        keys.delete(key);
+      });
+      window.addEventListener("blur", () => keys.clear());
+      document.querySelector("#attack").addEventListener("click", attack);
+
+      function holdButton(id, key) {
+        const button = document.querySelector(id);
+        button.addEventListener("pointerdown", event => {
+          event.preventDefault();
+          keys.add(key);
+          button.setPointerCapture(event.pointerId);
+        });
+        const release = () => keys.delete(key);
+        button.addEventListener("pointerup", release);
+        button.addEventListener("pointercancel", release);
+        button.addEventListener("lostpointercapture", release);
+      }
+      holdButton("#left", "ArrowLeft");
+      holdButton("#right", "ArrowRight");
+
+      canvas.addEventListener("pointerdown", event => {
+        if (player.hp <= 0) {
+          resetGame();
+          return;
+        }
+        const bounds = canvas.getBoundingClientRect();
+        const clickX = (event.clientX - bounds.left) / bounds.width * canvas.width;
+        player.facing = clickX < player.x ? -1 : 1;
+        attack();
+      });
+
+      resetGame();
+      requestAnimationFrame(tick);
+    })();
+  </script>
+</body>
+</html>
