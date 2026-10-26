@@ -3,170 +3,58 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#101525">
-  <title>Mga Lupain ng Eldoria</title>
+  <meta name="theme-color" content="#101522">
+  <title>Eldoria — Pakikipagsapalaran</title>
   <style>
     :root {
       color-scheme: dark;
       font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-      background: #101525;
-      color: #f4f1e8;
+      background: #101522;
+      color: #f5f1e8;
     }
 
     * { box-sizing: border-box; }
-
     body {
-      margin: 0;
       min-height: 100vh;
-      background:
-        radial-gradient(ellipse at 50% 0, #293252 0, transparent 55%),
-        #101525;
-    }
-
-    .page {
-      width: min(100% - 28px, 1000px);
-      margin: 0 auto;
-      padding: 28px 0 40px;
-    }
-
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      margin-bottom: 18px;
-    }
-
-    h1 {
       margin: 0;
-      color: #f4d27a;
-      font-size: clamp(1.45rem, 5vw, 2.25rem);
-      letter-spacing: .04em;
+      background: radial-gradient(ellipse at 50% 0, #293451, #101522 65%);
     }
-
-    .subtitle, .hint { color: #b8bfd1; }
-    .subtitle { margin: 5px 0 0; font-size: .92rem; }
-
-    .level {
-      flex: 0 0 auto;
-      padding: 9px 13px;
-      border: 1px solid #65708d;
-      border-radius: 999px;
-      color: #f4d27a;
-      background: #1b2235;
-      font-weight: 700;
-    }
-
-    .game {
-      overflow: hidden;
-      border: 1px solid #65708d;
-      border-radius: 16px;
-      background: #182137;
-      box-shadow: 0 18px 60px #05081299;
-    }
-
-    .bars {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-      padding: 15px;
-      background: #1b2235;
-    }
-
-    .bar-label {
-      display: flex;
-      justify-content: space-between;
-      gap: 8px;
-      margin-bottom: 6px;
-      color: #dce2ef;
-      font-size: .83rem;
-      font-weight: 700;
-    }
-
-    .track {
-      height: 12px;
-      overflow: hidden;
-      border: 1px solid #ffffff25;
-      border-radius: 20px;
-      background: #0b1020;
-    }
-
-    .fill {
-      width: 100%;
-      height: 100%;
-      border-radius: inherit;
-      transition: width .2s ease;
-    }
-
-    #healthFill { background: linear-gradient(90deg, #d04456, #ff7880); }
-    #xpFill { background: linear-gradient(90deg, #5379eb, #9aaeff); }
-
-    canvas {
-      display: block;
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      min-height: 250px;
-      max-height: 560px;
-      background: #26344a;
-      image-rendering: pixelated;
-      touch-action: none;
-    }
-
-    .below {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 16px;
-      align-items: center;
-      padding: 14px 16px;
-    }
-
-    #message {
-      min-height: 24px;
-      margin: 0;
-      color: #f4d27a;
-      font-weight: 650;
-    }
-
-    .controls {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-      gap: 8px;
-    }
-
-    button {
-      min-height: 42px;
-      padding: 9px 15px;
-      border: 1px solid #7e8ba8;
-      border-radius: 10px;
-      color: #f4f1e8;
-      background: #2a3550;
-      font: inherit;
-      font-weight: 700;
-      cursor: pointer;
-      touch-action: manipulation;
-    }
-
-    button:hover { background: #39496d; }
-    button:active { transform: translateY(1px); }
-    button:focus-visible { outline: 3px solid #f4d27a; outline-offset: 2px; }
+    .page { width: min(100% - 24px, 1050px); margin: auto; padding: 22px 0 32px; }
+    header { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 14px; }
+    h1 { margin: 0; color: #f3d27d; font-size: clamp(1.4rem, 4vw, 2rem); }
+    .subtitle { margin: 4px 0 0; color: #b9c2d4; font-size: .9rem; }
+    .level { flex: none; border: 1px solid #67738e; border-radius: 30px; padding: 8px 13px; color: #f3d27d; background: #1b2335; font-weight: 700; }
+    .game { overflow: hidden; border: 1px solid #68738d; border-radius: 14px; background: #192136; box-shadow: 0 18px 55px #05081299; }
+    .stats { display: grid; grid-template-columns: 1fr 1fr 120px; gap: 12px; padding: 13px; background: #1b2335; }
+    .label { display: flex; justify-content: space-between; gap: 6px; margin-bottom: 5px; color: #dce2ef; font-size: .8rem; font-weight: 700; }
+    .track { height: 11px; overflow: hidden; border-radius: 20px; background: #0c1120; }
+    .fill { height: 100%; width: 100%; transition: width .16s ease; }
+    #hpFill { background: linear-gradient(90deg, #bb394d, #ff7880); }
+    #xpFill { background: linear-gradient(90deg, #456cdb, #9aaeff); }
+    #goldText { color: #f3d27d; text-align: right; font-weight: 800; }
+    .quest { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; min-height: 44px; padding: 9px 14px; background: #242e45; border-top: 1px solid #ffffff12; font-size: .87rem; }
+    .quest strong { color: #f3d27d; }
+    #questText { color: #e1e5ee; }
+    canvas { display: block; width: 100%; aspect-ratio: 16 / 9; max-height: 570px; background: #283649; image-rendering: pixelated; touch-action: none; }
+    .bottom { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 60px; padding: 10px 14px; }
+    #message { margin: 0; min-height: 22px; color: #f3d27d; font-weight: 650; }
+    .buttons { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 7px; }
+    button { min-height: 40px; padding: 8px 12px; border: 1px solid #7d8aa5; border-radius: 9px; color: #f5f1e8; background: #2b3650; font: inherit; font-weight: 700; cursor: pointer; touch-action: manipulation; }
+    button:hover { background: #3c4a6c; }
+    button:focus-visible { outline: 3px solid #f3d27d; outline-offset: 2px; }
     #attack { border-color: #d97968; background: #813e43; }
-    #attack:hover { background: #a34e50; }
-
-    .hint {
-      margin: 14px 2px 0;
-      font-size: .85rem;
-      line-height: 1.6;
-      text-align: center;
-    }
-
-    @media (max-width: 600px) {
-      .page { width: min(100% - 18px, 1000px); padding-top: 18px; }
-      .bars { gap: 10px; padding: 12px; }
-      .below { grid-template-columns: 1fr; }
-      .controls { justify-content: center; }
-      .controls button { flex: 1 1 28%; }
-      canvas { min-height: 220px; }
+    #talk { border-color: #ba9b5e; background: #655333; }
+    #restart[hidden] { display: none; }
+    .help { margin: 12px 2px 0; color: #b9c2d4; font-size: .84rem; line-height: 1.55; text-align: center; }
+    @media (max-width: 650px) {
+      .page { width: min(100% - 14px, 1050px); padding-top: 14px; }
+      .stats { grid-template-columns: 1fr 1fr; }
+      .gold { grid-column: 1 / -1; display: flex; align-items: center; gap: 12px; }
+      .gold .label { margin: 0; }
+      canvas { aspect-ratio: 4 / 3; }
+      .bottom { flex-direction: column; align-items: stretch; }
+      .buttons { justify-content: center; }
+      .buttons button { flex: 1 1 20%; }
     }
   </style>
 </head>
@@ -174,293 +62,414 @@
   <main class="page">
     <header>
       <div>
-        <h1>Mga Lupain ng Eldoria</h1>
-        <p class="subtitle">Isang munting pakikipagsapalaran sa mahiwagang gubat</p>
+        <h1>Eldoria: Gubat ng mga Anino</h1>
+        <p class="subtitle">Isang munting 2D fantasy RPG na sariling likha</p>
       </div>
       <div class="level" id="level">Antas 1</div>
     </header>
 
     <section class="game" aria-label="Laro">
-      <div class="bars">
+      <div class="stats">
         <div>
-          <div class="bar-label"><span>Buhay</span><span id="healthText">100 / 100</span></div>
-          <div class="track"><div class="fill" id="healthFill"></div></div>
+          <div class="label"><span>Buhay</span><span id="hpText">100 / 100</span></div>
+          <div class="track"><div class="fill" id="hpFill"></div></div>
         </div>
         <div>
-          <div class="bar-label"><span>Karanasan</span><span id="xpText">0 / 100 XP</span></div>
+          <div class="label"><span>Karanasan</span><span id="xpText">0 / 100 XP</span></div>
           <div class="track"><div class="fill" id="xpFill" style="width:0%"></div></div>
         </div>
+        <div class="gold">
+          <div class="label"><span>Barya</span></div>
+          <div id="goldText">0</div>
+        </div>
       </div>
-      <canvas id="world" width="960" height="540" aria-label="Gubat ng Eldoria"></canvas>
-      <div class="below">
-        <p id="message" role="status">Talunin ang mga anino para makakuha ng karanasan!</p>
-        <div class="controls">
-          <button type="button" id="left" aria-label="Kaliwa">◀</button>
-          <button type="button" id="right" aria-label="Kanan">▶</button>
+      <div class="quest"><strong>MISYON</strong><span id="questText">Pumunta kay Lira sa kaliwa at pindutin ang E para kausapin siya.</span></div>
+      <canvas id="world" width="960" height="540" aria-label="Side-view na mapa ng Eldoria"></canvas>
+      <div class="bottom">
+        <p id="message" role="status">Maligayang pagdating sa Eldoria, bayani!</p>
+        <div class="buttons">
+          <button type="button" id="left" aria-label="Gumalaw pakaliwa">◀</button>
+          <button type="button" id="right" aria-label="Gumalaw pakanan">▶</button>
           <button type="button" id="attack">⚔ Atake</button>
+          <button type="button" id="talk">💬 Kausap</button>
+          <button type="button" id="restart" hidden>Muling Subukan</button>
         </div>
       </div>
     </section>
-    <p class="hint">Gamitin ang A / D o ← / → para gumalaw. Pindutin ang Space para umatake.<br>
-      Sa cellphone, gamitin ang mga button. Lumapit sa halimaw bago umatake.</p>
+    <p class="help">A / D o ← / → para gumalaw · Space para umatake · E para makipag-usap<br>
+      Sa cellphone, gamitin ang mga button. Lapitan muna ang NPC o halimaw para makipag-ugnayan.</p>
   </main>
 
   <script>
     (() => {
+      "use strict";
+
       const canvas = document.querySelector("#world");
       const ctx = canvas.getContext("2d");
-      const healthFill = document.querySelector("#healthFill");
-      const healthText = document.querySelector("#healthText");
-      const xpFill = document.querySelector("#xpFill");
-      const xpText = document.querySelector("#xpText");
-      const levelLabel = document.querySelector("#level");
-      const message = document.querySelector("#message");
+      const ui = {
+        hpFill: document.querySelector("#hpFill"),
+        hpText: document.querySelector("#hpText"),
+        xpFill: document.querySelector("#xpFill"),
+        xpText: document.querySelector("#xpText"),
+        goldText: document.querySelector("#goldText"),
+        level: document.querySelector("#level"),
+        quest: document.querySelector("#questText"),
+        message: document.querySelector("#message"),
+        restart: document.querySelector("#restart")
+      };
 
-      const player = { x: 230, y: 386, hp: 100, maxHp: 100, xp: 0, level: 1, facing: 1, swing: 0, invulnerable: 0 };
+      const WORLD_WIDTH = 1900;
+      const GROUND = 432;
+      const player = { x: 850, hp: 100, maxHp: 100, xp: 0, level: 1, gold: 0, facing: 1, swing: 0, invulnerable: 0 };
+      const npc = { x: 180, name: "Lira" };
       const keys = new Set();
-      let monsters = [];
+      const quest = { state: "available", kills: 0, goal: 3 };
+      const monsters = [
+        makeMonster(1110), makeMonster(1300), makeMonster(1510),
+        makeMonster(1690), makeMonster(1810)
+      ];
+      let cameraX = 0;
       let lastTime = 0;
       let messageTimer = 0;
+      let elapsed = 0;
 
       function makeMonster(x) {
-        return { x, y: 396, hp: 40, maxHp: 40, alive: true, hit: 0, attackTimer: 1 + Math.random() * 2, phase: Math.random() * 6 };
+        return { x, hp: 45, maxHp: 45, alive: true, hit: 0, attackTimer: 1 + Math.random(), phase: Math.random() * 6 };
       }
 
-      function showMessage(text, seconds = 2.5) {
-        message.textContent = text;
+      function say(text, seconds = 3) {
+        ui.message.textContent = text;
         messageTimer = seconds;
       }
 
-      function updateBars() {
-        healthFill.style.width = `${Math.max(0, player.hp / player.maxHp * 100)}%`;
-        healthText.textContent = `${player.hp} / ${player.maxHp}`;
-        xpFill.style.width = `${player.xp}%`;
-        xpText.textContent = `${player.xp} / 100 XP`;
-        levelLabel.textContent = `Antas ${player.level}`;
+      function updateUI() {
+        ui.hpFill.style.width = `${Math.max(0, player.hp / player.maxHp * 100)}%`;
+        ui.hpText.textContent = `${player.hp} / ${player.maxHp}`;
+        ui.xpFill.style.width = `${player.xp}%`;
+        ui.xpText.textContent = `${player.xp} / 100 XP`;
+        ui.goldText.textContent = `${player.gold}`;
+        ui.level.textContent = `Antas ${player.level}`;
+        ui.restart.hidden = player.hp > 0;
+
+        if (quest.state === "available") ui.quest.textContent = "Pumunta kay Lira sa kaliwa at pindutin ang E para kausapin siya.";
+        if (quest.state === "active") ui.quest.textContent = `Talunin ang mga Anino sa kanan: ${quest.kills} / ${quest.goal}.`;
+        if (quest.state === "return") ui.quest.textContent = `Bumalik kay Lira para kunin ang gantimpala: ${quest.kills} / ${quest.goal}.`;
+        if (quest.state === "complete") ui.quest.textContent = "Natapos ang misyon! Maaari kang maglaro at magpataas pa ng antas.";
+      }
+
+      function talk() {
+        if (player.hp <= 0) return;
+        if (Math.abs(player.x - npc.x) > 100) {
+          say("Masyado kang malayo kay Lira. Hanapin siya sa kaliwa.");
+          return;
+        }
+        if (quest.state === "available") {
+          quest.state = "active";
+          say("Lira: May mga Anino sa kanan! Talunin ang tatlo at bumalik ka sa akin.");
+        } else if (quest.state === "active") {
+          say(`Lira: Talunin mo muna ang tatlong Anino. (${quest.kills} / ${quest.goal})`);
+        } else if (quest.state === "return") {
+          quest.state = "complete";
+          player.gold += 50;
+          player.xp += 50;
+          addExperience(0);
+          say("Lira: Maraming salamat, bayani! Natanggap mo ang 50 barya at 50 XP.");
+        } else {
+          say("Lira: Salamat sa pagtulong sa aming gubat, bayani!");
+        }
+        updateUI();
+      }
+
+      function addExperience(amount) {
+        player.xp += amount;
+        while (player.xp >= 100) {
+          player.xp -= 100;
+          player.level++;
+          player.maxHp += 20;
+          player.hp = player.maxHp;
+          say(`Tumaas ka sa Antas ${player.level}! Bumalik ang iyong buong buhay.`, 4);
+        }
       }
 
       function attack() {
         if (player.hp <= 0 || player.swing > 0) return;
         player.swing = .28;
-        const target = monsters.find(monster => monster.alive && Math.abs(monster.x - player.x) < 105);
+        const target = monsters.find(monster =>
+          monster.alive &&
+          Math.abs(monster.x - player.x) < 95 &&
+          Math.sign(monster.x - player.x || player.facing) === player.facing
+        );
         if (!target) {
-          showMessage("Walang halimaw sa abot ng espada mo.");
+          say("Walang halimaw sa harap mo. Lumapit muna at humarap dito.");
           return;
         }
-        target.hp -= 20 + (player.level - 1) * 5;
-        target.hit = .18;
+        target.hp -= 25 + (player.level - 1) * 5;
+        target.hit = .2;
         if (target.hp <= 0) {
           target.alive = false;
-          player.xp += 25;
-          showMessage("Natalo mo ang anino! +25 XP");
-          if (player.xp >= 100) {
-            player.xp -= 100;
-            player.level++;
-            player.maxHp += 15;
-            player.hp = player.maxHp;
-            showMessage(`Tumaas ka sa Antas ${player.level}! Bumalik ang iyong buhay.`, 3);
+          player.gold += 5;
+          addExperience(20);
+          if (quest.state === "active" && quest.kills < quest.goal) {
+            quest.kills++;
+            say(`Natalo mo ang Anino! Misyon: ${quest.kills} / ${quest.goal}. +20 XP, +5 barya.`);
+            if (quest.kills >= quest.goal) {
+              quest.state = "return";
+              say("Natapos mo ang misyon! Bumalik kay Lira sa kaliwa para kunin ang gantimpala.");
+            }
+          } else {
+            say("Natalo mo ang Anino! +20 XP, +5 barya.");
           }
         } else {
-          showMessage("Tinamaan mo ang anino!");
+          say("Tinamaan mo ang Anino!");
         }
-        updateBars();
+        updateUI();
+      }
+
+      function drawTree(x, scale, color) {
+        ctx.fillStyle = "#392c2a";
+        ctx.fillRect(x - 7 * scale, GROUND - 95 * scale, 14 * scale, 95 * scale);
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.moveTo(x - 48 * scale, GROUND - 80 * scale);
+        ctx.lineTo(x, GROUND - 190 * scale);
+        ctx.lineTo(x + 48 * scale, GROUND - 80 * scale);
+        ctx.closePath();
+        ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(x - 38 * scale, GROUND - 120 * scale);
+        ctx.lineTo(x, GROUND - 220 * scale);
+        ctx.lineTo(x + 38 * scale, GROUND - 120 * scale);
+        ctx.closePath();
+        ctx.fill();
       }
 
       function drawBackground() {
         const sky = ctx.createLinearGradient(0, 0, 0, 540);
-        sky.addColorStop(0, "#18253f");
-        sky.addColorStop(.68, "#53614b");
-        sky.addColorStop(1, "#283c32");
+        sky.addColorStop(0, "#24344f");
+        sky.addColorStop(.68, "#84916c");
+        sky.addColorStop(1, "#526044");
         ctx.fillStyle = sky;
         ctx.fillRect(0, 0, 960, 540);
 
-        ctx.fillStyle = "#f6d78a";
+        ctx.fillStyle = "#f5d78d";
         ctx.beginPath();
-        ctx.arc(770, 95, 38, 0, Math.PI * 2);
+        ctx.arc(765, 96, 35, 0, Math.PI * 2);
         ctx.fill();
-        ctx.fillStyle = "#18253f";
+        ctx.fillStyle = "#24344f";
         ctx.beginPath();
-        ctx.arc(785, 83, 34, 0, Math.PI * 2);
+        ctx.arc(779, 85, 32, 0, Math.PI * 2);
         ctx.fill();
 
-        ctx.fillStyle = "#314352";
-        ctx.beginPath();
-        ctx.moveTo(0, 300); ctx.lineTo(180, 105); ctx.lineTo(350, 300);
-        ctx.lineTo(520, 125); ctx.lineTo(740, 315); ctx.lineTo(900, 150);
-        ctx.lineTo(960, 225); ctx.lineTo(960, 430); ctx.lineTo(0, 430);
-        ctx.fill();
-        ctx.fillStyle = "#465644";
-        ctx.fillRect(0, 405, 960, 135);
-
-        for (let i = 0; i < 12; i++) {
-          const x = i * 94 - 15;
-          const h = 105 + (i * 37 % 75);
-          ctx.fillStyle = i % 2 ? "#1d302e" : "#263a32";
-          ctx.fillRect(x + 28, 400 - h * .35, 18, h);
+        ctx.save();
+        ctx.translate(-cameraX * .22, 0);
+        ctx.fillStyle = "#3c4c59";
+        for (let i = 0; i < 8; i++) {
+          const x = i * 280 - 40;
           ctx.beginPath();
-          ctx.moveTo(x - 14, 410 - h * .35);
-          ctx.lineTo(x + 37, 330 - h);
-          ctx.lineTo(x + 88, 410 - h * .35);
-          ctx.fill();
-          ctx.beginPath();
-          ctx.moveTo(x - 9, 372 - h * .25);
-          ctx.lineTo(x + 37, 300 - h * .68);
-          ctx.lineTo(x + 83, 372 - h * .25);
+          ctx.moveTo(x, GROUND);
+          ctx.lineTo(x + 145, 180 + i % 3 * 35);
+          ctx.lineTo(x + 310, GROUND);
           ctx.fill();
         }
+        ctx.restore();
 
-        ctx.fillStyle = "#c5a76d";
-        ctx.fillRect(0, 430, 960, 110);
-        ctx.fillStyle = "#a18a5f";
-        for (let i = 0; i < 18; i++) {
-          ctx.fillRect((i * 71 + 20) % 960, 442 + (i * 29) % 82, 3, 3);
+        ctx.fillStyle = "#394737";
+        ctx.fillRect(0, 374, 960, 66);
+        ctx.fillStyle = "#b6a071";
+        ctx.fillRect(0, GROUND, 960, 108);
+
+        ctx.save();
+        ctx.translate(-cameraX, 0);
+        for (let i = 0; i < 24; i++) {
+          const x = i * 92 - 25;
+          drawTree(x, .65 + (i % 3) * .12, i % 2 ? "#294238" : "#354b3d");
         }
-        ctx.fillStyle = "#78884c";
-        for (let i = 0; i < 17; i++) {
-          const x = (i * 83 + 32) % 940;
-          ctx.fillRect(x, 425 + (i * 17) % 100, 5, 4);
-          ctx.fillRect(x + 5, 429 + (i * 17) % 100, 5, 3);
+        ctx.fillStyle = "#887751";
+        for (let i = 0; i < 34; i++) {
+          const x = (i * 77 + 31) % WORLD_WIDTH;
+          ctx.fillRect(x, GROUND + 13 + (i * 23) % 75, 4, 3);
         }
+        ctx.fillStyle = "#81905a";
+        for (let i = 0; i < 29; i++) {
+          const x = (i * 67 + 11) % WORLD_WIDTH;
+          ctx.fillRect(x, GROUND - 4, 9, 5);
+          ctx.fillRect(x + 5, GROUND - 8, 7, 5);
+        }
+        ctx.restore();
+
+        ctx.fillStyle = "#f0e6ce";
+        ctx.font = "bold 16px system-ui";
+        ctx.textAlign = "left";
+        ctx.fillText("GUBAT NG ELDORIA", 18, 30);
       }
 
       function drawPlayer() {
         const blink = player.invulnerable > 0 && Math.floor(player.invulnerable * 18) % 2 === 0;
         if (blink) return;
         const x = player.x;
-        const y = player.y;
+        const y = GROUND - 3;
         ctx.save();
         ctx.translate(x, y);
         if (player.facing < 0) ctx.scale(-1, 1);
-        ctx.fillStyle = "#2a1d23";
-        ctx.fillRect(-15, 30, 12, 21);
-        ctx.fillRect(4, 30, 12, 21);
-        ctx.fillStyle = "#d7c8a8";
-        ctx.fillRect(-20, -8, 40, 43);
-        ctx.fillStyle = "#4274a2";
-        ctx.fillRect(-19, 1, 38, 27);
-        ctx.fillStyle = "#e5bd8e";
-        ctx.fillRect(-13, -37, 27, 28);
-        ctx.fillStyle = "#3b2830";
-        ctx.fillRect(-15, -41, 31, 11);
-        ctx.fillRect(-10, -48, 22, 10);
+        ctx.fillStyle = "#221e28";
+        ctx.fillRect(-14, -19, 11, 19);
+        ctx.fillRect(4, -19, 11, 19);
+        ctx.fillStyle = "#35618d";
+        ctx.fillRect(-19, -60, 38, 39);
+        ctx.fillStyle = "#d8b88c";
+        ctx.fillRect(-13, -91, 27, 30);
+        ctx.fillStyle = "#36262d";
+        ctx.fillRect(-15, -96, 31, 12);
+        ctx.fillRect(-9, -104, 22, 10);
         ctx.fillStyle = "#202735";
-        ctx.fillRect(3, -28, 4, 4);
-        ctx.fillStyle = "#8d513e";
-        ctx.fillRect(-11, -12, 22, 4);
-        ctx.fillStyle = "#a9c9e5";
-        ctx.fillRect(14, -2, 8, 26);
+        ctx.fillRect(4, -80, 4, 4);
         ctx.fillStyle = "#e6e8e8";
         ctx.save();
-        if (player.swing > 0) ctx.rotate(-.75);
-        ctx.fillRect(20, -18, 5, 48);
+        if (player.swing > 0) ctx.rotate(-.85);
+        ctx.fillRect(19, -57, 5, 44);
         ctx.fillStyle = "#806044";
-        ctx.fillRect(17, 19, 11, 5);
+        ctx.fillRect(16, -18, 11, 5);
         ctx.restore();
         ctx.restore();
+      }
+
+      function drawNpc() {
+        const x = npc.x;
+        if (x < cameraX - 80 || x > cameraX + 1040) return;
+        const y = GROUND - 3;
+        ctx.fillStyle = "#322536";
+        ctx.fillRect(x - 14, y - 19, 11, 19);
+        ctx.fillRect(x + 4, y - 19, 11, 19);
+        ctx.fillStyle = "#6a4b83";
+        ctx.fillRect(x - 19, y - 59, 38, 38);
+        ctx.fillStyle = "#ebc49c";
+        ctx.fillRect(x - 13, y - 91, 27, 30);
+        ctx.fillStyle = "#5c372f";
+        ctx.fillRect(x - 15, y - 96, 31, 13);
+        ctx.fillRect(x - 12, y - 84, 7, 23);
+        ctx.fillStyle = "#24202d";
+        ctx.fillRect(x + 4, y - 80, 4, 4);
+        ctx.fillStyle = "#fff0a6";
+        ctx.font = "bold 14px system-ui";
+        ctx.textAlign = "center";
+        ctx.fillText("Lira", x, y - 112);
+        if (Math.abs(player.x - npc.x) < 115) {
+          ctx.fillStyle = "#fff0a6";
+          ctx.font = "bold 12px system-ui";
+          ctx.fillText("[E] Kausap", x, y - 130);
+        }
       }
 
       function drawMonster(monster) {
         if (!monster.alive) return;
-        const bounce = Math.sin(monster.phase) * 3;
         const x = monster.x;
-        const y = monster.y + bounce;
-        ctx.fillStyle = "#182032";
-        ctx.fillRect(x - 19, y - 1, 38, 35);
-        ctx.fillRect(x - 12, y + 31, 10, 16);
-        ctx.fillRect(x + 4, y + 31, 10, 16);
-        ctx.fillStyle = monster.hit > 0 ? "#f1b3a0" : "#697fa8";
-        ctx.fillRect(x - 23, y - 34, 46, 36);
-        ctx.fillStyle = "#8498bc";
-        ctx.fillRect(x - 16, y - 45, 9, 17);
-        ctx.fillRect(x + 7, y - 45, 9, 17);
-        ctx.fillStyle = "#f1d982";
-        ctx.fillRect(x - 12, y - 21, 7, 6);
-        ctx.fillRect(x + 6, y - 21, 7, 6);
-        ctx.fillStyle = "#392b42";
-        ctx.fillRect(x - 10, y - 5, 20, 5);
-        ctx.fillStyle = "#271f2b";
-        ctx.fillRect(x - 22, y - 58, 44, 6);
+        if (x < cameraX - 70 || x > cameraX + 1030) return;
+        const y = GROUND - 3 + Math.sin(monster.phase) * 2;
+        ctx.fillStyle = "#171e2d";
+        ctx.fillRect(x - 18, y - 35, 36, 34);
+        ctx.fillRect(x - 12, y - 3, 10, 18);
+        ctx.fillRect(x + 4, y - 3, 10, 18);
+        ctx.fillStyle = monster.hit > 0 ? "#f1b3a0" : "#667da5";
+        ctx.fillRect(x - 23, y - 70, 46, 37);
+        ctx.fillRect(x - 16, y - 84, 9, 17);
+        ctx.fillRect(x + 7, y - 84, 9, 17);
+        ctx.fillStyle = "#f4dc8a";
+        ctx.fillRect(x - 12, y - 57, 7, 6);
+        ctx.fillRect(x + 6, y - 57, 7, 6);
+        ctx.fillStyle = "#30283c";
+        ctx.fillRect(x - 9, y - 39, 18, 5);
+        ctx.fillStyle = "#201b26";
+        ctx.fillRect(x - 24, y - 99, 48, 6);
         ctx.fillStyle = "#d55261";
-        ctx.fillRect(x - 21, y - 57, 42 * (monster.hp / monster.maxHp), 4);
-        ctx.fillStyle = "#e1e6f2";
+        ctx.fillRect(x - 23, y - 98, 46 * Math.max(0, monster.hp / monster.maxHp), 4);
+        ctx.fillStyle = "#f5f1e8";
         ctx.font = "12px system-ui";
         ctx.textAlign = "center";
-        ctx.fillText("Anino", x, y - 64);
+        ctx.fillText("Anino", x, y - 105);
       }
 
       function draw() {
         drawBackground();
+        ctx.save();
+        ctx.translate(-cameraX, 0);
+        drawNpc();
         monsters.forEach(drawMonster);
         drawPlayer();
+        ctx.restore();
+
         if (player.hp <= 0) {
-          ctx.fillStyle = "#101525bb";
+          ctx.fillStyle = "#0d1220c9";
           ctx.fillRect(0, 0, 960, 540);
-          ctx.fillStyle = "#fff2dc";
           ctx.textAlign = "center";
-          ctx.font = "bold 42px system-ui";
-          ctx.fillText("Nakahinga ka na", 480, 250);
-          ctx.font = "20px system-ui";
-          ctx.fillText("Pindutin ang Muling Subukan para maglaro ulit.", 480, 292);
+          ctx.fillStyle = "#fff1d2";
+          ctx.font = "bold 40px system-ui";
+          ctx.fillText("Nabuwal ang bayani", 480, 245);
+          ctx.font = "18px system-ui";
+          ctx.fillText("Pindutin ang Muling Subukan para maglaro ulit.", 480, 282);
         }
       }
 
-      function tick(time) {
-        const dt = Math.min((time - lastTime) / 1000 || 0, .04);
-        lastTime = time;
+      function update(dt) {
+        elapsed += dt;
+        if (player.hp <= 0) return;
+        const direction = (keys.has("ArrowRight") || keys.has("d") ? 1 : 0) -
+          (keys.has("ArrowLeft") || keys.has("a") ? 1 : 0);
+        if (direction) {
+          player.x += direction * 230 * dt;
+          player.facing = direction;
+        }
+        player.x = Math.max(30, Math.min(WORLD_WIDTH - 30, player.x));
+        player.swing = Math.max(0, player.swing - dt);
+        player.invulnerable = Math.max(0, player.invulnerable - dt);
+        cameraX = Math.max(0, Math.min(WORLD_WIDTH - 960, player.x - 480));
 
-        if (player.hp > 0) {
-          const speed = 220 * dt;
-          if (keys.has("ArrowLeft") || keys.has("a")) {
-            player.x -= speed;
-            player.facing = -1;
-          }
-          if (keys.has("ArrowRight") || keys.has("d")) {
-            player.x += speed;
-            player.facing = 1;
-          }
-          player.x = Math.max(32, Math.min(928, player.x));
-          player.swing = Math.max(0, player.swing - dt);
-          player.invulnerable = Math.max(0, player.invulnerable - dt);
-          if (messageTimer > 0) {
-            messageTimer -= dt;
-            if (messageTimer <= 0 && player.hp > 0) message.textContent = "Talunin ang mga anino para makakuha ng karanasan!";
-          }
-
-          for (const monster of monsters) {
-            if (!monster.alive) continue;
-            monster.phase += dt * 4;
-            monster.hit = Math.max(0, monster.hit - dt);
-            monster.attackTimer -= dt;
-            if (Math.abs(monster.x - player.x) < 45 && monster.attackTimer <= 0 && player.invulnerable <= 0) {
-              player.hp = Math.max(0, player.hp - 10);
-              player.invulnerable = .8;
-              monster.attackTimer = 1.2;
-              showMessage(player.hp > 0 ? "Tinamaan ka ng anino! Mag-ingat ka." : "Nakahinga ka na. Pindutin ang Muling Subukan.");
-              updateBars();
-            }
-          }
-
-          if (monsters.filter(monster => monster.alive).length < 3) {
-            const rightmost = Math.max(560, ...monsters.map(monster => monster.x));
-            monsters.push(makeMonster(Math.min(900, rightmost + 120)));
-          }
+        if (messageTimer > 0) {
+          messageTimer -= dt;
+          if (messageTimer <= 0) ui.message.textContent = "Maglakad, makipag-usap kay Lira, at talunin ang mga Anino.";
         }
 
-        draw();
-        requestAnimationFrame(tick);
+        for (const monster of monsters) {
+          if (!monster.alive) continue;
+          monster.phase += dt * 3;
+          monster.hit = Math.max(0, monster.hit - dt);
+          monster.attackTimer -= dt;
+          const distance = Math.abs(monster.x - player.x);
+          if (distance < 48 && monster.attackTimer <= 0 && player.invulnerable <= 0) {
+            player.hp = Math.max(0, player.hp - 9);
+            player.invulnerable = .85;
+            monster.attackTimer = 1.1;
+            say(player.hp > 0 ? "Tinamaan ka ng Anino! Lumayo o talunin ito." : "Nabuwal ka. Pindutin ang Muling Subukan.");
+            updateUI();
+          }
+        }
       }
 
       function resetGame() {
-        player.x = 230;
-        player.hp = player.maxHp = 100;
+        player.x = 850;
+        player.hp = 100;
+        player.maxHp = 100;
         player.xp = 0;
         player.level = 1;
+        player.gold = 0;
+        player.facing = 1;
         player.swing = 0;
         player.invulnerable = 0;
-        monsters = [makeMonster(520), makeMonster(720)];
-        message.textContent = "Talunin ang mga anino para makakuha ng karanasan!";
-        messageTimer = 0;
-        updateBars();
+        quest.state = "available";
+        quest.kills = 0;
+        monsters.splice(0, monsters.length,
+          makeMonster(1110), makeMonster(1300), makeMonster(1510),
+          makeMonster(1690), makeMonster(1810));
+        cameraX = Math.max(0, player.x - 480);
+        say("Maligayang pagdating sa Eldoria, bayani!", 4);
+        updateUI();
+      }
+
+      function frame(time) {
+        const dt = Math.min((time - lastTime) / 1000 || 0, .04);
+        lastTime = time;
+        update(dt);
+        draw();
+        requestAnimationFrame(frame);
       }
 
       document.addEventListener("keydown", event => {
@@ -468,14 +477,15 @@
         if (["ArrowLeft", "ArrowRight", " "].includes(event.key)) event.preventDefault();
         keys.add(key);
         if (event.code === "Space" && !event.repeat) attack();
-        if (player.hp <= 0 && (event.key.toLowerCase() === "r")) resetGame();
+        if ((event.key.toLowerCase() === "e") && !event.repeat) talk();
       });
       document.addEventListener("keyup", event => {
-        const key = event.key.length === 1 ? event.key.toLowerCase() : event.key;
-        keys.delete(key);
+        keys.delete(event.key.length === 1 ? event.key.toLowerCase() : event.key);
       });
       window.addEventListener("blur", () => keys.clear());
       document.querySelector("#attack").addEventListener("click", attack);
+      document.querySelector("#talk").addEventListener("click", talk);
+      ui.restart.addEventListener("click", resetGame);
 
       function holdButton(id, key) {
         const button = document.querySelector(id);
@@ -492,19 +502,8 @@
       holdButton("#left", "ArrowLeft");
       holdButton("#right", "ArrowRight");
 
-      canvas.addEventListener("pointerdown", event => {
-        if (player.hp <= 0) {
-          resetGame();
-          return;
-        }
-        const bounds = canvas.getBoundingClientRect();
-        const clickX = (event.clientX - bounds.left) / bounds.width * canvas.width;
-        player.facing = clickX < player.x ? -1 : 1;
-        attack();
-      });
-
       resetGame();
-      requestAnimationFrame(tick);
+      requestAnimationFrame(frame);
     })();
   </script>
 </body>
